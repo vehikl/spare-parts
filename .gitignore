@@ -45,3 +45,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Paranoid users
+**/google-services.json
+**/firebase_options.dart
