@@ -1,5 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:spare_parts/my_home_page.dart';
+import 'package:spare_parts/signin_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -7,6 +8,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
+  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+
   runApp(const MyApp());
 }
 
@@ -20,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const SignInPage(title: 'Flutter Demo Home Page'),
     );
   }
 }
