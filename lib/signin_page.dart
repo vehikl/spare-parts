@@ -3,9 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:spare_parts/home_page.dart';
 
 class SignInPage extends StatefulWidget {
-  const SignInPage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const SignInPage({Key? key}) : super(key: key);
 
   @override
   State<SignInPage> createState() => _SignInPageState();
@@ -18,9 +16,7 @@ class _SignInPageState extends State<SignInPage> {
     GoogleAuthProvider googleProvider = GoogleAuthProvider();
 
     try {
-      var user = await FirebaseAuth.instance.signInWithPopup(googleProvider);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+      await FirebaseAuth.instance.signInWithPopup(googleProvider);
     } on FirebaseAuthException catch (e) {
       setState(() {
         _error = e.message;
@@ -37,7 +33,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text('Sign in page'),
       ),
       body: Center(
         child: Column(
