@@ -10,165 +10,57 @@ env:
 jobs:
   test_flutter:
     name: Run Flutter tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
+    uses: ./.github/workflows/flutter-setup.yml
+    with:
+      runs-on: ubuntu-latest
+      final_command_name: Run tests
+      final_command: flutter test
+    secrets:
+      GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+      DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
 
-      - name: Download Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: '12.x'
-
-      - name: Download Flutter
-        uses: subosito/flutter-action@v1
-        with:
-          channel: 'stable'
-
-      - name: Copy google-services.json
-        env:
-          GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
-        run: echo "$GOOGLE_SERVICES" > android/app/google-services.json
-
-      - name: Copy firebase_options.dart
-        env:
-          DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
-        run: echo "$DART_FIREBASE_OPTIONS" > lib/firebase_options.dart
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Run tests
-        run: flutter test
+  
   
   build_android:
     name: Build Android App
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-
-      - name: Download Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: '12.x'
-
-      - name: Download Flutter
-        uses: subosito/flutter-action@v1
-        with:
-          channel: 'stable'
-
-      - name: Copy google-services.json
-        env:
-          GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
-        run: echo $GOOGLE_SERVICES > android/app/google-services.json
-
-      - name: Copy firebase_options.dart
-        env:
-          DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
-        run: echo $DART_FIREBASE_OPTIONS > lib/firebase_options.dart
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build for Android
-        run: flutter build apk
+    uses: ./.github/workflows/flutter-setup.yml
+    with:
+      runs-on: ubuntu-latest
+      final_command_name: Build for Android
+      final_command: flutter build apk
+    secrets:
+      GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+      DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
 
   build_web:
     name: Build Web App
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-
-      - name: Download Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: '12.x'
-
-      - name: Download Flutter
-        uses: subosito/flutter-action@v1
-        with:
-          channel: 'stable'
-
-      - name: Copy google-services.json
-        env:
-          GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
-        run: echo $GOOGLE_SERVICES > android/app/google-services.json
-
-      - name: Copy firebase_options.dart
-        env:
-          DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
-        run: echo $DART_FIREBASE_OPTIONS > lib/firebase_options.dart
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build for web
-        run: flutter web
+    uses: ./.github/workflows/flutter-setup.yml
+    with:
+      runs-on: ubuntu-latest
+      final_command_name: Build for web
+      final_command: flutter build web
+    secrets:
+      GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+      DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
 
   build_ios:
     name: Build IOS App
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-
-      - name: Download Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: '12.x'
-
-      - name: Download Flutter
-        uses: subosito/flutter-action@v1
-        with:
-          channel: 'stable'
-
-      - name: Copy google-services.json
-        env:
-          GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
-        run: echo $GOOGLE_SERVICES > android/app/google-services.json
-
-      - name: Copy firebase_options.dart
-        env:
-          DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
-        run: echo $DART_FIREBASE_OPTIONS > lib/firebase_options.dart
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build for Android
-        run: flutter build ios
+    uses: ./.github/workflows/flutter-setup.yml
+    with:
+      runs-on: macos-latest
+      final_command_name: Buid for IOS
+      final_command: flutter build ios
+    secrets:
+      GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+      DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
 
   build_macos:
-    name: Build MACOS App
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-
-      - name: Download Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: '12.x'
-
-      - name: Download Flutter
-        uses: subosito/flutter-action@v1
-        with:
-          channel: 'stable'
-
-      - name: Copy google-services.json
-        env:
-          GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
-        run: echo $GOOGLE_SERVICES > android/app/google-services.json
-
-      - name: Copy firebase_options.dart
-        env:
-          DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
-        run: echo $DART_FIREBASE_OPTIONS > lib/firebase_options.dart
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build for Android
-        run: flutter build macos
+    name: Build MacOS App
+    uses: ./.github/workflows/flutter-setup.yml
+    with:
+      runs-on: macos-latest
+      final_command_name: Build for MacOS
+      final_command: flutter build macos
+    secrets:
+      GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+      DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
