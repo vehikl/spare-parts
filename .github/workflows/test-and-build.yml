@@ -1,0 +1,65 @@
+name: Test and build
+
+on:
+  pull_request:
+    branches: [main]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  test_flutter:
+    name: Run Flutter tests
+    uses: ./.github/workflows/flutter-setup.yml
+    with:
+      runs_on: ubuntu-latest
+      final_command_name: Run tests
+      final_command: flutter test
+    secrets:
+      GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+      DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
+
+  build_android:
+    name: Build Android App
+    uses: ./.github/workflows/flutter-setup.yml
+    with:
+      runs_on: ubuntu-latest
+      final_command_name: Build for Android
+      final_command: flutter build apk
+    secrets:
+      GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+      DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
+
+  build_web:
+    name: Build Web App
+    uses: ./.github/workflows/flutter-setup.yml
+    with:
+      runs_on: ubuntu-latest
+      final_command_name: Build for web
+      final_command: flutter build web
+    secrets:
+      GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+      DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
+
+  # TODO: set up provisioning profiles
+  # build_ios:
+  #   name: Build IOS App
+  #   uses: ./.github/workflows/flutter-setup.yml
+  #   with:
+  #     runs_on: macos-latest
+  #     final_command_name: Buid for IOS
+  #     final_command: flutter build ios
+  #   secrets:
+  #     GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+  #     DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
+
+  build_macos:
+    name: Build MacOS App
+    uses: ./.github/workflows/flutter-setup.yml
+    with:
+      runs_on: macos-latest
+      final_command_name: Build for MacOS
+      final_command: flutter build macos
+    secrets:
+      GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+      DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
