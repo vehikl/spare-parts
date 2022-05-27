@@ -12,20 +12,18 @@ jobs:
     name: Run Flutter tests
     uses: ./.github/workflows/flutter-setup.yml
     with:
-      runs-on: ubuntu-latest
+      runs_on: ubuntu-latest
       final_command_name: Run tests
       final_command: flutter test
     secrets:
       GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
       DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
 
-  
-  
   build_android:
     name: Build Android App
     uses: ./.github/workflows/flutter-setup.yml
     with:
-      runs-on: ubuntu-latest
+      runs_on: ubuntu-latest
       final_command_name: Build for Android
       final_command: flutter build apk
     secrets:
@@ -36,7 +34,7 @@ jobs:
     name: Build Web App
     uses: ./.github/workflows/flutter-setup.yml
     with:
-      runs-on: ubuntu-latest
+      runs_on: ubuntu-latest
       final_command_name: Build for web
       final_command: flutter build web
     secrets:
@@ -47,7 +45,7 @@ jobs:
     name: Build IOS App
     uses: ./.github/workflows/flutter-setup.yml
     with:
-      runs-on: macos-latest
+      runs_on: macos-latest
       final_command_name: Buid for IOS
       final_command: flutter build ios
     secrets:
@@ -58,7 +56,7 @@ jobs:
     name: Build MacOS App
     uses: ./.github/workflows/flutter-setup.yml
     with:
-      runs-on: macos-latest
+      runs_on: macos-latest
       final_command_name: Build for MacOS
       final_command: flutter build macos
     secrets:
