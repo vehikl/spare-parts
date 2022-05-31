@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:spare_parts/home_page.dart';
@@ -6,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  // if (Firebase.apps.isEmpty) {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -13,10 +15,12 @@ void main() async {
   const useEmulators = bool.fromEnvironment('USE_EMULATORS');
   if (useEmulators) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
   }
 
   print(
       "Talking to Firebase ${useEmulators ? 'via EMULATORS' : 'in PRODUCTION'}");
+  // }
 
   runApp(const MyApp());
 }
