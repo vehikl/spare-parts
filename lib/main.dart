@@ -10,7 +10,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  const useEmulators = bool.fromEnvironment('USE_EMULATORS');
+  if (useEmulators) {
+    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  }
+  
+  print("Talking to Firebase ${useEmulators ? 'via EMULATORS' : 'in PRODUCTION'}");
 
   runApp(const MyApp());
 }
