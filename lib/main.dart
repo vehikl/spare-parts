@@ -14,8 +14,9 @@ void main() async {
   if (useEmulators) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
   }
-  
-  print("Talking to Firebase ${useEmulators ? 'via EMULATORS' : 'in PRODUCTION'}");
+
+  print(
+      "Talking to Firebase ${useEmulators ? 'via EMULATORS' : 'in PRODUCTION'}");
 
   runApp(const MyApp());
 }
@@ -25,24 +26,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
-      if (user?.email != null && user!.email!.endsWith('vehikl.com')) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const HomePage()));
-      } else {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const SignInPage()));
-
-        await FirebaseAuth.instance.signOut();
-      }
-    });
-
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const SignInPage(),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: Builder(builder: (context) {
+          FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+            if (user?.email != null && user!.email!.endsWith('vehikl.com')) {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const HomePage()));
+            } else {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const SignInPage()));
+              await FirebaseAuth.instance.signOut();
+            }
+          });
+          return const SignInPage();
+        }));
   }
 }
