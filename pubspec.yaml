@@ -49,6 +49,9 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
 
+scripts:
+  emulate: firebase emulators:start --import ./emulator_data
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

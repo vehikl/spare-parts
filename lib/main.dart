@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
           if (user?.email != null && user!.email!.endsWith('vehikl.com')) {
             return const HomePage();
           }
+          
           return const SignInPage();
         },
       ),
