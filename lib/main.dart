@@ -7,7 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  // if (Firebase.apps.isEmpty) {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -20,7 +20,6 @@ void main() async {
 
   print(
       "Talking to Firebase ${useEmulators ? 'via EMULATORS' : 'in PRODUCTION'}");
-  // }
 
   runApp(const MyApp());
 }
