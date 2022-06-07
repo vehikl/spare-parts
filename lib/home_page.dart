@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'inventory_list_item.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, required this.firestore}) : super(key: key);
+
+  final FirebaseFirestore firestore;
 
   handleSignOut() {
     FirebaseAuth.instance.signOut();
@@ -14,14 +16,14 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Page'),
+        title: const Text('Inventory'),
         actions: [
           IconButton(onPressed: handleSignOut, icon: const Icon(Icons.logout))
         ],
       ),
       body: Center(
         child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          future: FirebaseFirestore.instance.collection('Items').get(),
+          future: firestore.collection('Items').get(),
           builder: (context, snapshot) {
             if (snapshot.error == null) {
               print(snapshot);
@@ -33,9 +35,7 @@ class HomePage extends StatelessWidget {
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   var item = items[index];
-                  return ListTile(
-                    title: Text(item['id']),
-                  );
+                  return InventoryListItem(item: item);
                 },
               );
             } else {

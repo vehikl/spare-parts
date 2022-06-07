@@ -40,9 +40,9 @@ class MyApp extends StatelessWidget {
           final user = snapshot.data;
 
           if (user?.email != null && user!.email!.endsWith('vehikl.com')) {
-            return const HomePage();
+            return HomePage(firestore: FirebaseFirestore.instance);
           }
-          
+
           return const SignInPage();
         },
       ),
