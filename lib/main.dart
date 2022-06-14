@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:spare_parts/home_page.dart';
-import 'package:spare_parts/signin_page.dart';
+import 'package:spare_parts/pages/home_page.dart';
+import 'package:spare_parts/pages/signin_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 

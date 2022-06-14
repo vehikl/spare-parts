@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'inventory_list_item.dart';
+import '../widgets/inventory_list_item.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key, required this.firestore}) : super(key: key);
