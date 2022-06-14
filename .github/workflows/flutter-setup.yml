@@ -1,0 +1,58 @@
+name: Test and build
+
+on:
+  workflow_call:
+    inputs:
+      final_command_name:
+        type: string
+        required: false
+        default: Final command
+      final_command:
+        type: string
+        required: false
+        default: echo no-op
+      runs_on:
+        type: string
+        required: true
+    secrets: 
+      GOOGLE_SERVICES:
+        required: true
+      DART_FIREBASE_OPTIONS:
+        required: true
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  test_flutter:
+    name: Run Flutter tests
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Download Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+
+      - name: Download Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable'
+
+      - name: Copy google-services.json
+        env:
+          GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+        run: echo "$GOOGLE_SERVICES" > android/app/google-services.json
+
+      - name: Copy firebase_options.dart
+        env:
+          DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
+        run: echo "$DART_FIREBASE_OPTIONS" > lib/firebase_options.dart
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: ${{ inputs.final_command_name }}
+        run: ${{ inputs.final_command }}
