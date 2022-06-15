@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:spare_parts/widgets/add_inventory_item_form.dart';
 import '../widgets/inventory_list_item.dart';
 
 class HomePage extends StatelessWidget {
@@ -21,12 +22,22 @@ class HomePage extends StatelessWidget {
           IconButton(onPressed: handleSignOut, icon: const Icon(Icons.logout))
         ],
       ),
+      floatingActionButton: IconButton(
+        icon: const Icon(Icons.add),
+        onPressed: () async {
+          await showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return AddInventoryItemForm(firestore: firestore);
+            },
+          );
+        },
+      ),
       body: Center(
-        child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          future: firestore.collection('Items').get(),
+        child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          stream: firestore.collection('Items').snapshots(),
           builder: (context, snapshot) {
             if (snapshot.error == null) {
-              print(snapshot);
               final items = (snapshot.data?.docs ?? [])
                   .map((doc) => {'id': doc.id, ...doc.data()})
                   .toList();

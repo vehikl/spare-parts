@@ -21,4 +21,39 @@ void main() {
       expect(find.text('Chair'), findsOneWidget);
     },
   );
+  testWidgets(
+    'Add new item to inventory list',
+    (WidgetTester tester) async {
+      final firestore = FakeFirebaseFirestore();
+      const itemId = '21DSAdd4';
+
+      await tester.pumpWidget(MaterialApp(
+        home: HomePage(firestore: firestore),
+      ));
+
+      final fab = find.byIcon(Icons.add);
+
+      await tester.tap(fab);
+      await tester.pump();
+
+      expect(find.text('New Item'), findsOneWidget);
+
+      final typeInput = find.byType(DropdownButton<String>);
+      await tester.tap(typeInput);
+      final chairOption = find.text('Chair');
+      await tester.tap(chairOption);
+
+      final idInput = find.byType(TextField);
+      await tester.enterText(idInput, itemId);
+
+      final addButton = find.text('Add');
+      await tester.tap(addButton);
+
+      await tester.pump(Duration(seconds: 2));
+
+      print(tester.allWidgets);
+
+      expect(find.text(itemId), findsOneWidget);
+    },
+  );
 }
