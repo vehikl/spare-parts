@@ -21,8 +21,9 @@ void main() {
       expect(find.text('Chair'), findsOneWidget);
     },
   );
+
   testWidgets(
-    'Add new item to inventory list',
+    'Adds new item to inventory list',
     (WidgetTester tester) async {
       final firestore = FakeFirebaseFirestore();
       const itemId = '21DSAdd4';
@@ -34,24 +35,22 @@ void main() {
       final fab = find.byIcon(Icons.add);
 
       await tester.tap(fab);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(find.text('New Item'), findsOneWidget);
-
+      // tap on the dropdown and wait for the options to show up
       final typeInput = find.byType(DropdownButton<String>);
       await tester.tap(typeInput);
-      final chairOption = find.text('Chair');
-      await tester.tap(chairOption);
+      await tester.pumpAndSettle();
+
+      // pick the 'Desk' option
+      final deskOption = find.text('Desk').first;
+      await tester.tap(deskOption);
 
       final idInput = find.byType(TextField);
       await tester.enterText(idInput, itemId);
 
       final addButton = find.text('Add');
       await tester.tap(addButton);
-
-      await tester.pump(Duration(seconds: 2));
-
-      print(tester.allWidgets);
 
       expect(find.text(itemId), findsOneWidget);
     },
