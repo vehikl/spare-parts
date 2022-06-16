@@ -22,8 +22,8 @@ class HomePage extends StatelessWidget {
           IconButton(onPressed: handleSignOut, icon: const Icon(Icons.logout))
         ],
       ),
-      floatingActionButton: IconButton(
-        icon: const Icon(Icons.add),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
         onPressed: () async {
           await showDialog<void>(
             context: context,
