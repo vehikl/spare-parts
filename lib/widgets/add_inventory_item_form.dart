@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class AddInventoryItemForm extends StatefulWidget {
   const AddInventoryItemForm({Key? key, required this.firestore})
@@ -42,12 +40,20 @@ class _AddInventoryItemFormState extends State<AddInventoryItemForm> {
                   });
                 },
               ),
-              TextField(
-                decoration: const InputDecoration(label: Text('ID')),
+              TextFormField(
+                decoration: const InputDecoration(
+                  label: Text('ID'),
+                ),
                 onChanged: (String newValue) {
                   setState(() {
                     idValue = newValue;
                   });
+                },
+                validator: (text) {
+                  if (text == null || text.isEmpty) {
+                    return 'You must set an ID';
+                  }
+                  return null;
                 },
               ),
             ],
@@ -58,10 +64,12 @@ class _AddInventoryItemFormState extends State<AddInventoryItemForm> {
         TextButton(
           child: const Text('Add'),
           onPressed: () async {
-            await widget.firestore
-                .collection('Items')
-                .add({'id': idValue, 'type': dropdownValue});
-            Navigator.of(context).pop();
+            if (_formKey.currentState!.validate()) {
+              await widget.firestore
+                  .collection('Items')
+                  .add({'id': idValue, 'type': dropdownValue});
+              Navigator.of(context).pop();
+            }
           },
         ),
       ],

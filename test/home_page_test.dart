@@ -42,12 +42,10 @@ void main() {
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
-      // tap on the dropdown and wait for the options to show up
       final typeInput = find.byType(DropdownButton<String>);
       await tester.tap(typeInput);
       await tester.pumpAndSettle();
 
-      // pick the 'Desk' option
       final deskOption = find.text('Desk').first;
       await tester.tap(deskOption);
 
@@ -61,29 +59,22 @@ void main() {
     },
   );
 
-  testWidgets('It displays an error if a user tried to add an item with no ID',
-      (WidgetTester tester) async {
-    await pumpHomePage(tester);
+  testWidgets(
+    'It displays an error if a user tried to add an item with no ID',
+    (WidgetTester tester) async {
+      await pumpHomePage(tester);
 
-    final fab = find.byIcon(Icons.add);
-    await tester.tap(fab);
-    await tester.pumpAndSettle();
+      final fab = find.byIcon(Icons.add);
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
 
-    // tap on the dropdown and wait for the options to show up
-    final typeInput = find.byType(DropdownButton<String>);
-    await tester.tap(typeInput);
-    await tester.pumpAndSettle();
+      expect(find.text('You must set an ID'), findsNothing);
 
-    // pick the 'Desk' option
-    final deskOption = find.text('Desk').first;
-    await tester.tap(deskOption);
+      final addButton = find.text('Add');
+      await tester.tap(addButton);
+      await tester.pumpAndSettle();
 
-    final idInput = find.byType(TextField);
-    await tester.enterText(idInput, '');
-
-    final addButton = find.text('Add');
-    await tester.tap(addButton);
-
-    expect(find.text("You must set an ID."), findsOneWidget);
-  });
+      expect(find.text('You must set an ID'), findsOneWidget);
+    },
+  );
 }
