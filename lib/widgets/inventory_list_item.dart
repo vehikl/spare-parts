@@ -11,7 +11,10 @@ class InventoryListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(item['id']),
+      title: Text(
+        item['id'],
+        style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 22),
+      ),
     );
   }
 }
