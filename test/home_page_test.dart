@@ -4,18 +4,26 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/pages/home_page.dart';
 
 void main() {
+  late final FakeFirebaseFirestore firestore;
+
+  Future<void> pumpHomePage(WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: HomePage(firestore: firestore),
+    ));
+
+    await tester.idle();
+    await tester.pump();
+  }
+
+  setUp(() async {
+    firestore = FakeFirebaseFirestore();
+    await firestore.collection('Items').doc('Chair').set({'cost': 123});
+  });
+
   testWidgets(
     'Displays a list of inventory items',
     (WidgetTester tester) async {
-      final firestore = FakeFirebaseFirestore();
-      await firestore.collection('Items').doc('Chair').set({'cost': 123});
-
-      await tester.pumpWidget(MaterialApp(
-        home: HomePage(firestore: firestore),
-      ));
-
-      await tester.idle();
-      await tester.pump();
+      await pumpHomePage(tester);
 
       expect(find.text('Inventory'), findsOneWidget);
       expect(find.text('Chair'), findsOneWidget);
@@ -25,7 +33,6 @@ void main() {
   testWidgets(
     'Adds new item to inventory list',
     (WidgetTester tester) async {
-      final firestore = FakeFirebaseFirestore();
       const itemId = '21DSAdd4';
 
       await tester.pumpWidget(MaterialApp(
