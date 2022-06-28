@@ -16,3 +16,10 @@ Map<int, Color> colorCodes = {
 };
 
 MaterialColor kVehiklMaterialColor = new MaterialColor(0xFFDD5F13, colorCodes);
+
+Map<String, IconData> inventoryItems = {
+  "Chair": Icons.chair,
+  "Desk": Icons.desk,
+  "Monitor": Icons.monitor,
+  "Laptop": Icons.laptop
+};

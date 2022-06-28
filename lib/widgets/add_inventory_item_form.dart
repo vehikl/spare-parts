@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/constants.dart';
 
 class AddInventoryItemForm extends StatefulWidget {
   const AddInventoryItemForm({Key? key}) : super(key: key);
@@ -28,7 +29,7 @@ class _AddInventoryItemFormState extends State<AddInventoryItemForm> {
           children: [
             DropdownButton<String>(
               value: dropdownValue,
-              items: <String>["Chair", "Desk", "Monitor", "Laptop"]
+              items: inventoryItems.keys
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -61,7 +62,7 @@ class _AddInventoryItemFormState extends State<AddInventoryItemForm> {
         ),
       ),
       actions: <Widget>[
-        TextButton(
+        ElevatedButton(
           child: const Text('Add'),
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
