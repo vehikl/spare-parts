@@ -23,6 +23,7 @@ class _AddInventoryItemFormState extends State<AddInventoryItemForm> {
       content: Form(
         key: _formKey,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DropdownButton<String>(
