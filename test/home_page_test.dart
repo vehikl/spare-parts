@@ -15,7 +15,7 @@ void main() {
     await tester.pump();
   }
 
-  setUp(() async {
+  setUpAll(() async {
     firestore = FakeFirebaseFirestore();
     await firestore.collection('Items').doc('Chair').set({'cost': 123});
   });
