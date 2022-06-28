@@ -1,14 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 import 'package:spare_parts/pages/home_page.dart';
 
 void main() {
   late final FakeFirebaseFirestore firestore;
 
   Future<void> pumpHomePage(WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: HomePage(firestore: firestore),
+    await tester.pumpWidget(Provider<FirebaseFirestore>(
+      create: (context) => firestore,
+      child: MaterialApp(home: HomePage()),
     ));
 
     await tester.idle();

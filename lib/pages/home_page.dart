@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:spare_parts/widgets/add_inventory_item_form.dart';
 import '../widgets/inventory_list_item.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key, required this.firestore}) : super(key: key);
-
-  final FirebaseFirestore firestore;
+  const HomePage({Key? key}) : super(key: key);
 
   handleSignOut() {
     FirebaseAuth.instance.signOut();
@@ -15,6 +14,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final firestore = context.read<FirebaseFirestore>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inventory'),

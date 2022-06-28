@@ -5,6 +5,7 @@ import 'package:spare_parts/constants.dart';
 import 'package:spare_parts/pages/home_page.dart';
 import 'package:spare_parts/pages/signin_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -30,22 +31,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: kVehiklMaterialColor,
-      ),
-      home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          final user = snapshot.data;
-
-          if (user?.email != null && user!.email!.endsWith('vehikl.com')) {
-            return HomePage(firestore: FirebaseFirestore.instance);
-          }
-
-          return const SignInPage();
-        },
+    return Provider<FirebaseFirestore>(
+      create: (context) => FirebaseFirestore.instance,
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: kVehiklMaterialColor,
+        ),
+        home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            final user = snapshot.data;
+    
+            if (user?.email != null && user!.email!.endsWith('vehikl.com')) {
+              return HomePage();
+            }
+    
+            return const SignInPage();
+          },
+        ),
       ),
     );
   }
