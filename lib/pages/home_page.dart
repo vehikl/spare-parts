@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
           await showDialog<void>(
             context: context,
             builder: (BuildContext context) {
-              return AddInventoryItemForm(firestore: firestore);
+              return const AddInventoryItemForm();
             },
           );
         },

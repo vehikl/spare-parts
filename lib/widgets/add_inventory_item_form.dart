@@ -1,12 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddInventoryItemForm extends StatefulWidget {
-  const AddInventoryItemForm({Key? key, required this.firestore})
-      : super(key: key);
-
-  final FirebaseFirestore firestore;
+  const AddInventoryItemForm({Key? key}) : super(key: key);
 
   @override
   State<AddInventoryItemForm> createState() => _AddInventoryItemFormState();
@@ -19,6 +16,8 @@ class _AddInventoryItemFormState extends State<AddInventoryItemForm> {
 
   @override
   Widget build(BuildContext context) {
+    final firestore = context.read<FirebaseFirestore>();
+
     return AlertDialog(
       title: const Text('New Item'),
       content: Container(
@@ -66,7 +65,7 @@ class _AddInventoryItemFormState extends State<AddInventoryItemForm> {
           child: const Text('Add'),
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              await widget.firestore
+              await firestore
                   .collection('Items')
                   .add({'id': idValue, 'type': dropdownValue});
               Navigator.of(context).pop();
