@@ -20,44 +20,43 @@ class _AddInventoryItemFormState extends State<AddInventoryItemForm> {
 
     return AlertDialog(
       title: const Text('New Item'),
-      content: Container(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              DropdownButton<String>(
-                value: dropdownValue,
-                items: <String>["Chair", "Desk", "Monitor", "Laptop"]
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownValue = newValue!;
-                  });
-                },
+      content: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DropdownButton<String>(
+              value: dropdownValue,
+              items: <String>["Chair", "Desk", "Monitor", "Laptop"]
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  dropdownValue = newValue!;
+                });
+              },
+            ),
+            TextFormField(
+              decoration: const InputDecoration(
+                label: Text('ID'),
               ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  label: Text('ID'),
-                ),
-                onChanged: (String newValue) {
-                  setState(() {
-                    idValue = newValue;
-                  });
-                },
-                validator: (text) {
-                  if (text == null || text.isEmpty) {
-                    return 'You must set an ID';
-                  }
-                  return null;
-                },
-              ),
-            ],
-          ),
+              onChanged: (String newValue) {
+                setState(() {
+                  idValue = newValue;
+                });
+              },
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'You must set an ID';
+                }
+                return null;
+              },
+            ),
+          ],
         ),
       ),
       actions: <Widget>[
