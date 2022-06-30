@@ -52,14 +52,3 @@ jobs:
   #   secrets:
   #     GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
   #     DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
-
-  build_macos:
-    name: Build MacOS App
-    uses: ./.github/workflows/flutter-setup.yml
-    with:
-      runs_on: macos-latest
-      final_command_name: Build for MacOS
-      final_command: flutter build macos
-    secrets:
-      GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
-      DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}

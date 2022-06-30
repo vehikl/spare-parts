@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'inventory_list_item.dart';
+import 'package:provider/provider.dart';
+import 'package:spare_parts/widgets/add_inventory_item_form.dart';
+import '../widgets/inventory_list_item.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key, required this.firestore}) : super(key: key);
-
-  final FirebaseFirestore firestore;
+  const HomePage({Key? key}) : super(key: key);
 
   handleSignOut() {
     FirebaseAuth.instance.signOut();
@@ -14,6 +14,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final firestore = context.read<FirebaseFirestore>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inventory'),
@@ -21,12 +23,22 @@ class HomePage extends StatelessWidget {
           IconButton(onPressed: handleSignOut, icon: const Icon(Icons.logout))
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () async {
+          await showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return const AddInventoryItemForm();
+            },
+          );
+        },
+      ),
       body: Center(
-        child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          future: firestore.collection('Items').get(),
+        child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          stream: firestore.collection('Items').snapshots(),
           builder: (context, snapshot) {
             if (snapshot.error == null) {
-              print(snapshot);
               final items = (snapshot.data?.docs ?? [])
                   .map((doc) => {'id': doc.id, ...doc.data()})
                   .toList();

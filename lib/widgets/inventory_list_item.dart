@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spare_parts/constants.dart';
 
 class InventoryListItem extends StatelessWidget {
   const InventoryListItem({
@@ -11,7 +12,11 @@ class InventoryListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(item['id']),
+      leading: Icon(inventoryItems[item['type']]),
+      title: Text(
+        item['id'],
+        style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 22),
+      ),
     );
   }
 }
