@@ -20,7 +20,10 @@ void main() {
 
   setUpAll(() async {
     firestore = FakeFirebaseFirestore();
-    await firestore.collection('Items').doc('Chair').set({'cost': 123});
+    await firestore
+        .collection('Items')
+        .doc()
+        .set({'cost': 123, 'id': 'Chair#123', 'type': 'Chair'});
   });
 
   testWidgets(
@@ -29,7 +32,7 @@ void main() {
       await pumpHomePage(tester);
 
       expect(find.text('Inventory'), findsOneWidget);
-      expect(find.text('Chair'), findsOneWidget);
+      expect(find.text('Chair#123'), findsOneWidget);
     },
   );
 
@@ -78,6 +81,31 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('You must set an ID'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Deletes an item from the list',
+    (WidgetTester tester) async {
+      await pumpHomePage(tester);
+
+      final chairListItem = find.ancestor(
+        of: find.text('Chair#123'),
+        matching: find.byType(ListTile),
+      );
+      final optionsButton = find.descendant(
+        of: chairListItem,
+        matching: find.byIcon(Icons.more_vert),
+      );
+
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
+
+      final deleteButton = find.text('Delete');
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.more_vert), findsNothing);
     },
   );
 }

@@ -23,3 +23,8 @@ Map<String, IconData> inventoryItems = {
   "Monitor": Icons.monitor,
   "Laptop": Icons.laptop
 };
+
+enum ItemAction {
+  delete,
+  edit
+}

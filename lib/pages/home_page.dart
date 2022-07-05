@@ -40,7 +40,7 @@ class HomePage extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.error == null) {
               final items = (snapshot.data?.docs ?? [])
-                  .map((doc) => {'id': doc.id, ...doc.data()})
+                  .map((doc) => {'firestore_id': doc.id, ...doc.data()})
                   .toList();
 
               return ListView.builder(
