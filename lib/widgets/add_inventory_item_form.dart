@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/constants.dart';
+import 'package:spare_parts/models/inventory_item.dart';
 
 class AddInventoryItemForm extends StatefulWidget {
   const AddInventoryItemForm({Key? key}) : super(key: key);
@@ -66,9 +67,9 @@ class _AddInventoryItemFormState extends State<AddInventoryItemForm> {
           child: const Text('Add'),
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              await firestore
-                  .collection('Items')
-                  .add({'id': idValue, 'type': dropdownValue});
+              await firestore.collection('Items').add(
+                  InventoryItem(id: idValue, type: dropdownValue)
+                      .toFirestore());
               Navigator.of(context).pop();
             }
           },

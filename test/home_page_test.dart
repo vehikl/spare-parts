@@ -105,7 +105,7 @@ void main() {
       await tester.tap(deleteButton);
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.more_vert), findsNothing);
+      expect(find.text('Chair#123'), findsNothing);
     },
   );
 }

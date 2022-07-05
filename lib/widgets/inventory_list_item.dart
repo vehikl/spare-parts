@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/constants.dart';
+import 'package:spare_parts/models/inventory_item.dart';
 
 class InventoryListItem extends StatelessWidget {
   const InventoryListItem({
@@ -9,16 +10,16 @@ class InventoryListItem extends StatelessWidget {
     required this.item,
   }) : super(key: key);
 
-  final Map<String, dynamic> item;
+  final InventoryItem item;
 
   @override
   Widget build(BuildContext context) {
     final firestore = context.read<FirebaseFirestore>();
 
     return ListTile(
-      leading: Icon(inventoryItems[item['type']]),
+      leading: Icon(inventoryItems[item.type]),
       title: Text(
-        item['id'],
+        item.id,
         style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 22),
       ),
       trailing: PopupMenuButton<ItemAction>(
@@ -31,10 +32,7 @@ class InventoryListItem extends StatelessWidget {
         ],
         onSelected: (value) async {
           if (value == ItemAction.delete) {
-            await firestore
-                .collection('Items')
-                .doc(item['firestore_id'])
-                .delete();
+            await firestore.collection('Items').doc(item.firestoreId).delete();
           }
         },
       ),

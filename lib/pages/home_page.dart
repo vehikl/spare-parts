@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/widgets/add_inventory_item_form.dart';
 import '../widgets/inventory_list_item.dart';
 
@@ -40,7 +41,7 @@ class HomePage extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.error == null) {
               final items = (snapshot.data?.docs ?? [])
-                  .map((doc) => {'firestore_id': doc.id, ...doc.data()})
+                  .map(InventoryItem.fromFirestore)
                   .toList();
 
               return ListView.builder(
