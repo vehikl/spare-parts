@@ -19,8 +19,18 @@ class InventoryItemForm extends StatefulWidget {
 
 class _InventoryItemFormState extends State<InventoryItemForm> {
   final _formKey = GlobalKey<FormState>();
-  String dropdownValue = 'Chair';
+  String dropdownValue = inventoryItems.keys.first;
   String idValue = '';
+
+  @override
+  void initState() {
+    final item = widget.item;
+    if (item != null) {
+      idValue = item.id;
+      dropdownValue = item.type;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +60,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
               },
             ),
             TextFormField(
+              initialValue: widget.item?.id,
               decoration: const InputDecoration(
                 label: Text('ID'),
               ),

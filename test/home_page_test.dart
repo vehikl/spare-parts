@@ -62,7 +62,7 @@ void main() {
       await tester.tap(typeInput);
       await tester.pumpAndSettle();
 
-      final deskOption = find.text('Desk').first;
+      final deskOption = find.text('Desk').last;
       await tester.tap(deskOption);
 
       final idInput = find.byType(TextField);
@@ -100,7 +100,20 @@ void main() {
       await tester.pumpAndSettle();
 
       final idInput = find.byType(TextField);
+      final idInputText = find.descendant(
+        of: idInput,
+        matching: find.text(oldItemId),
+      );
+      expect(idInputText, findsOneWidget);
       await tester.enterText(idInput, newItemId);
+
+      final typeInput = find.byType(DropdownButton<String>);
+      await tester.tap(typeInput);
+      await tester.pumpAndSettle();
+
+      final laptopOption = find.text('Laptop').last;
+      await tester.tap(laptopOption);
+      await tester.pumpAndSettle();
 
       final saveButton = find.text('Save');
       await tester.tap(saveButton);
@@ -108,6 +121,39 @@ void main() {
 
       expect(find.text(newItemId), findsOneWidget);
       expect(find.text(oldItemId), findsNothing);
+      expect(find.byIcon(Icons.laptop), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Saves the initial value of the item id if not updated on edit',
+    (WidgetTester tester) async {
+      const oldItemId = 'Chair#123';
+
+      await pumpHomePage(tester);
+
+      final chairListItem = find.ancestor(
+        of: find.text(oldItemId),
+        matching: find.byType(ListTile),
+      );
+      final optionsButton = find.descendant(
+        of: chairListItem,
+        matching: find.byIcon(Icons.more_vert),
+      );
+
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
+
+      final editButton = find.text('Edit');
+      await tester.tap(editButton);
+      await tester.pumpAndSettle();
+
+      final saveButton = find.text('Save');
+      await tester.tap(saveButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text(oldItemId), findsOneWidget);
+      expect(find.byIcon(Icons.chair), findsOneWidget);
     },
   );
 

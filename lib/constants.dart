@@ -18,13 +18,10 @@ Map<int, Color> colorCodes = {
 MaterialColor kVehiklMaterialColor = new MaterialColor(0xFFDD5F13, colorCodes);
 
 Map<String, IconData> inventoryItems = {
-  "Chair": Icons.chair,
   "Desk": Icons.desk,
+  "Chair": Icons.chair,
   "Monitor": Icons.monitor,
   "Laptop": Icons.laptop
 };
 
-enum ItemAction {
-  delete,
-  edit
-}
+enum ItemAction { delete, edit }
