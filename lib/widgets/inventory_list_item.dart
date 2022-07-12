@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/constants.dart';
 import 'package:spare_parts/models/inventory_item.dart';
+import 'package:spare_parts/widgets/inventory_item_form.dart';
 
 class InventoryListItem extends StatelessWidget {
   const InventoryListItem({
@@ -29,10 +30,25 @@ class InventoryListItem extends StatelessWidget {
             value: ItemAction.delete,
             child: const Text('Delete'),
           ),
+          PopupMenuItem(
+            value: ItemAction.edit,
+            child: const Text('Edit'),
+          ),
         ],
         onSelected: (value) async {
           if (value == ItemAction.delete) {
             await firestore.collection('Items').doc(item.firestoreId).delete();
+          }
+          if (value == ItemAction.edit) {
+            await showDialog<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return InventoryItemForm(
+                  formState: InventoryFormState.edit,
+                  item: item,
+                );
+              },
+            );
           }
         },
       ),

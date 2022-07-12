@@ -20,10 +20,20 @@ void main() {
 
   setUpAll(() async {
     firestore = FakeFirebaseFirestore();
+  });
+
+  setUp(() async {
     await firestore
         .collection('Items')
         .doc()
         .set({'cost': 123, 'id': 'Chair#123', 'type': 'Chair'});
+  });
+
+  tearDown(() async {
+    final items = await firestore.collection('Items').get();
+    for (final doc in items.docs) {
+      await doc.reference.delete();
+    }
   });
 
   testWidgets(
@@ -58,10 +68,46 @@ void main() {
       final idInput = find.byType(TextField);
       await tester.enterText(idInput, itemId);
 
-      final addButton = find.text('Add');
+      final addButton = find.text('Save');
       await tester.tap(addButton);
 
       expect(find.text(itemId), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Edits an inventory item',
+    (WidgetTester tester) async {
+      const oldItemId = 'Chair#123';
+      const newItemId = 'Chair#321';
+
+      await pumpHomePage(tester);
+
+      final chairListItem = find.ancestor(
+        of: find.text(oldItemId),
+        matching: find.byType(ListTile),
+      );
+      final optionsButton = find.descendant(
+        of: chairListItem,
+        matching: find.byIcon(Icons.more_vert),
+      );
+
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
+
+      final editButton = find.text('Edit');
+      await tester.tap(editButton);
+      await tester.pumpAndSettle();
+
+      final idInput = find.byType(TextField);
+      await tester.enterText(idInput, newItemId);
+
+      final saveButton = find.text('Save');
+      await tester.tap(saveButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text(newItemId), findsOneWidget);
+      expect(find.text(oldItemId), findsNothing);
     },
   );
 
@@ -76,7 +122,7 @@ void main() {
 
       expect(find.text('You must set an ID'), findsNothing);
 
-      final addButton = find.text('Add');
+      final addButton = find.text('Save');
       await tester.tap(addButton);
       await tester.pumpAndSettle();
 

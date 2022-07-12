@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/models/inventory_item.dart';
-import 'package:spare_parts/widgets/add_inventory_item_form.dart';
+import 'package:spare_parts/widgets/inventory_item_form.dart';
 import '../widgets/inventory_list_item.dart';
 
 class HomePage extends StatelessWidget {
@@ -30,7 +30,9 @@ class HomePage extends StatelessWidget {
           await showDialog<void>(
             context: context,
             builder: (BuildContext context) {
-              return const AddInventoryItemForm();
+              return const InventoryItemForm(
+                formState: InventoryFormState.add,
+              );
             },
           );
         },
