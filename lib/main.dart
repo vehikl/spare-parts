@@ -31,24 +31,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider<FirebaseFirestore>(
-      create: (context) => FirebaseFirestore.instance,
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: kVehiklMaterialColor,
-        ),
-        home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            final user = snapshot.data;
-    
-            if (user?.email != null && user!.email!.endsWith('vehikl.com')) {
-              return HomePage();
-            }
-    
-            return const SignInPage();
-          },
+    return Provider<FirebaseAuth>(
+      create: (context) => FirebaseAuth.instance,
+      child: Provider<FirebaseFirestore>(
+        create: (context) => FirebaseFirestore.instance,
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: kVehiklMaterialColor,
+          ),
+          home: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              final user = snapshot.data;
+
+              if (user?.email != null && user!.email!.endsWith('vehikl.com')) {
+                return HomePage();
+              }
+
+              return const SignInPage();
+            },
+          ),
         ),
       ),
     );

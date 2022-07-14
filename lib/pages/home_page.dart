@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,63 +11,78 @@ import '../widgets/inventory_list_item.dart';
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
-  handleSignOut() {
-    FirebaseAuth.instance.signOut();
+  handleSignOut(FirebaseAuth auth) {
+    auth.signOut();
   }
 
   @override
   Widget build(BuildContext context) {
     final firestore = context.read<FirebaseFirestore>();
+    final auth = context.read<FirebaseAuth>();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inventory'),
-        actions: [
-          IconButton(onPressed: handleSignOut, icon: const Icon(Icons.logout))
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () async {
-          await showDialog<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return const InventoryItemForm(
-                formState: InventoryFormState.add,
-              );
-            },
-          );
-        },
-      ),
-      body: Center(
-        child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          stream: firestore.collection('items').snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.error == null) {
-              final items = (snapshot.data?.docs ?? [])
-                  .map(InventoryItem.fromFirestore)
-                  .toList();
+    print('========================');
+    print(auth.currentUser);
 
-              return ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  var item = items[index];
-                  return InventoryListItem(item: item);
+    return FutureBuilder<IdTokenResult>(
+        future: auth.currentUser?.getIdTokenResult(true),
+        builder: (context, snap) {
+          if (!snap.hasData) return Scaffold(body: Container());
+
+          print(snap.data);
+
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Inventory'),
+              actions: [
+                IconButton(
+                  onPressed: () => handleSignOut(auth),
+                  icon: const Icon(Icons.logout),
+                )
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(
+              child: const Icon(Icons.add),
+              onPressed: () async {
+                await showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const InventoryItemForm(
+                      formState: InventoryFormState.add,
+                    );
+                  },
+                );
+              },
+            ),
+            body: Center(
+              child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: firestore.collection('items').snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.error == null) {
+                    final items = (snapshot.data?.docs ?? [])
+                        .map(InventoryItem.fromFirestore)
+                        .toList();
+
+                    return ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        var item = items[index];
+                        return InventoryListItem(item: item);
+                      },
+                    );
+                  } else {
+                    return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        color: Colors.red,
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Text(snapshot.error.toString()),
+                    );
+                  }
                 },
-              );
-            } else {
-              return Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
-                  color: Colors.red,
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Text(snapshot.error.toString()),
-              );
-            }
-          },
-        ),
-      ),
-    );
+              ),
+            ),
+          );
+        });
   }
 }

@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/pages/home_page.dart';
 
 void main() {
-  late final FakeFirebaseFirestore firestore;
+  final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
 
   Future<void> pumpHomePage(WidgetTester tester) async {
     await tester.pumpWidget(Provider<FirebaseFirestore>(
@@ -17,10 +17,6 @@ void main() {
     await tester.idle();
     await tester.pump();
   }
-
-  setUpAll(() async {
-    firestore = FakeFirebaseFirestore();
-  });
 
   setUp(() async {
     await firestore
