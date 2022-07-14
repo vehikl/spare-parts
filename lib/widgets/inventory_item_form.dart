@@ -85,12 +85,12 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
               if (widget.formState == InventoryFormState.add) {
-                await firestore.collection('Items').add(
+                await firestore.collection('items').add(
                     InventoryItem(id: idValue, type: dropdownValue)
                         .toFirestore());
               } else {
                 await firestore
-                    .collection('Items')
+                    .collection('items')
                     .doc(widget.item?.firestoreId)
                     .set(InventoryItem(id: idValue, type: dropdownValue)
                         .toFirestore());

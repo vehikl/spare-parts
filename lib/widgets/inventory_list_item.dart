@@ -52,7 +52,7 @@ class InventoryListItem extends StatelessWidget {
         ],
         onSelected: (value) async {
           if (value == ItemAction.delete) {
-            await firestore.collection('Items').doc(item.firestoreId).delete();
+            await firestore.collection('items').doc(item.firestoreId).delete();
           }
           if (value == ItemAction.edit) {
             await showDialog<void>(

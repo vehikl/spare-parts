@@ -39,7 +39,7 @@ class HomePage extends StatelessWidget {
       ),
       body: Center(
         child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          stream: firestore.collection('Items').snapshots(),
+          stream: firestore.collection('items').snapshots(),
           builder: (context, snapshot) {
             if (snapshot.error == null) {
               final items = (snapshot.data?.docs ?? [])

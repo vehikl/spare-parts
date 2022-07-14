@@ -24,13 +24,13 @@ void main() {
 
   setUp(() async {
     await firestore
-        .collection('Items')
+        .collection('items')
         .doc()
         .set({'cost': 123, 'id': 'Chair#123', 'type': 'Chair'});
   });
 
   tearDown(() async {
-    final items = await firestore.collection('Items').get();
+    final items = await firestore.collection('items').get();
     for (final doc in items.docs) {
       await doc.reference.delete();
     }
