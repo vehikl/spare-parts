@@ -28,11 +28,26 @@ class InventoryListItem extends StatelessWidget {
         itemBuilder: (context) => [
           PopupMenuItem(
             value: ItemAction.edit,
-            child: const Text('Edit'),
+            child: Row(
+              children: const [
+                Icon(Icons.edit),
+                SizedBox(width: 4),
+                Text('Edit'),
+              ],
+            ),
           ),
           PopupMenuItem(
             value: ItemAction.delete,
-            child: const Text('Delete'),
+            child: Row(
+              children: [
+                Icon(Icons.delete, color: Theme.of(context).errorColor),
+                SizedBox(width: 4),
+                Text(
+                  'Delete',
+                  style: TextStyle(color: Theme.of(context).errorColor),
+                ),
+              ],
+            ),
           ),
         ],
         onSelected: (value) async {
