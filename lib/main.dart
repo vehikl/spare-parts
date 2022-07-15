@@ -46,7 +46,19 @@ class MyApp extends StatelessWidget {
               final user = snapshot.data;
 
               if (user?.email != null && user!.email!.endsWith('vehikl.com')) {
-                return HomePage();
+                return FutureBuilder<IdTokenResult>(
+                  future: user.getIdTokenResult(true),
+                  builder: (context, snap) {
+                    if (!snap.hasData) return Scaffold(body: Container());
+
+                    final isAdmin = snap.data?.claims?['role'] == 'admin';
+                    return Provider<UserRole>(
+                      create: (context) =>
+                          isAdmin ? UserRole.admin : UserRole.user,
+                      child: HomePage(),
+                    );
+                  },
+                );
               }
 
               return const SignInPage();

@@ -5,42 +5,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/constants.dart';
 import 'package:spare_parts/pages/home_page.dart';
-
-class MockUser extends Mock implements User {
-  // this is needed to satisfy the "Null" related error when calling `thenAnswer`
-  // referenced from here: https://github.com/dart-lang/mockito/blob/master/NULL_SAFETY_README.md
-  @override
-  Future<IdTokenResult> getIdTokenResult([bool forceRefresh = false]) {
-    return super.noSuchMethod(
-      Invocation.getter(#uri),
-      returnValue: Future.value(MockIdTokenResult())
-    );
-  }
-}
-
-class MockIdTokenResult extends Mock implements IdTokenResult {}
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
 void main() async {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
   final auth = MockFirebaseAuth();
-  final user = MockUser();
-  final token = MockIdTokenResult();
 
-  when(token.claims).thenReturn({'role': 'admin'});
-  when(user.getIdTokenResult()).thenAnswer((_) => Future.value(token));
-  when(auth.currentUser).thenReturn(user);
+  await firestore
+      .collection('items')
+      .doc()
+      .set({'cost': 123, 'id': 'Chair#123', 'type': 'Chair'});
 
-  Future<void> pumpHomePage(WidgetTester tester) async {
-    await tester.pumpWidget(Provider<FirebaseAuth>(
-      create: (context) => auth,
-      child: Provider<FirebaseFirestore>(
-        create: (context) => firestore,
+  Future<void> pumpHomePage(WidgetTester tester, { UserRole? userRole }) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider<FirebaseAuth>(create: (context) => auth),
+          Provider<FirebaseFirestore>(create: (context) => firestore),
+          Provider<UserRole>(create: (context) => userRole ?? UserRole.user)
+        ],
         child: MaterialApp(home: HomePage()),
       ),
-    ));
+    );
 
     await tester.idle();
     await tester.pump();
@@ -48,17 +37,19 @@ void main() async {
 
   testWidgets('Shows the add button if the user is an admin',
       (WidgetTester tester) async {
-    when(token.claims).thenReturn({'role': 'admin'});
-    await pumpHomePage(tester);
+    await pumpHomePage(tester, userRole: UserRole.admin);
+    await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.add), findsOneWidget);
+    expect(find.byIcon(Icons.more_vert), findsOneWidget);
   });
 
   testWidgets('Hides the add button if the user is not an admin',
       (WidgetTester tester) async {
-    when(token.claims).thenReturn({});
     await pumpHomePage(tester);
+    await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.add), findsNothing);
+    expect(find.byIcon(Icons.more_vert), findsNothing);
   });
 }

@@ -16,6 +16,7 @@ class InventoryListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final firestore = context.read<FirebaseFirestore>();
+    final userRole = context.read<UserRole>();
 
     return ListTile(
       leading: Icon(inventoryItems[item.type]),
@@ -23,50 +24,55 @@ class InventoryListItem extends StatelessWidget {
         item.id,
         style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 22),
       ),
-      trailing: PopupMenuButton<ItemAction>(
-        child: Icon(Icons.more_vert),
-        itemBuilder: (context) => [
-          PopupMenuItem(
-            value: ItemAction.edit,
-            child: Row(
-              children: const [
-                Icon(Icons.edit),
-                SizedBox(width: 4),
-                Text('Edit'),
-              ],
-            ),
-          ),
-          PopupMenuItem(
-            value: ItemAction.delete,
-            child: Row(
-              children: [
-                Icon(Icons.delete, color: Theme.of(context).errorColor),
-                SizedBox(width: 4),
-                Text(
-                  'Delete',
-                  style: TextStyle(color: Theme.of(context).errorColor),
+      trailing: userRole == UserRole.admin
+          ? PopupMenuButton<ItemAction>(
+              child: Icon(Icons.more_vert),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: ItemAction.edit,
+                  child: Row(
+                    children: const [
+                      Icon(Icons.edit),
+                      SizedBox(width: 4),
+                      Text('Edit'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: ItemAction.delete,
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, color: Theme.of(context).errorColor),
+                      SizedBox(width: 4),
+                      Text(
+                        'Delete',
+                        style: TextStyle(color: Theme.of(context).errorColor),
+                      ),
+                    ],
+                  ),
                 ),
               ],
-            ),
-          ),
-        ],
-        onSelected: (value) async {
-          if (value == ItemAction.delete) {
-            await firestore.collection('items').doc(item.firestoreId).delete();
-          }
-          if (value == ItemAction.edit) {
-            await showDialog<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return InventoryItemForm(
-                  formState: InventoryFormState.edit,
-                  item: item,
-                );
+              onSelected: (value) async {
+                if (value == ItemAction.delete) {
+                  await firestore
+                      .collection('items')
+                      .doc(item.firestoreId)
+                      .delete();
+                }
+                if (value == ItemAction.edit) {
+                  await showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return InventoryItemForm(
+                        formState: InventoryFormState.edit,
+                        item: item,
+                      );
+                    },
+                  );
+                }
               },
-            );
-          }
-        },
-      ),
+            )
+          : null,
     );
   }
 }

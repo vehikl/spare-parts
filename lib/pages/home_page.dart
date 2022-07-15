@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/constants.dart';
 import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
 import '../widgets/inventory_list_item.dart';
@@ -17,15 +18,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final firestore = context.read<FirebaseFirestore>();
     final auth = context.read<FirebaseAuth>();
+    final userRole = context.read<UserRole>();
 
-    return FutureBuilder<IdTokenResult>(
-        future: auth.currentUser?.getIdTokenResult(true),
-        builder: (context, snap) {
-          if (!snap.hasData) return Scaffold(body: Container());
-
-          final isAdmin = snap.data?.claims?['role'] == 'admin';
-
-          return Scaffold(
+    return Scaffold(
             appBar: AppBar(
               title: const Text('Inventory'),
               actions: [
@@ -35,7 +30,7 @@ class HomePage extends StatelessWidget {
                 )
               ],
             ),
-            floatingActionButton: isAdmin
+            floatingActionButton: userRole == UserRole.admin
                 ? FloatingActionButton(
                     child: const Icon(Icons.add),
                     onPressed: () async {
@@ -80,6 +75,5 @@ class HomePage extends StatelessWidget {
               ),
             ),
           );
-        });
   }
 }
