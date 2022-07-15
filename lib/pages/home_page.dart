@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,15 +18,12 @@ class HomePage extends StatelessWidget {
     final firestore = context.read<FirebaseFirestore>();
     final auth = context.read<FirebaseAuth>();
 
-    print('========================');
-    print(auth.currentUser);
-
     return FutureBuilder<IdTokenResult>(
         future: auth.currentUser?.getIdTokenResult(true),
         builder: (context, snap) {
           if (!snap.hasData) return Scaffold(body: Container());
 
-          print(snap.data);
+          final isAdmin = snap.data?.claims?['role'] == 'admin';
 
           return Scaffold(
             appBar: AppBar(
@@ -40,19 +35,21 @@ class HomePage extends StatelessWidget {
                 )
               ],
             ),
-            floatingActionButton: FloatingActionButton(
-              child: const Icon(Icons.add),
-              onPressed: () async {
-                await showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const InventoryItemForm(
-                      formState: InventoryFormState.add,
-                    );
-                  },
-                );
-              },
-            ),
+            floatingActionButton: isAdmin
+                ? FloatingActionButton(
+                    child: const Icon(Icons.add),
+                    onPressed: () async {
+                      await showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const InventoryItemForm(
+                            formState: InventoryFormState.add,
+                          );
+                        },
+                      );
+                    },
+                  )
+                : null,
             body: Center(
               child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: firestore.collection('items').snapshots(),
