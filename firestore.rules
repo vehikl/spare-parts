@@ -2,7 +2,20 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
-      allow read, write: if request.auth.token.email.matches('.*@vehikl[.]com$');
+      allow read: if isVehiklian();
+      allow write: if false;
+    }
+
+    match /items/{item} {
+      allow write: if isVehiklian() && isPublic();
+    }
+
+    function isAdmin() {
+      return request.auth.token.role == 'admin';
+    }
+
+    function isVehiklian() {
+      return request.auth.token.email.matches('.*@vehikl[.]com$');
     }
   }
 }
