@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spare_parts/constants.dart';
+import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/models/inventory_item.dart';
+import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
 
 class InventoryListItem extends StatelessWidget {
@@ -60,12 +61,10 @@ class InventoryListItem extends StatelessWidget {
                         .doc(item.firestoreId)
                         .delete();
                   } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                        'Error occured while deleting inventory item',
-                      ),
-                      backgroundColor: Colors.red,
-                    ));
+                    displayError(
+                      context: context,
+                      message: 'Error occured while deleting inventory item',
+                    );
                   }
                 }
                 if (value == ItemAction.edit) {

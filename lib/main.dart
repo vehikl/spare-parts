@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:spare_parts/constants.dart';
+import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/pages/home_page.dart';
 import 'package:spare_parts/pages/signin_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -31,39 +31,39 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider<FirebaseAuth>(
-      create: (context) => FirebaseAuth.instance,
-      child: Provider<FirebaseFirestore>(
-        create: (context) => FirebaseFirestore.instance,
-        child: MaterialApp(
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            primarySwatch: kVehiklMaterialColor,
-          ),
-          home: StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) {
-              final user = snapshot.data;
+    return MultiProvider(
+      providers: [
+        Provider<FirebaseAuth>(create: (_) => FirebaseAuth.instance),
+        Provider<FirebaseFirestore>(create: (_) => FirebaseFirestore.instance)
+      ],
+      child: MaterialApp(
+        title: 'Spare Parts',
+        theme: ThemeData(
+          primarySwatch: kVehiklMaterialColor,
+        ),
+        home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            final user = snapshot.data;
 
-              if (user?.email != null && user!.email!.endsWith('vehikl.com')) {
-                return FutureBuilder<IdTokenResult>(
-                  future: user.getIdTokenResult(true),
-                  builder: (context, snap) {
-                    if (!snap.hasData) return Scaffold(body: Container());
+            if (user?.email != null && user!.email!.endsWith('vehikl.com')) {
+              return FutureBuilder<IdTokenResult>(
+                future: user.getIdTokenResult(true),
+                builder: (context, snap) {
+                  if (!snap.hasData) return Scaffold(body: Container());
 
-                    final isAdmin = snap.data?.claims?['role'] == 'admin';
-                    return Provider<UserRole>(
-                      create: (context) =>
-                          isAdmin ? UserRole.admin : UserRole.user,
-                      child: HomePage(),
-                    );
-                  },
-                );
-              }
+                  final isAdmin = snap.data?.claims?['role'] == 'admin';
+                  return Provider<UserRole>(
+                    create: (context) =>
+                        isAdmin ? UserRole.admin : UserRole.user,
+                    child: HomePage(),
+                  );
+                },
+              );
+            }
 
-              return const SignInPage();
-            },
-          ),
+            return const SignInPage();
+          },
         ),
       ),
     );

@@ -1,22 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
-import 'package:spare_parts/pages/home_page.dart';
+import 'package:spare_parts/utilities/constants.dart';
+
+import 'test_helpers.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
-
-  Future<void> pumpHomePage(WidgetTester tester) async {
-    await tester.pumpWidget(Provider<FirebaseFirestore>(
-      create: (context) => firestore,
-      child: MaterialApp(home: HomePage()),
-    ));
-
-    await tester.idle();
-    await tester.pump();
-  }
 
   setUp(() async {
     await firestore
@@ -35,7 +25,7 @@ void main() {
   testWidgets(
     'Displays a list of inventory items',
     (WidgetTester tester) async {
-      await pumpHomePage(tester);
+      await pumpHomePage(tester, firestore: firestore);
 
       expect(find.text('Inventory'), findsOneWidget);
       expect(find.text('Chair#123'), findsOneWidget);
@@ -47,7 +37,11 @@ void main() {
     (WidgetTester tester) async {
       const itemId = '21DSAdd4';
 
-      await pumpHomePage(tester);
+      await pumpHomePage(
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+      );
 
       final fab = find.byIcon(Icons.add);
 
@@ -77,7 +71,11 @@ void main() {
       const oldItemId = 'Chair#123';
       const newItemId = 'Chair#321';
 
-      await pumpHomePage(tester);
+      await pumpHomePage(
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+      );
 
       final chairListItem = find.ancestor(
         of: find.text(oldItemId),
@@ -126,7 +124,11 @@ void main() {
     (WidgetTester tester) async {
       const oldItemId = 'Chair#123';
 
-      await pumpHomePage(tester);
+      await pumpHomePage(
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+      );
 
       final chairListItem = find.ancestor(
         of: find.text(oldItemId),
@@ -156,7 +158,11 @@ void main() {
   testWidgets(
     'It displays an error if a user tried to add an item with no ID',
     (WidgetTester tester) async {
-      await pumpHomePage(tester);
+      await pumpHomePage(
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+      );
 
       final fab = find.byIcon(Icons.add);
       await tester.tap(fab);
@@ -175,7 +181,11 @@ void main() {
   testWidgets(
     'Deletes an item from the list',
     (WidgetTester tester) async {
-      await pumpHomePage(tester);
+      await pumpHomePage(
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+      );
 
       final chairListItem = find.ancestor(
         of: find.text('Chair#123'),
