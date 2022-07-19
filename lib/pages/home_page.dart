@@ -21,59 +21,59 @@ class HomePage extends StatelessWidget {
     final userRole = context.read<UserRole>();
 
     return Scaffold(
-            appBar: AppBar(
-              title: const Text('Inventory'),
-              actions: [
-                IconButton(
-                  onPressed: () => handleSignOut(auth),
-                  icon: const Icon(Icons.logout),
-                )
-              ],
-            ),
-            floatingActionButton: userRole == UserRole.admin
-                ? FloatingActionButton(
-                    child: const Icon(Icons.add),
-                    onPressed: () async {
-                      await showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const InventoryItemForm(
-                            formState: InventoryFormState.add,
-                          );
-                        },
-                      );
-                    },
-                  )
-                : null,
-            body: Center(
-              child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                stream: firestore.collection('items').snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.error == null) {
-                    final items = (snapshot.data?.docs ?? [])
-                        .map(InventoryItem.fromFirestore)
-                        .toList();
+      appBar: AppBar(
+        title: const Text('Inventory'),
+        actions: [
+          IconButton(
+            onPressed: () => handleSignOut(auth),
+            icon: const Icon(Icons.logout),
+          )
+        ],
+      ),
+      floatingActionButton: userRole == UserRole.admin
+          ? FloatingActionButton(
+              child: const Icon(Icons.add),
+              onPressed: () async {
+                await showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const InventoryItemForm(
+                      formState: InventoryFormState.add,
+                    );
+                  },
+                );
+              },
+            )
+          : null,
+      body: Center(
+        child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          stream: firestore.collection('items').snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.error == null) {
+              final items = (snapshot.data?.docs ?? [])
+                  .map(InventoryItem.fromFirestore)
+                  .toList();
 
-                    return ListView.builder(
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        var item = items[index];
-                        return InventoryListItem(item: item);
-                      },
-                    );
-                  } else {
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        color: Colors.red,
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: Text(snapshot.error.toString()),
-                    );
-                  }
+              return ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  var item = items[index];
+                  return InventoryListItem(item: item);
                 },
-              ),
-            ),
-          );
+              );
+            } else {
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.red,
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Text(snapshot.error.toString()),
+              );
+            }
+          },
+        ),
+      ),
+    );
   }
 }

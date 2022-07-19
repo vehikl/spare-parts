@@ -54,10 +54,19 @@ class InventoryListItem extends StatelessWidget {
               ],
               onSelected: (value) async {
                 if (value == ItemAction.delete) {
-                  await firestore
-                      .collection('items')
-                      .doc(item.firestoreId)
-                      .delete();
+                  try {
+                    await firestore
+                        .collection('items')
+                        .doc(item.firestoreId)
+                        .delete();
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                        'Error occured while deleting inventory item',
+                      ),
+                      backgroundColor: Colors.red,
+                    ));
+                  }
                 }
                 if (value == ItemAction.edit) {
                   await showDialog<void>(

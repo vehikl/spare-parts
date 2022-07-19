@@ -84,16 +84,25 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
           child: const Text('Save'),
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              if (widget.formState == InventoryFormState.add) {
-                await firestore.collection('items').add(
-                    InventoryItem(id: idValue, type: dropdownValue)
-                        .toFirestore());
-              } else {
-                await firestore
-                    .collection('items')
-                    .doc(widget.item?.firestoreId)
-                    .set(InventoryItem(id: idValue, type: dropdownValue)
-                        .toFirestore());
+              try {
+                if (widget.formState == InventoryFormState.add) {
+                  await firestore.collection('items').add(
+                      InventoryItem(id: idValue, type: dropdownValue)
+                          .toFirestore());
+                } else {
+                  await firestore
+                      .collection('items')
+                      .doc(widget.item?.firestoreId)
+                      .set(InventoryItem(id: idValue, type: dropdownValue)
+                          .toFirestore());
+                }
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    'Error occured while saving inventory item',
+                  ),
+                  backgroundColor: Colors.red,
+                ));
               }
               Navigator.of(context).pop();
             }
