@@ -7,11 +7,37 @@ import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
 import '../widgets/inventory_list_item.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedBottomNavItemIndex = 0;
+  final PageController pageController = PageController();
 
   handleSignOut(FirebaseAuth auth) {
     auth.signOut();
+  }
+
+  void _onBottomNavItemTapped(int index) {
+    pageController.animateToPage(
+      index,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
+
+    setState(() {
+      _selectedBottomNavItemIndex = index;
+    });
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _selectedBottomNavItemIndex = index;
+    });
   }
 
   @override
@@ -46,6 +72,8 @@ class HomePage extends StatelessWidget {
             )
           : null,
       body: PageView(
+        controller: pageController,
+        onPageChanged: _onPageChanged,
         children: [
           Center(
             child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -80,6 +108,16 @@ class HomePage extends StatelessWidget {
             child: Text('Borrowed items'),
           )
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.backpack_outlined), label: 'borrowed items'),
+        ],
+        currentIndex: _selectedBottomNavItemIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onBottomNavItemTapped,
       ),
     );
   }
