@@ -25,3 +25,5 @@ Map<String, IconData> inventoryItems = {
 };
 
 enum ItemAction { delete, edit }
+
+enum UserRole { user, admin }
