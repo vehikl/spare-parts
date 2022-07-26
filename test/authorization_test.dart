@@ -15,7 +15,7 @@ void main() async {
 
   testWidgets('Shows the add button if the user is an admin',
       (WidgetTester tester) async {
-    await pumpHomePage(tester, userRole: UserRole.admin, firestore: firestore);
+    await pumpPage(tester, userRole: UserRole.admin, firestore: firestore);
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.add), findsOneWidget);
@@ -24,7 +24,7 @@ void main() async {
 
   testWidgets('Hides the add button if the user is not an admin',
       (WidgetTester tester) async {
-    await pumpHomePage(tester, firestore: firestore);
+    await pumpPage(tester, firestore: firestore);
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.add), findsNothing);

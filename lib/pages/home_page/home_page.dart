@@ -44,7 +44,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final firestore = context.read<FirebaseFirestore>();
     final auth = context.read<FirebaseAuth>();
     final userRole = context.read<UserRole>();
 
