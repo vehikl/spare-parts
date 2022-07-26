@@ -8,16 +8,19 @@ import 'test_helpers.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
+  final uid = 'qwe123';
 
   setUp(() async {
-    final uid = 'qwe123';
-
     await firestore.collection('items').doc().set({
-      'cost': 123,
       'id': 'Chair#123',
       'type': 'Chair',
       'borrowers': [uid]
     });
+
+    await firestore
+        .collection('items')
+        .doc()
+        .set({'id': 'Desk#321', 'type': 'Desk', 'borrowers': []});
   });
 
   tearDown(() async {
@@ -28,7 +31,7 @@ void main() {
   });
 
   testWidgets(
-    'Displays a list of borrowed items',
+    'Displays only items that were borrowed',
     (WidgetTester tester) async {
       await pumpPage(
         Scaffold(body: BorrowedItemsView()),
