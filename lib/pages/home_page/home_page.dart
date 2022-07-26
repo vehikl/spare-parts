@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/pages/home_page/inventory_view.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
-import '../widgets/inventory_list_item.dart';
+import 'package:spare_parts/widgets/inventory_list_item.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -74,36 +75,8 @@ class _HomePageState extends State<HomePage> {
       body: PageView(
         controller: pageController,
         onPageChanged: _onPageChanged,
-        children: [
-          Center(
-            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-              stream: firestore.collection('items').snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.error == null) {
-                  final items = (snapshot.data?.docs ?? [])
-                      .map(InventoryItem.fromFirestore)
-                      .toList();
-
-                  return ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      var item = items[index];
-                      return InventoryListItem(item: item);
-                    },
-                  );
-                } else {
-                  return Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      color: Colors.red,
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Text(snapshot.error.toString()),
-                  );
-                }
-              },
-            ),
-          ),
+        children: const [
+          InventoryView(),
           Center(
             child: Text('Borrowed items'),
           )
