@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
 import 'package:spare_parts/pages/home_page/inventory_view.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/models/inventory_item.dart';
@@ -77,9 +78,7 @@ class _HomePageState extends State<HomePage> {
         onPageChanged: _onPageChanged,
         children: const [
           InventoryView(),
-          Center(
-            child: Text('Borrowed items'),
-          )
+          BorrowedItemsView(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
