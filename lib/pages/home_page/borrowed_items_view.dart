@@ -15,12 +15,14 @@ class BorrowedItemsView extends StatelessWidget {
 
     return Center(
       child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: firestore.collection('items').snapshots(),
+        stream: firestore
+            .collection('items')
+            .where('borrowers', arrayContains: auth.currentUser?.uid)
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.error == null) {
             final items = (snapshot.data?.docs ?? [])
                 .map(InventoryItem.fromFirestore)
-                .where((item) => item.borrowers.contains(auth.currentUser?.uid))
                 .toList();
 
             return ListView.builder(
