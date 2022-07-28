@@ -12,35 +12,36 @@ class BorrowedItemsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final firestore = context.read<FirebaseFirestore>();
     final auth = context.read<FirebaseAuth>();
-    
-    return Center(
-        child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          stream: firestore.collection('items').snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.error == null) {
-              final items = (snapshot.data?.docs ?? [])
-                  .map(InventoryItem.fromFirestore)
-                  .toList();
 
-              return ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  var item = items[index];
-                  return InventoryListItem(item: item);
-                },
-              );
-            } else {
-              return Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
-                  color: Colors.red,
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Text(snapshot.error.toString()),
-              );
-            }
-          },
-        ),
-      );
+    return Center(
+      child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: firestore.collection('items').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.error == null) {
+            final items = (snapshot.data?.docs ?? [])
+                .map(InventoryItem.fromFirestore)
+                .where((item) => item.borrowers.contains(auth.currentUser?.uid))
+                .toList();
+
+            return ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                var item = items[index];
+                return InventoryListItem(item: item);
+              },
+            );
+          } else {
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                color: Colors.red,
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Text(snapshot.error.toString()),
+            );
+          }
+        },
+      ),
+    );
   }
 }
