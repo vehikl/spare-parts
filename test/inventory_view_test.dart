@@ -2,6 +2,7 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
+import 'package:spare_parts/pages/home_page/inventory_view.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 import 'test_helpers.dart';
@@ -13,7 +14,7 @@ void main() {
     await firestore
         .collection('items')
         .doc()
-        .set({'cost': 123, 'id': 'Chair#123', 'type': 'Chair'});
+        .set({'id': 'Chair#123', 'type': 'Chair', 'borrowers': null});
   });
 
   tearDown(() async {
@@ -26,9 +27,9 @@ void main() {
   testWidgets(
     'Displays a list of inventory items',
     (WidgetTester tester) async {
-      await pumpPage(HomePage(), tester, firestore: firestore);
+      await pumpPage(Scaffold(body: InventoryView()), tester,
+          firestore: firestore);
 
-      expect(find.text('Inventory'), findsOneWidget);
       expect(find.text('Chair#123'), findsOneWidget);
     },
   );
@@ -69,7 +70,7 @@ void main() {
       const oldItemId = 'Chair#123';
       const newItemId = 'Chair#321';
 
-      await pumpPage(HomePage(), tester,
+      await pumpPage(Scaffold(body: InventoryView()), tester,
           userRole: UserRole.admin, firestore: firestore);
 
       final chairListItem = find.ancestor(
@@ -119,7 +120,7 @@ void main() {
     (WidgetTester tester) async {
       const oldItemId = 'Chair#123';
 
-      await pumpPage(HomePage(), tester,
+      await pumpPage(Scaffold(body: InventoryView()), tester,
           userRole: UserRole.admin, firestore: firestore);
 
       final chairListItem = find.ancestor(
@@ -170,7 +171,7 @@ void main() {
   testWidgets(
     'Deletes an item from the list',
     (WidgetTester tester) async {
-      await pumpPage(HomePage(), tester,
+      await pumpPage(Scaffold(body: InventoryView()), tester,
           userRole: UserRole.admin, firestore: firestore);
 
       final chairListItem = find.ancestor(
@@ -197,7 +198,7 @@ void main() {
     'User can borrow an item from the list',
     (WidgetTester tester) async {
       await pumpPage(
-        HomePage(),
+        Scaffold(body: InventoryView()),
         tester,
         userRole: UserRole.user,
         firestore: firestore,

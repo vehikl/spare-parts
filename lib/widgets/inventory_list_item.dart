@@ -95,7 +95,7 @@ class InventoryListItem extends StatelessWidget {
           if (value == ItemAction.borrow) {
             try {
               await firestore.collection('items').doc(item.firestoreId).update({
-                'borrowers': [...item.borrowers, auth.currentUser?.uid]
+                'borrowers': [...(item.borrowers ?? []), auth.currentUser?.uid]
               });
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Item has been successfully borrowed')));

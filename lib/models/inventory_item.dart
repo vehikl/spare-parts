@@ -4,16 +4,14 @@ class InventoryItem {
   String id;
   String type;
   String? firestoreId;
-  late List<String> borrowers;
+  late List<String>? borrowers;
 
   InventoryItem({
     required this.id,
     required this.type,
     this.firestoreId,
-    List<String>? borrowers,
-  }) {
-    this.borrowers = borrowers ?? [];
-  }
+    this.borrowers,
+  });
 
   static InventoryItem fromFirestore(
       QueryDocumentSnapshot<Map<String, dynamic>> doc) {
