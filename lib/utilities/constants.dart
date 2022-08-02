@@ -24,6 +24,6 @@ Map<String, IconData> inventoryItems = {
   "Laptop": Icons.laptop
 };
 
-enum ItemAction { delete, edit }
+enum ItemAction { delete, edit, borrow }
 
 enum UserRole { user, admin }

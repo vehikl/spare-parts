@@ -192,4 +192,35 @@ void main() {
       expect(find.text('Chair#123'), findsNothing);
     },
   );
+
+  testWidgets(
+    'User can borrow an item from the list',
+    (WidgetTester tester) async {
+      await pumpPage(
+        HomePage(),
+        tester,
+        userRole: UserRole.user,
+        firestore: firestore,
+      );
+
+      final chairListItem = find.ancestor(
+        of: find.text('Chair#123'),
+        matching: find.byType(ListTile),
+      );
+      final optionsButton = find.descendant(
+        of: chairListItem,
+        matching: find.byIcon(Icons.more_vert),
+      );
+
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
+
+      final borrowButton = find.text('Borrow');
+      await tester.tap(borrowButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Chair#123'), findsNothing);
+      expect(find.text('Item has been successfully borrowed'), findsOneWidget);
+    },
+  );
 }
