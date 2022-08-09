@@ -14,7 +14,7 @@ class InventoryView extends StatelessWidget {
       child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: firestore
             .collection('items')
-            .where('borrowers', isNull: true)
+            .where('borrower', isNull: true)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.error == null) {

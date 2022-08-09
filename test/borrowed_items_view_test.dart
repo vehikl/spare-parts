@@ -24,13 +24,14 @@ void main() {
     await firestore.collection('items').doc().set({
       'id': 'Chair#123',
       'type': 'Chair',
-      'borrowers': [uid]
+      'borrower': uid,
     });
 
-    await firestore
-        .collection('items')
-        .doc()
-        .set({'id': 'Desk#321', 'type': 'Desk', 'borrowers': []});
+    await firestore.collection('items').doc().set({
+      'id': 'Desk#321',
+      'type': 'Desk',
+      'borrower': null,
+    });
 
     when(userMock.uid).thenReturn(uid);
   });

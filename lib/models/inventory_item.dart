@@ -4,13 +4,13 @@ class InventoryItem {
   String id;
   String type;
   String? firestoreId;
-  late List<String>? borrowers;
+  late String? borrower;
 
   InventoryItem({
     required this.id,
     required this.type,
     this.firestoreId,
-    this.borrowers,
+    this.borrower
   });
 
   static InventoryItem fromFirestore(
@@ -19,15 +19,11 @@ class InventoryItem {
       id: doc.data()['id'],
       type: doc.data()['type'],
       firestoreId: doc.id,
-      borrowers: (doc.data()['borrowers'] != null
-              ? doc.data()['borrowers'] as List<dynamic>
-              : [])
-          .map((b) => b.toString())
-          .toList(),
+      borrower: doc.data()['borrower'],
     );
   }
 
   Map<String, dynamic> toFirestore() {
-    return {'id': id, 'type': type, 'borrowers': borrowers};
+    return {'id': id, 'type': type, 'borrower': borrower};
   }
 }

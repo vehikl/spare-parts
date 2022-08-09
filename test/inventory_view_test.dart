@@ -1,20 +1,29 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/home_page/inventory_view.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 import 'test_helpers.dart';
 
+class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+
+class MockUser extends Mock implements User {
+  @override
+  String get uid =>
+      super.noSuchMethod(Invocation.getter(#uid), returnValue: '');
+}
+
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
 
   setUp(() async {
-    await firestore
-        .collection('items')
-        .doc()
-        .set({'id': 'Chair#123', 'type': 'Chair', 'borrowers': null});
+    final testItem = InventoryItem(id: 'Chair#123', type: 'Chair');
+    await firestore.collection('items').doc().set(testItem.toFirestore());
   });
 
   tearDown(() async {
@@ -197,11 +206,18 @@ void main() {
   testWidgets(
     'User can borrow an item from the list',
     (WidgetTester tester) async {
+      final authMock = MockFirebaseAuth();
+      final userMock = MockUser();
+
+      when(authMock.currentUser).thenReturn(userMock);
+      when(userMock.uid).thenReturn('foo');
+
       await pumpPage(
         Scaffold(body: InventoryView()),
         tester,
         userRole: UserRole.user,
         firestore: firestore,
+        auth: authMock,
       );
 
       final chairListItem = find.ancestor(
@@ -219,6 +235,9 @@ void main() {
       final borrowButton = find.text('Borrow');
       await tester.tap(borrowButton);
       await tester.pumpAndSettle();
+
+      final itemSnaps = await firestore.collection('items').get();
+      final items = itemSnaps.docs.map((doc) => doc.data()).toList();
 
       expect(find.text('Chair#123'), findsNothing);
       expect(find.text('Item has been successfully borrowed'), findsOneWidget);
