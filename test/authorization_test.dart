@@ -29,6 +29,5 @@ void main() async {
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.add), findsNothing);
-    expect(find.byIcon(Icons.more_vert), findsNothing);
   });
 }
