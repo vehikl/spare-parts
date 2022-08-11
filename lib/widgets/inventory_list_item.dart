@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,15 +9,18 @@ import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
 
+/// Represents an inventory item with actions
+/// "edit" and "delete" actions are always available to the admin
+/// optional actions can be supplied through the [actions] property
 class InventoryListItem extends StatelessWidget {
   const InventoryListItem({
     Key? key,
     required this.item,
-    this.hasBorrowAction = false,
+    this.actions = const [],
   }) : super(key: key);
 
   final InventoryItem item;
-  final bool hasBorrowAction;
+  final List<ItemAction> actions;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +62,7 @@ class InventoryListItem extends StatelessWidget {
                 ],
               ),
             ),
-          if (userRole == UserRole.user && hasBorrowAction)
+          if (actions.contains(ItemAction.borrow))
             PopupMenuItem(
               value: ItemAction.borrow,
               child: Row(
@@ -68,7 +73,7 @@ class InventoryListItem extends StatelessWidget {
                 ],
               ),
             ),
-          if (userRole == UserRole.user && !hasBorrowAction)
+          if (actions.contains(ItemAction.release))
             PopupMenuItem(
               value: ItemAction.release,
               child: Row(
