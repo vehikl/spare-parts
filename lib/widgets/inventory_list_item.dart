@@ -11,9 +11,11 @@ class InventoryListItem extends StatelessWidget {
   const InventoryListItem({
     Key? key,
     required this.item,
+    this.hasBorrowAction = false,
   }) : super(key: key);
 
   final InventoryItem item;
+  final bool hasBorrowAction;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +57,7 @@ class InventoryListItem extends StatelessWidget {
                 ],
               ),
             ),
-          if (userRole == UserRole.user)
+          if (userRole == UserRole.user && hasBorrowAction)
             PopupMenuItem(
               value: ItemAction.borrow,
               child: Row(

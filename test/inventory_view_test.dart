@@ -236,9 +236,6 @@ void main() {
       await tester.tap(borrowButton);
       await tester.pumpAndSettle();
 
-      final itemSnaps = await firestore.collection('items').get();
-      final items = itemSnaps.docs.map((doc) => doc.data()).toList();
-
       expect(find.text('Chair#123'), findsNothing);
       expect(find.text('Item has been successfully borrowed'), findsOneWidget);
     },

@@ -26,7 +26,10 @@ class InventoryView extends StatelessWidget {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 var item = items[index];
-                return InventoryListItem(item: item);
+                return InventoryListItem(
+                  item: item,
+                  hasBorrowAction: true,
+                );
               },
             );
           } else {

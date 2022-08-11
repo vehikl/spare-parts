@@ -59,4 +59,32 @@ void main() {
       expect(find.text('Desk#321'), findsNothing);
     },
   );
+
+  testWidgets(
+    'Should not display the "borrow" action for an already borrowed item',
+    (WidgetTester tester) async {
+      when(authMock.currentUser).thenReturn(userMock);
+
+      await pumpPage(
+        Scaffold(body: BorrowedItemsView()),
+        tester,
+        firestore: firestore,
+        auth: authMock,
+      );
+
+      final chairListItem = find.ancestor(
+        of: find.text('Chair#123'),
+        matching: find.byType(ListTile),
+      );
+      final optionsButton = find.descendant(
+        of: chairListItem,
+        matching: find.byIcon(Icons.more_vert),
+      );
+
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Borrow'), findsNothing);
+    },
+  );
 }
