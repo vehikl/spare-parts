@@ -1,18 +1,29 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:spare_parts/models/inventory_item.dart';
+import 'package:spare_parts/pages/home_page/home_page.dart';
+import 'package:spare_parts/pages/home_page/inventory_view.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 import 'test_helpers.dart';
+
+class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+
+class MockUser extends Mock implements User {
+  @override
+  String get uid =>
+      super.noSuchMethod(Invocation.getter(#uid), returnValue: '');
+}
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
 
   setUp(() async {
-    await firestore
-        .collection('items')
-        .doc()
-        .set({'cost': 123, 'id': 'Chair#123', 'type': 'Chair'});
+    final testItem = InventoryItem(id: 'Chair#123', type: 'Chair');
+    await firestore.collection('items').doc().set(testItem.toFirestore());
   });
 
   tearDown(() async {
@@ -25,9 +36,9 @@ void main() {
   testWidgets(
     'Displays a list of inventory items',
     (WidgetTester tester) async {
-      await pumpHomePage(tester, firestore: firestore);
+      await pumpPage(Scaffold(body: InventoryView()), tester,
+          firestore: firestore);
 
-      expect(find.text('Inventory'), findsOneWidget);
       expect(find.text('Chair#123'), findsOneWidget);
     },
   );
@@ -37,11 +48,8 @@ void main() {
     (WidgetTester tester) async {
       const itemId = '21DSAdd4';
 
-      await pumpHomePage(
-        tester,
-        userRole: UserRole.admin,
-        firestore: firestore,
-      );
+      await pumpPage(HomePage(), tester,
+          userRole: UserRole.admin, firestore: firestore);
 
       final fab = find.byIcon(Icons.add);
 
@@ -71,11 +79,8 @@ void main() {
       const oldItemId = 'Chair#123';
       const newItemId = 'Chair#321';
 
-      await pumpHomePage(
-        tester,
-        userRole: UserRole.admin,
-        firestore: firestore,
-      );
+      await pumpPage(Scaffold(body: InventoryView()), tester,
+          userRole: UserRole.admin, firestore: firestore);
 
       final chairListItem = find.ancestor(
         of: find.text(oldItemId),
@@ -124,11 +129,8 @@ void main() {
     (WidgetTester tester) async {
       const oldItemId = 'Chair#123';
 
-      await pumpHomePage(
-        tester,
-        userRole: UserRole.admin,
-        firestore: firestore,
-      );
+      await pumpPage(Scaffold(body: InventoryView()), tester,
+          userRole: UserRole.admin, firestore: firestore);
 
       final chairListItem = find.ancestor(
         of: find.text(oldItemId),
@@ -158,11 +160,8 @@ void main() {
   testWidgets(
     'It displays an error if a user tried to add an item with no ID',
     (WidgetTester tester) async {
-      await pumpHomePage(
-        tester,
-        userRole: UserRole.admin,
-        firestore: firestore,
-      );
+      await pumpPage(HomePage(), tester,
+          userRole: UserRole.admin, firestore: firestore);
 
       final fab = find.byIcon(Icons.add);
       await tester.tap(fab);
@@ -181,11 +180,8 @@ void main() {
   testWidgets(
     'Deletes an item from the list',
     (WidgetTester tester) async {
-      await pumpHomePage(
-        tester,
-        userRole: UserRole.admin,
-        firestore: firestore,
-      );
+      await pumpPage(Scaffold(body: InventoryView()), tester,
+          userRole: UserRole.admin, firestore: firestore);
 
       final chairListItem = find.ancestor(
         of: find.text('Chair#123'),
@@ -204,6 +200,44 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Chair#123'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'User can borrow an item from the list',
+    (WidgetTester tester) async {
+      final authMock = MockFirebaseAuth();
+      final userMock = MockUser();
+
+      when(authMock.currentUser).thenReturn(userMock);
+      when(userMock.uid).thenReturn('foo');
+
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.user,
+        firestore: firestore,
+        auth: authMock,
+      );
+
+      final chairListItem = find.ancestor(
+        of: find.text('Chair#123'),
+        matching: find.byType(ListTile),
+      );
+      final optionsButton = find.descendant(
+        of: chairListItem,
+        matching: find.byIcon(Icons.more_vert),
+      );
+
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
+
+      final borrowButton = find.text('Borrow');
+      await tester.tap(borrowButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Chair#123'), findsNothing);
+      expect(find.text('Item has been successfully borrowed'), findsOneWidget);
     },
   );
 }

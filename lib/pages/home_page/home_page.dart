@@ -2,21 +2,48 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
+import 'package:spare_parts/pages/home_page/inventory_view.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
-import '../widgets/inventory_list_item.dart';
+import 'package:spare_parts/widgets/inventory_list_item.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedBottomNavItemIndex = 0;
+  final PageController pageController = PageController();
 
   handleSignOut(FirebaseAuth auth) {
     auth.signOut();
   }
 
+  void _onBottomNavItemTapped(int index) {
+    pageController.animateToPage(
+      index,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
+
+    setState(() {
+      _selectedBottomNavItemIndex = index;
+    });
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _selectedBottomNavItemIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final firestore = context.read<FirebaseFirestore>();
     final auth = context.read<FirebaseAuth>();
     final userRole = context.read<UserRole>();
 
@@ -45,34 +72,23 @@ class HomePage extends StatelessWidget {
               },
             )
           : null,
-      body: Center(
-        child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          stream: firestore.collection('items').snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.error == null) {
-              final items = (snapshot.data?.docs ?? [])
-                  .map(InventoryItem.fromFirestore)
-                  .toList();
-
-              return ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  var item = items[index];
-                  return InventoryListItem(item: item);
-                },
-              );
-            } else {
-              return Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
-                  color: Colors.red,
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Text(snapshot.error.toString()),
-              );
-            }
-          },
-        ),
+      body: PageView(
+        controller: pageController,
+        onPageChanged: _onPageChanged,
+        children: const [
+          InventoryView(),
+          BorrowedItemsView(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.backpack_outlined), label: 'borrowed items'),
+        ],
+        currentIndex: _selectedBottomNavItemIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onBottomNavItemTapped,
       ),
     );
   }

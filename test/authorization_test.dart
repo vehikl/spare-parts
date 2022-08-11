@@ -1,6 +1,7 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 import 'test_helpers.dart';
@@ -15,7 +16,7 @@ void main() async {
 
   testWidgets('Shows the add button if the user is an admin',
       (WidgetTester tester) async {
-    await pumpHomePage(tester, userRole: UserRole.admin, firestore: firestore);
+    await pumpPage(HomePage(), tester, userRole: UserRole.admin, firestore: firestore);
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.add), findsOneWidget);
@@ -24,10 +25,9 @@ void main() async {
 
   testWidgets('Hides the add button if the user is not an admin',
       (WidgetTester tester) async {
-    await pumpHomePage(tester, firestore: firestore);
+    await pumpPage(HomePage(), tester, firestore: firestore);
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.add), findsNothing);
-    expect(find.byIcon(Icons.more_vert), findsNothing);
   });
 }

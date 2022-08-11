@@ -4,11 +4,13 @@ class InventoryItem {
   String id;
   String type;
   String? firestoreId;
+  late String? borrower;
 
   InventoryItem({
     required this.id,
     required this.type,
     this.firestoreId,
+    this.borrower
   });
 
   static InventoryItem fromFirestore(
@@ -17,10 +19,11 @@ class InventoryItem {
       id: doc.data()['id'],
       type: doc.data()['type'],
       firestoreId: doc.id,
+      borrower: doc.data()['borrower'],
     );
   }
 
   Map<String, dynamic> toFirestore() {
-    return {'id': id, 'type': type};
+    return {'id': id, 'type': type, 'borrower': borrower};
   }
 }
