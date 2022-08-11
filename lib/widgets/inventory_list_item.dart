@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +65,7 @@ class InventoryListItem extends StatelessWidget {
               value: ItemAction.borrow,
               child: Row(
                 children: const [
-                  Icon(Icons.delete),
+                  Icon(Icons.arrow_downward),
                   SizedBox(width: 4),
                   Text('Borrow'),
                 ],
@@ -78,7 +76,7 @@ class InventoryListItem extends StatelessWidget {
               value: ItemAction.release,
               child: Row(
                 children: const [
-                  Icon(Icons.delete),
+                  Icon(Icons.arrow_upward),
                   SizedBox(width: 4),
                   Text('Release'),
                 ],
