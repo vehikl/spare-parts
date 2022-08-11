@@ -87,4 +87,37 @@ void main() {
       expect(find.text('Borrow'), findsNothing);
     },
   );
+
+  testWidgets(
+    'User can release an item from the list',
+    (WidgetTester tester) async {
+      when(authMock.currentUser).thenReturn(userMock);
+
+      await pumpPage(
+        Scaffold(body: BorrowedItemsView()),
+        tester,
+        firestore: firestore,
+        auth: authMock,
+      );
+
+      final chairListItem = find.ancestor(
+        of: find.text('Chair#123'),
+        matching: find.byType(ListTile),
+      );
+      final optionsButton = find.descendant(
+        of: chairListItem,
+        matching: find.byIcon(Icons.more_vert),
+      );
+
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
+
+      final releaseButton = find.text('Release');
+      await tester.tap(releaseButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Chair#123'), findsNothing);
+      expect(find.text('Item has been successfully released'), findsOneWidget);
+    },
+  );
 }

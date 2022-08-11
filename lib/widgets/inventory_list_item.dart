@@ -68,6 +68,17 @@ class InventoryListItem extends StatelessWidget {
                 ],
               ),
             ),
+          if (userRole == UserRole.user && !hasBorrowAction)
+            PopupMenuItem(
+              value: ItemAction.release,
+              child: Row(
+                children: const [
+                  Icon(Icons.delete),
+                  SizedBox(width: 4),
+                  Text('Release'),
+                ],
+              ),
+            ),
         ],
         onSelected: (value) async {
           if (value == ItemAction.delete) {
@@ -105,6 +116,22 @@ class InventoryListItem extends StatelessWidget {
               displayError(
                 context: context,
                 message: 'Error occured while borrowing inventory item',
+              );
+            }
+          }
+
+          if (value == ItemAction.release) {
+            try {
+              await firestore
+                  .collection('items')
+                  .doc(item.firestoreId)
+                  .update({'borrower': null});
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Item has been successfully released')));
+            } catch (e) {
+              displayError(
+                context: context,
+                message: 'Error occured while releasing inventory item',
               );
             }
           }
