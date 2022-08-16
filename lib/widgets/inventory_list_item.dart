@@ -122,10 +122,7 @@ class InventoryListItem extends StatelessWidget {
 
           if (value == ItemAction.release) {
             try {
-              await firestore
-                  .collection('items')
-                  .doc(item.firestoreId)
-                  .update({'borrower': null});
+              firestoreService.releaseItem(item);
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Item has been successfully released')));
             } catch (e) {
