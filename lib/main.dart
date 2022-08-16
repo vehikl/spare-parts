@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/signin_page.dart';
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<FirebaseAuth>(create: (_) => FirebaseAuth.instance),
-        Provider<FirebaseFirestore>(create: (_) => FirebaseFirestore.instance)
+        Provider<FirebaseFirestore>(create: (_) => FirebaseFirestore.instance),
+        Provider<FirestoreService>(create: (_) => FirestoreService(FirebaseFirestore.instance))
       ],
       child: MaterialApp(
         title: 'Spare Parts',

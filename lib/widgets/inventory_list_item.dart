@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/utilities/helpers.dart';
@@ -25,6 +26,7 @@ class InventoryListItem extends StatelessWidget {
     final firestore = context.read<FirebaseFirestore>();
     final userRole = context.read<UserRole>();
     final auth = context.read<FirebaseAuth>();
+    final firestoreService = context.read<FirestoreService>();
 
     return ListTile(
       leading: Icon(inventoryItems[item.type]),
@@ -86,10 +88,7 @@ class InventoryListItem extends StatelessWidget {
         onSelected: (value) async {
           if (value == ItemAction.delete) {
             try {
-              await firestore
-                  .collection('items')
-                  .doc(item.firestoreId)
-                  .delete();
+              await firestoreService.deleteItem(item.firestoreId);
             } catch (e) {
               displayError(
                 context: context,

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
@@ -22,7 +23,8 @@ Future<void> pumpPage(
         Provider<FirebaseAuth>(create: (context) => auth ?? MockFirebaseAuth()),
         Provider<FirebaseFirestore>(
             create: (context) => firestore ?? FakeFirebaseFirestore()),
-        Provider<UserRole>(create: (context) => userRole ?? UserRole.user)
+        Provider<UserRole>(create: (context) => userRole ?? UserRole.user),
+        Provider<FirestoreService>(create: (context) => FirestoreService(firestore ?? FakeFirebaseFirestore()))
       ],
       child: MaterialApp(home: page),
     ),
