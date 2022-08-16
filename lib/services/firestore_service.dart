@@ -31,4 +31,8 @@ class FirestoreService {
   addItem(InventoryItem item) async {
     await itemsCollection.add(item.toFirestore());
   }
+
+  updateItem(String? itemId, InventoryItem item) async {
+    await getItemDocumentReference(itemId).set(item.toFirestore());
+  }
 }

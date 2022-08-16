@@ -92,11 +92,11 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                   final item = InventoryItem(id: idValue, type: dropdownValue);
                   await firestoreService.addItem(item);
                 } else {
-                  await firestore
-                      .collection('items')
-                      .doc(widget.item?.firestoreId)
-                      .set(InventoryItem(id: idValue, type: dropdownValue)
-                          .toFirestore());
+                  final item = InventoryItem(id: idValue, type: dropdownValue);
+                  await firestoreService.updateItem(
+                    widget.item?.firestoreId,
+                    item,
+                  );
                 }
                 Navigator.of(context).pop();
               } catch (e) {
