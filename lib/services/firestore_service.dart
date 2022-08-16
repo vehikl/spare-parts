@@ -8,8 +8,10 @@ class FirestoreService {
     _firestore = firestore;
   }
 
+  CollectionReference get itemsCollection => _firestore.collection('items');
+
   DocumentReference getItemDocumentReference(String? itemId) {
-    return _firestore.collection('items').doc(itemId);
+    return itemsCollection.doc(itemId);
   }
 
   deleteItem(String? itemId) async {
@@ -24,5 +26,9 @@ class FirestoreService {
 
   releaseItem(InventoryItem item) async {
     await getItemDocumentReference(item.firestoreId).update({'borrower': null});
+  }
+
+  addItem(InventoryItem item) async {
+    await itemsCollection.add(item.toFirestore());
   }
 }
