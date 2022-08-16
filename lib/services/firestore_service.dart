@@ -8,12 +8,16 @@ class FirestoreService {
     _firestore = firestore;
   }
 
+  DocumentReference getItemDocumentReference(String? itemId) {
+    return _firestore.collection('items').doc(itemId);
+  }
+
   deleteItem(String? itemId) async {
-    await _firestore.collection('items').doc(itemId).delete();
+    await getItemDocumentReference(itemId).delete();
   }
 
   borrowItem(InventoryItem item, String? uid) async {
-    await _firestore.collection('items').doc(item.firestoreId).update({
+    await getItemDocumentReference(item.firestoreId).update({
       'borrower': uid,
     });
   }
