@@ -16,7 +16,9 @@ class BorrowedItemsView extends StatelessWidget {
 
     return Center(
       child: StreamBuilder<List<InventoryItem>>(
-        stream: firestoreService.getBorrowedItemsStream(auth.currentUser?.uid),
+        stream: firestoreService.getItemsStream(
+          whereBorrowerIs: auth.currentUser?.uid,
+        ),
         builder: (context, snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
             return Container(

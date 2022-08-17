@@ -36,16 +36,17 @@ class FirestoreService {
     await getItemDocumentReference(itemId).set(item.toFirestore());
   }
 
-  Stream<List<InventoryItem>> getBorrowedItemsStream(String? uid) {
-    return itemsCollection
-        .where('borrower', isEqualTo: uid)
-        .snapshots()
-        .map(_mapQuerySnapshotToInventoryItems);
-  }
+  Stream<List<InventoryItem>> getItemsStream({String? whereBorrowerIs, bool? withNoBorrower}) {
+    Query<Object?>? query;
 
-  Stream<List<InventoryItem>> getInventoryItemsStream() {
-    return itemsCollection
-        .where('borrower', isNull: true)
+    if (withNoBorrower != null && withNoBorrower) {
+      query = itemsCollection.where('borrower', isNull: true);
+    }
+
+    if (whereBorrowerIs != null) {
+      query = itemsCollection.where('borrower', isEqualTo: whereBorrowerIs);
+    }
+    return (query ?? itemsCollection)
         .snapshots()
         .map(_mapQuerySnapshotToInventoryItems);
   }

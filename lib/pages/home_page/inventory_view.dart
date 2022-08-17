@@ -13,7 +13,7 @@ class InventoryView extends StatelessWidget {
     final firestoreService = context.read<FirestoreService>();
     return Center(
       child: StreamBuilder<List<InventoryItem>>(
-        stream: firestoreService.getInventoryItemsStream(),
+        stream: firestoreService.getItemsStream(withNoBorrower: true),
         builder: (context, snapshot) {
           if (snapshot.hasError || !snapshot.hasData) {
             return Container(
