@@ -15,7 +15,7 @@ Map<int, Color> colorCodes = {
   900: Color.fromRGBO(221, 95, 19, 1),
 };
 
-MaterialColor kVehiklMaterialColor = new MaterialColor(0xFFDD5F13, colorCodes);
+MaterialColor kVehiklMaterialColor = MaterialColor(0xFFDD5F13, colorCodes);
 
 Map<String, IconData> inventoryItems = {
   "Desk": Icons.desk,

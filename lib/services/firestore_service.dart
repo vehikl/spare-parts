@@ -36,7 +36,10 @@ class FirestoreService {
     await getItemDocumentReference(itemId).set(item.toFirestore());
   }
 
-  Stream<List<InventoryItem>> getItemsStream({String? whereBorrowerIs, bool? withNoBorrower}) {
+  Stream<List<InventoryItem>> getItemsStream({
+    String? whereBorrowerIs,
+    bool? withNoBorrower,
+  }) {
     Query<Object?>? query;
 
     if (withNoBorrower != null && withNoBorrower) {
