@@ -43,6 +43,13 @@ class FirestoreService {
         .map(_mapQuerySnapshotToInventoryItems);
   }
 
+  Stream<List<InventoryItem>> getInventoryItemsStream() {
+    return itemsCollection
+        .where('borrower', isNull: true)
+        .snapshots()
+        .map(_mapQuerySnapshotToInventoryItems);
+  }
+
   List<InventoryItem> _mapQuerySnapshotToInventoryItems(
     QuerySnapshot<Object?> snapshot,
   ) {
