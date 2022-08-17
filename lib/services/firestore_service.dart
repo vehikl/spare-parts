@@ -35,4 +35,20 @@ class FirestoreService {
   updateItem(String? itemId, InventoryItem item) async {
     await getItemDocumentReference(itemId).set(item.toFirestore());
   }
+
+  Stream<List<InventoryItem>> getBorrowedItemsStream(String? uid) {
+    return itemsCollection
+        .where('borrower', isEqualTo: uid)
+        .snapshots()
+        .map(_mapQuerySnapshotToInventoryItems);
+  }
+
+  List<InventoryItem> _mapQuerySnapshotToInventoryItems(
+    QuerySnapshot<Object?> snapshot,
+  ) {
+    return snapshot.docs
+        .map((doc) => InventoryItem.fromFirestore(
+            doc as QueryDocumentSnapshot<Map<String, dynamic>>))
+        .toList();
+  }
 }
