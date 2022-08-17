@@ -20,7 +20,7 @@ class BorrowedItemsView extends StatelessWidget {
           whereBorrowerIs: auth.currentUser?.uid,
         ),
         builder: (context, snapshot) {
-          if (snapshot.hasError || !snapshot.hasData) {
+          if (snapshot.hasError) {
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
@@ -30,6 +30,8 @@ class BorrowedItemsView extends StatelessWidget {
               child: Text(snapshot.error.toString()),
             );
           }
+
+          if (!snapshot.hasData) return Center(child: Text('Loading...'));
 
           final items = snapshot.data!;
           return ListView.builder(

@@ -15,7 +15,7 @@ class InventoryView extends StatelessWidget {
       child: StreamBuilder<List<InventoryItem>>(
         stream: firestoreService.getItemsStream(withNoBorrower: true),
         builder: (context, snapshot) {
-          if (snapshot.hasError || !snapshot.hasData) {
+          if (snapshot.hasError) {
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
@@ -25,6 +25,9 @@ class InventoryView extends StatelessWidget {
               child: Text(snapshot.error.toString()),
             );
           }
+
+          if (!snapshot.hasData) return Center(child: Text('Loading...'));
+          
           final items = snapshot.data!;
 
           return ListView.builder(
