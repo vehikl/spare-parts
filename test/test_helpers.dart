@@ -21,8 +21,6 @@ Future<void> pumpPage(
     MultiProvider(
       providers: [
         Provider<FirebaseAuth>(create: (context) => auth ?? MockFirebaseAuth()),
-        Provider<FirebaseFirestore>(
-            create: (context) => firestore ?? FakeFirebaseFirestore()),
         Provider<UserRole>(create: (context) => userRole ?? UserRole.user),
         Provider<FirestoreService>(create: (context) => FirestoreService(firestore ?? FakeFirebaseFirestore()))
       ],

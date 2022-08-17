@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 
 enum InventoryFormState { edit, add }
@@ -36,7 +35,6 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
 
   @override
   Widget build(BuildContext context) {
-    final firestore = context.read<FirebaseFirestore>();
     final firestoreService = context.read<FirestoreService>();
 
     return AlertDialog(

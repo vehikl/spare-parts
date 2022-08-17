@@ -35,7 +35,6 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<FirebaseAuth>(create: (_) => FirebaseAuth.instance),
-        Provider<FirebaseFirestore>(create: (_) => FirebaseFirestore.instance),
         Provider<FirestoreService>(create: (_) => FirestoreService(FirebaseFirestore.instance))
       ],
       child: MaterialApp(

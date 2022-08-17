@@ -1,10 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
 
@@ -23,7 +22,6 @@ class InventoryListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestore = context.read<FirebaseFirestore>();
     final userRole = context.read<UserRole>();
     final auth = context.read<FirebaseAuth>();
     final firestoreService = context.read<FirestoreService>();
