@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
 class BorrowedItemsView extends StatelessWidget {
@@ -34,6 +35,12 @@ class BorrowedItemsView extends StatelessWidget {
           if (!snapshot.hasData) return Center(child: Text('Loading...'));
 
           final items = snapshot.data!;
+
+          if (items.isEmpty) {
+            return EmptyListState(
+                message: "You don't have any borrowed items yet...");
+          }
+
           return ListView.builder(
             itemCount: items.length,
             itemBuilder: (context, index) {

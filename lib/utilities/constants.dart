@@ -27,3 +27,8 @@ Map<String, IconData> inventoryItems = {
 enum ItemAction { delete, edit, borrow, release }
 
 enum UserRole { user, admin }
+
+const TextStyle kEmptyListStyle = TextStyle(
+  fontSize: 24,
+  color: Colors.grey,
+);
