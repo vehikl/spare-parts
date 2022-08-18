@@ -1,9 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/models/inventory_item.dart';
+import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
 
@@ -22,9 +22,9 @@ class InventoryListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestore = context.read<FirebaseFirestore>();
     final userRole = context.read<UserRole>();
     final auth = context.read<FirebaseAuth>();
+    final firestoreService = context.read<FirestoreService>();
 
     return ListTile(
       leading: Icon(inventoryItems[item.type]),
@@ -86,10 +86,7 @@ class InventoryListItem extends StatelessWidget {
         onSelected: (value) async {
           if (value == ItemAction.delete) {
             try {
-              await firestore
-                  .collection('items')
-                  .doc(item.firestoreId)
-                  .delete();
+              await firestoreService.deleteItem(item.firestoreId);
             } catch (e) {
               displayError(
                 context: context,
@@ -110,9 +107,7 @@ class InventoryListItem extends StatelessWidget {
           }
           if (value == ItemAction.borrow) {
             try {
-              await firestore.collection('items').doc(item.firestoreId).update({
-                'borrower': auth.currentUser?.uid,
-              });
+              await firestoreService.borrowItem(item, auth.currentUser?.uid);
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Item has been successfully borrowed')));
             } catch (e) {
@@ -125,10 +120,7 @@ class InventoryListItem extends StatelessWidget {
 
           if (value == ItemAction.release) {
             try {
-              await firestore
-                  .collection('items')
-                  .doc(item.firestoreId)
-                  .update({'borrower': null});
+              firestoreService.releaseItem(item);
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Item has been successfully released')));
             } catch (e) {
