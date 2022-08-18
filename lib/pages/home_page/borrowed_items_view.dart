@@ -32,7 +32,9 @@ class BorrowedItemsView extends StatelessWidget {
             );
           }
 
-          if (!snapshot.hasData) return Center(child: Text('Loading...'));
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
 
           final items = snapshot.data!;
 
