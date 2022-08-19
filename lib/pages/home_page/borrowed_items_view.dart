@@ -5,6 +5,7 @@ import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
+import 'package:spare_parts/widgets/error_container.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
 class BorrowedItemsView extends StatelessWidget {
@@ -22,14 +23,7 @@ class BorrowedItemsView extends StatelessWidget {
         ),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: Colors.red,
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Text(snapshot.error.toString()),
-            );
+            return ErrorContainer(error: snapshot.error.toString());
           }
 
           if (!snapshot.hasData) {

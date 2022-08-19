@@ -16,13 +16,14 @@ Future<void> pumpPage(
   UserRole? userRole,
   FirebaseAuth? auth,
   FirebaseFirestore? firestore,
+  FirestoreService? firestoreService,
 }) async {
   await tester.pumpWidget(
     MultiProvider(
       providers: [
         Provider<FirebaseAuth>(create: (context) => auth ?? MockFirebaseAuth()),
         Provider<UserRole>(create: (context) => userRole ?? UserRole.user),
-        Provider<FirestoreService>(create: (context) => FirestoreService(firestore ?? FakeFirebaseFirestore()))
+        Provider<FirestoreService>(create: (context) => firestoreService ?? FirestoreService(firestore ?? FakeFirebaseFirestore()))
       ],
       child: MaterialApp(home: page),
     ),
