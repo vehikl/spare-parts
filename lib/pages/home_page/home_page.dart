@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
 import 'package:spare_parts/pages/home_page/inventory_view.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/widgets/inventory_item_form.dart';
+import 'package:spare_parts/widgets/add_inventory_item_button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -54,21 +54,8 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      floatingActionButton: userRole == UserRole.admin
-          ? FloatingActionButton(
-              child: const Icon(Icons.add),
-              onPressed: () async {
-                await showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const InventoryItemForm(
-                      formState: InventoryFormState.add,
-                    );
-                  },
-                );
-              },
-            )
-          : null,
+      floatingActionButton:
+          userRole == UserRole.admin ? AddInventoryItemButton() : null,
       body: PageView(
         controller: pageController,
         onPageChanged: _onPageChanged,
