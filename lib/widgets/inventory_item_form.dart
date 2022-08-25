@@ -33,10 +33,30 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
     super.initState();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  _handleSave() async {
     final firestoreService = context.read<FirestoreService>();
 
+    if (_formKey.currentState!.validate()) {
+      try {
+        if (widget.formState == InventoryFormState.add) {
+          final item = InventoryItem(id: idValue, type: dropdownValue);
+          await firestoreService.addItem(item);
+        } else {
+          final item = InventoryItem(id: idValue, type: dropdownValue);
+          await firestoreService.updateItem(widget.item?.firestoreId, item);
+        }
+        Navigator.of(context).pop();
+      } catch (e) {
+        displayError(
+          context: context,
+          message: 'Error occured while saving inventory item',
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('New Item'),
       content: Form(
@@ -81,31 +101,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
         ),
       ),
       actions: <Widget>[
-        ElevatedButton(
-          child: const Text('Save'),
-          onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              try {
-                if (widget.formState == InventoryFormState.add) {
-                  final item = InventoryItem(id: idValue, type: dropdownValue);
-                  await firestoreService.addItem(item);
-                } else {
-                  final item = InventoryItem(id: idValue, type: dropdownValue);
-                  await firestoreService.updateItem(
-                    widget.item?.firestoreId,
-                    item,
-                  );
-                }
-                Navigator.of(context).pop();
-              } catch (e) {
-                displayError(
-                  context: context,
-                  message: 'Error occured while saving inventory item',
-                );
-              }
-            }
-          },
-        ),
+        ElevatedButton(onPressed: _handleSave, child: const Text('Save')),
       ],
     );
   }
