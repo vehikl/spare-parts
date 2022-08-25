@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
-import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
@@ -36,7 +36,7 @@ class InventoryView extends StatelessWidget {
             itemBuilder: (context, index) {
               return InventoryListItem(
                 item: items[index],
-                actions: const [ItemAction.borrow],
+                actions: [BorrowItemAction()],
               );
             },
           );

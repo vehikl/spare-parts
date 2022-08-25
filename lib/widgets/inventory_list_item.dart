@@ -1,11 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/models/inventory_item.dart';
-import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/utilities/helpers.dart';
-import 'package:spare_parts/widgets/inventory_item_form.dart';
 
 /// Represents an inventory item with actions
 /// "edit" and "delete" actions are always available to the admin
@@ -23,8 +20,6 @@ class InventoryListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userRole = context.read<UserRole>();
-    final auth = context.read<FirebaseAuth>();
-    final firestoreService = context.read<FirestoreService>();
 
     return ListTile(
       leading: Icon(inventoryItems[item.type]),
@@ -37,7 +32,7 @@ class InventoryListItem extends StatelessWidget {
         itemBuilder: (context) => [
           if (userRole == UserRole.admin)
             PopupMenuItem(
-              value: ItemAction.edit,
+              value: EditItemAction(),
               child: Row(
                 children: const [
                   Icon(Icons.edit),
@@ -48,7 +43,7 @@ class InventoryListItem extends StatelessWidget {
             ),
           if (userRole == UserRole.admin)
             PopupMenuItem(
-              value: ItemAction.delete,
+              value: DeleteItemAction(),
               child: Row(
                 children: [
                   Icon(Icons.delete, color: Theme.of(context).errorColor),
@@ -60,77 +55,20 @@ class InventoryListItem extends StatelessWidget {
                 ],
               ),
             ),
-          if (actions.contains(ItemAction.borrow))
-            PopupMenuItem(
-              value: ItemAction.borrow,
+          ...actions.map(
+            (action) => PopupMenuItem(
+              value: action,
               child: Row(
-                children: const [
-                  Icon(Icons.arrow_downward),
+                children: [
+                  Icon(action.icon),
                   SizedBox(width: 4),
-                  Text('Borrow'),
+                  Text(action.name),
                 ],
               ),
             ),
-          if (actions.contains(ItemAction.release))
-            PopupMenuItem(
-              value: ItemAction.release,
-              child: Row(
-                children: const [
-                  Icon(Icons.arrow_upward),
-                  SizedBox(width: 4),
-                  Text('Release'),
-                ],
-              ),
-            ),
+          )
         ],
-        onSelected: (value) async {
-          if (value == ItemAction.delete) {
-            try {
-              await firestoreService.deleteItem(item.firestoreId);
-            } catch (e) {
-              displayError(
-                context: context,
-                message: 'Error occured while deleting inventory item',
-              );
-            }
-          }
-          if (value == ItemAction.edit) {
-            await showDialog<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return InventoryItemForm(
-                  formState: InventoryFormState.edit,
-                  item: item,
-                );
-              },
-            );
-          }
-          if (value == ItemAction.borrow) {
-            try {
-              await firestoreService.borrowItem(item, auth.currentUser?.uid);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Item has been successfully borrowed')));
-            } catch (e) {
-              displayError(
-                context: context,
-                message: 'Error occured while borrowing inventory item',
-              );
-            }
-          }
-
-          if (value == ItemAction.release) {
-            try {
-              firestoreService.releaseItem(item);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Item has been successfully released')));
-            } catch (e) {
-              displayError(
-                context: context,
-                message: 'Error occured while releasing inventory item',
-              );
-            }
-          }
-        },
+        onSelected: (itemAction) => itemAction.handle(context, item),
       ),
     );
   }
