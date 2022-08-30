@@ -3,10 +3,28 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
+import 'package:spare_parts/services/firestore_service.dart';
 import 'test_helpers.dart';
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+
+class MockFirestoreService extends Mock implements FirestoreService {
+  @override
+  Stream<List<InventoryItem>> getItemsStream({
+    String? whereBorrowerIs,
+    bool? withNoBorrower,
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #getItemsStream,
+          [],
+          {#whereBorrowerIs: whereBorrowerIs, #withNoBorrower: withNoBorrower},
+        ),
+        returnValue: Stream<List<InventoryItem>>.empty(),
+      );
+}
 
 class MockUser extends Mock implements User {
   @override
@@ -17,6 +35,7 @@ class MockUser extends Mock implements User {
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
   final authMock = MockFirebaseAuth();
+  final firestoreServiceMock = MockFirestoreService();
   final userMock = MockUser();
   const uid = 'qwe123';
 
@@ -119,5 +138,25 @@ void main() {
       expect(find.text('Chair#123'), findsNothing);
       expect(find.text('Item has been successfully released'), findsOneWidget);
     },
+  );
+
+  testWidgets(
+    'Displays error message if error occurs',
+    (WidgetTester tester) async {
+      const String errorMessage = 'Something went wrong';
+      when(firestoreServiceMock.getItemsStream()).thenAnswer(
+        (_) => Stream<List<InventoryItem>>.error(Exception(errorMessage)),
+      );
+
+      await pumpPage(
+        Scaffold(body: BorrowedItemsView()),
+        tester,
+        auth: authMock,
+        firestoreService: firestoreServiceMock,
+      );
+
+      expect(find.textContaining(errorMessage), findsOneWidget);
+    },
+    skip: true,
   );
 }

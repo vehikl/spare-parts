@@ -1,11 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/models/inventory_item.dart';
-import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/utilities/helpers.dart';
-import 'package:spare_parts/widgets/inventory_item_form.dart';
 
 /// Represents an inventory item with actions
 /// "edit" and "delete" actions are always available to the admin
@@ -23,8 +20,10 @@ class InventoryListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userRole = context.read<UserRole>();
-    final auth = context.read<FirebaseAuth>();
-    final firestoreService = context.read<FirestoreService>();
+
+    final allActions = [EditItemAction(), DeleteItemAction(), ...actions];
+    final allowedActions =
+        allActions.where((action) => action.allowedRoles.contains(userRole));
 
     return ListTile(
       leading: Icon(inventoryItems[item.type]),
@@ -34,103 +33,19 @@ class InventoryListItem extends StatelessWidget {
       ),
       trailing: PopupMenuButton<ItemAction>(
         child: Icon(Icons.more_vert),
-        itemBuilder: (context) => [
-          if (userRole == UserRole.admin)
-            PopupMenuItem(
-              value: ItemAction.edit,
-              child: Row(
-                children: const [
-                  Icon(Icons.edit),
-                  SizedBox(width: 4),
-                  Text('Edit'),
-                ],
-              ),
+        itemBuilder: (context) => allowedActions.map((action) {
+          return PopupMenuItem(
+            value: action,
+            child: Row(
+              children: [
+                Icon(action.icon),
+                SizedBox(width: 4),
+                Text(action.name),
+              ],
             ),
-          if (userRole == UserRole.admin)
-            PopupMenuItem(
-              value: ItemAction.delete,
-              child: Row(
-                children: [
-                  Icon(Icons.delete, color: Theme.of(context).errorColor),
-                  SizedBox(width: 4),
-                  Text(
-                    'Delete',
-                    style: TextStyle(color: Theme.of(context).errorColor),
-                  ),
-                ],
-              ),
-            ),
-          if (actions.contains(ItemAction.borrow))
-            PopupMenuItem(
-              value: ItemAction.borrow,
-              child: Row(
-                children: const [
-                  Icon(Icons.arrow_downward),
-                  SizedBox(width: 4),
-                  Text('Borrow'),
-                ],
-              ),
-            ),
-          if (actions.contains(ItemAction.release))
-            PopupMenuItem(
-              value: ItemAction.release,
-              child: Row(
-                children: const [
-                  Icon(Icons.arrow_upward),
-                  SizedBox(width: 4),
-                  Text('Release'),
-                ],
-              ),
-            ),
-        ],
-        onSelected: (value) async {
-          if (value == ItemAction.delete) {
-            try {
-              await firestoreService.deleteItem(item.firestoreId);
-            } catch (e) {
-              displayError(
-                context: context,
-                message: 'Error occured while deleting inventory item',
-              );
-            }
-          }
-          if (value == ItemAction.edit) {
-            await showDialog<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return InventoryItemForm(
-                  formState: InventoryFormState.edit,
-                  item: item,
-                );
-              },
-            );
-          }
-          if (value == ItemAction.borrow) {
-            try {
-              await firestoreService.borrowItem(item, auth.currentUser?.uid);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Item has been successfully borrowed')));
-            } catch (e) {
-              displayError(
-                context: context,
-                message: 'Error occured while borrowing inventory item',
-              );
-            }
-          }
-
-          if (value == ItemAction.release) {
-            try {
-              firestoreService.releaseItem(item);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Item has been successfully released')));
-            } catch (e) {
-              displayError(
-                context: context,
-                message: 'Error occured while releasing inventory item',
-              );
-            }
-          }
-        },
+          );
+        }).toList(),
+        onSelected: (itemAction) => itemAction.handle(context, item),
       ),
     );
   }
