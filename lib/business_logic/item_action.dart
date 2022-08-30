@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/models/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
 
@@ -11,6 +12,7 @@ enum ItemActionType { delete, edit, borrow, release }
 abstract class ItemAction {
   ItemActionType get actionType;
   IconData get icon;
+  List<UserRole> get allowedRoles;
 
   handle(BuildContext context, InventoryItem item);
 
@@ -55,6 +57,9 @@ class DeleteItemAction extends ItemAction {
       'deleted',
     );
   }
+  
+  @override
+  List<UserRole> get allowedRoles => [UserRole.admin];
 }
 
 class BorrowItemAction extends ItemAction {
@@ -75,6 +80,9 @@ class BorrowItemAction extends ItemAction {
       'borrowed',
     );
   }
+  
+  @override
+  List<UserRole> get allowedRoles => [UserRole.admin, UserRole.user];
 }
 
 class ReleaseItemAction extends ItemAction {
@@ -94,6 +102,9 @@ class ReleaseItemAction extends ItemAction {
       'released',
     );
   }
+
+  @override
+  List<UserRole> get allowedRoles => [UserRole.admin, UserRole.user];
 }
 
 class EditItemAction extends ItemAction {
@@ -115,4 +126,7 @@ class EditItemAction extends ItemAction {
       },
     );
   }
+
+  @override
+  List<UserRole> get allowedRoles => [UserRole.admin];
 }

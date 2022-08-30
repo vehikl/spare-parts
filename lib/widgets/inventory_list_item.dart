@@ -21,6 +21,10 @@ class InventoryListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final userRole = context.read<UserRole>();
 
+    final allActions = [EditItemAction(), DeleteItemAction(), ...actions];
+    final allowedActions =
+        allActions.where((action) => action.allowedRoles.contains(userRole));
+
     return ListTile(
       leading: Icon(inventoryItems[item.type]),
       title: Text(
@@ -29,45 +33,18 @@ class InventoryListItem extends StatelessWidget {
       ),
       trailing: PopupMenuButton<ItemAction>(
         child: Icon(Icons.more_vert),
-        itemBuilder: (context) => [
-          if (userRole == UserRole.admin)
-            PopupMenuItem(
-              value: EditItemAction(),
-              child: Row(
-                children: const [
-                  Icon(Icons.edit),
-                  SizedBox(width: 4),
-                  Text('Edit'),
-                ],
-              ),
+        itemBuilder: (context) => allowedActions.map((action) {
+          return PopupMenuItem(
+            value: action,
+            child: Row(
+              children: [
+                Icon(action.icon),
+                SizedBox(width: 4),
+                Text(action.name),
+              ],
             ),
-          if (userRole == UserRole.admin)
-            PopupMenuItem(
-              value: DeleteItemAction(),
-              child: Row(
-                children: [
-                  Icon(Icons.delete, color: Theme.of(context).errorColor),
-                  SizedBox(width: 4),
-                  Text(
-                    'Delete',
-                    style: TextStyle(color: Theme.of(context).errorColor),
-                  ),
-                ],
-              ),
-            ),
-          ...actions.map(
-            (action) => PopupMenuItem(
-              value: action,
-              child: Row(
-                children: [
-                  Icon(action.icon),
-                  SizedBox(width: 4),
-                  Text(action.name),
-                ],
-              ),
-            ),
-          )
-        ],
+          );
+        }).toList(),
         onSelected: (itemAction) => itemAction.handle(context, item),
       ),
     );
