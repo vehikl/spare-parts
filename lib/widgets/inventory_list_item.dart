@@ -17,6 +17,23 @@ class InventoryListItem extends StatelessWidget {
   final InventoryItem item;
   final List<ItemAction> actions;
 
+  void showHistoryModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => Container(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              Text('History'),
+              
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userRole = context.read<UserRole>();
@@ -31,19 +48,13 @@ class InventoryListItem extends StatelessWidget {
         item.id,
         style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 22),
       ),
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          builder: (_) => Container(
-            child: Padding(
-              padding: const EdgeInsets.all(100.0),
-              child: Text('History'),
-            ),
-          ),
-        );
-      },
+      onTap:
+          userRole == UserRole.admin ? () => showHistoryModal(context) : null,
       trailing: PopupMenuButton<ItemAction>(
-        child: Icon(Icons.more_vert),
+        child: Padding(
+          child: Icon(Icons.more_vert),
+          padding: EdgeInsets.all(10.0),
+        ),
         itemBuilder: (context) => allowedActions.map((action) {
           return PopupMenuItem(
             value: action,
