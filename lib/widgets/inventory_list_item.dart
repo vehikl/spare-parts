@@ -31,6 +31,17 @@ class InventoryListItem extends StatelessWidget {
         item.id,
         style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 22),
       ),
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          builder: (_) => Container(
+            child: Padding(
+              padding: const EdgeInsets.all(100.0),
+              child: Text('History'),
+            ),
+          ),
+        );
+      },
       trailing: PopupMenuButton<ItemAction>(
         child: Icon(Icons.more_vert),
         itemBuilder: (context) => allowedActions.map((action) {

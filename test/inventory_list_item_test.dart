@@ -16,4 +16,21 @@ void main() {
       expect(find.text(testItem.id), findsOneWidget);
     },
   );
+
+  testWidgets('Displays a modal with item history',
+      (WidgetTester tester) async {
+    final testItem = InventoryItem(id: '#re4123', type: 'Chair');
+
+    await pumpPage(Scaffold(body: InventoryListItem(item: testItem)), tester);
+
+    final invetoryItemElement = find.ancestor(
+      of: find.text('#re4123'),
+      matching: find.byType(ListTile),
+    );
+
+    await tester.tap(invetoryItemElement);
+    await tester.pumpAndSettle();
+
+    expect(find.text('History'), findsOneWidget);
+  });
 }
