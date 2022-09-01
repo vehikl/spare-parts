@@ -51,8 +51,12 @@ class InventoryListItem extends StatelessWidget {
 
                 return ListView(
                   shrinkWrap: true,
-                  children:
-                      events.map((event) => Text(event['issuerName'])).toList(),
+                  children: events
+                      .map((event) => ListTile(
+                            title: Text(event['issuerName']),
+                            subtitle: Text(event['type']),
+                          ))
+                      .toList(),
                 );
               },
             ),

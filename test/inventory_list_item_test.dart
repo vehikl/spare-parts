@@ -93,7 +93,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(issuerName), findsOneWidget);
-      // expect(find.text(eventType), findsOneWidget);
+      expect(find.text(eventType), findsOneWidget);
     },
   );
 }
