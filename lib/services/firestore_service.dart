@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:spare_parts/models/inventory_item.dart';
+import 'package:spare_parts/entities/inventory_item.dart';
 
 class FirestoreService {
   late FirebaseFirestore _firestore;

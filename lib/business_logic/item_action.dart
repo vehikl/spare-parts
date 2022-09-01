@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spare_parts/models/inventory_item.dart';
+import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
@@ -57,7 +57,7 @@ class DeleteItemAction extends ItemAction {
       'deleted',
     );
   }
-  
+
   @override
   List<UserRole> get allowedRoles => [UserRole.admin];
 }
@@ -80,7 +80,7 @@ class BorrowItemAction extends ItemAction {
       'borrowed',
     );
   }
-  
+
   @override
   List<UserRole> get allowedRoles => [UserRole.admin, UserRole.user];
 }
