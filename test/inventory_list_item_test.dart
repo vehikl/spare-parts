@@ -1,6 +1,7 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
@@ -64,18 +65,17 @@ void main() {
           await firestore.collection('items').add(testItem.toFirestore());
       testItem.firestoreId = itemDocReference.id;
 
-      const issuerName = 'Jonny';
-      const eventType = 'Borrow';
+      final event = Event(
+        issuerId: 'foo',
+        issuerName: 'Jonny',
+        type: 'Borrow',
+      );
 
       await firestore
           .collection('items')
           .doc(itemDocReference.id)
           .collection('events')
-          .add({
-        'issuerId': 'foo',
-        'issuerName': issuerName,
-        'type': eventType,
-      });
+          .add(event.toFirestore());
 
       await pumpPage(
         Scaffold(body: InventoryListItem(item: testItem)),
@@ -92,8 +92,8 @@ void main() {
       await tester.tap(invetoryItemElement);
       await tester.pumpAndSettle();
 
-      expect(find.text(issuerName), findsOneWidget);
-      expect(find.text(eventType), findsOneWidget);
+      expect(find.text(event.issuerName), findsOneWidget);
+      expect(find.text(event.type), findsOneWidget);
     },
   );
 }

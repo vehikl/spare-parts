@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
+import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
@@ -30,7 +31,7 @@ class InventoryListItem extends StatelessWidget {
         child: Column(
           children: [
             Text('Interaction History'),
-            StreamBuilder<List<dynamic>>(
+            StreamBuilder<List<Event>>(
               stream: firestoreService.getEventsStream(
                   inventoryItemId: item.firestoreId),
               builder: (context, snapshot) {
@@ -53,8 +54,8 @@ class InventoryListItem extends StatelessWidget {
                   shrinkWrap: true,
                   children: events
                       .map((event) => ListTile(
-                            title: Text(event['issuerName']),
-                            subtitle: Text(event['type']),
+                            title: Text(event.issuerName),
+                            subtitle: Text(event.type),
                           ))
                       .toList(),
                 );

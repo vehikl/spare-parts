@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 
 class FirestoreService {
@@ -63,11 +64,12 @@ class FirestoreService {
         .toList();
   }
 
-  Stream<List<dynamic>> getEventsStream({String? inventoryItemId}) {
+  Stream<List<Event>> getEventsStream({String? inventoryItemId}) {
     return itemsCollection
         .doc(inventoryItemId)
         .collection('events')
         .snapshots()
-        .map((snap) => snap.docs.map((doc) => doc.data()).toList());
+        .map((snap) =>
+            snap.docs.map((doc) => Event.fromFirestore(doc)).toList());
   }
 }
