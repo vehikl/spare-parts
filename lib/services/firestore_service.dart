@@ -64,12 +64,19 @@ class FirestoreService {
         .toList();
   }
 
-  Stream<List<Event>> getEventsStream({String? inventoryItemId}) {
+  Stream<List<Event>> getEventsStream(String? inventoryItemId) {
     return itemsCollection
         .doc(inventoryItemId)
         .collection('events')
         .snapshots()
         .map((snap) =>
             snap.docs.map((doc) => Event.fromFirestore(doc)).toList());
+  }
+
+  Future<void> addEvent(String inventoryItemId, Event event) async {
+    await itemsCollection
+        .doc(inventoryItemId)
+        .collection('events')
+        .add(event.toFirestore());
   }
 }

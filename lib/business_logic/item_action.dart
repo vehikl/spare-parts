@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
@@ -75,7 +76,15 @@ class BorrowItemAction extends ItemAction {
     final auth = context.read<FirebaseAuth>();
 
     commonHandle(
-      () => firestoreService.borrowItem(item, auth.currentUser?.uid),
+      () async {
+        await firestoreService.borrowItem(item, auth.currentUser?.uid);
+        final event = Event(
+          issuerId: auth.currentUser?.uid ?? '',
+          issuerName: auth.currentUser?.displayName ?? '',
+          type: 'Borrow',
+        );
+        await firestoreService.addEvent(item.firestoreId!, event);
+      },
       context,
       'borrowed',
     );
@@ -95,9 +104,18 @@ class ReleaseItemAction extends ItemAction {
   @override
   handle(BuildContext context, InventoryItem item) {
     final firestoreService = context.read<FirestoreService>();
+    final auth = context.read<FirebaseAuth>();
 
     commonHandle(
-      () => firestoreService.releaseItem(item),
+      () async {
+        await firestoreService.releaseItem(item);
+        final event = Event(
+          issuerId: auth.currentUser?.uid ?? '',
+          issuerName: auth.currentUser?.displayName ?? '',
+          type: 'Release',
+        );
+        await firestoreService.addEvent(item.firestoreId!, event);
+      },
       context,
       'released',
     );
