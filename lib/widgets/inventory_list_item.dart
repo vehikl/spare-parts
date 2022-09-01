@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/models/inventory_item.dart';
+import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/widgets/empty_list_state.dart';
+import 'package:spare_parts/widgets/error_container.dart';
 
 /// Represents an inventory item with actions
 /// "edit" and "delete" actions are always available to the admin
@@ -18,17 +21,42 @@ class InventoryListItem extends StatelessWidget {
   final List<ItemAction> actions;
 
   void showHistoryModal(BuildContext context) {
+    final firestoreService = context.read<FirestoreService>();
+
     showModalBottomSheet(
       context: context,
-      builder: (_) => Container(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: [
-              Text('History'),
-              
-            ],
-          ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            Text('Interaction History'),
+            StreamBuilder<List<dynamic>>(
+              stream: firestoreService.getEventsStream(
+                  inventoryItemId: item.firestoreId),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return ErrorContainer(error: snapshot.error.toString());
+                }
+
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                final events = snapshot.data!;
+
+                if (events.isEmpty) {
+                  return EmptyListState(
+                      message: "This item was not borrowed yet...");
+                }
+
+                return ListView(
+                  shrinkWrap: true,
+                  children:
+                      events.map((event) => Text(event['issuerName'])).toList(),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

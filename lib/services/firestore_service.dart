@@ -62,4 +62,12 @@ class FirestoreService {
             doc as QueryDocumentSnapshot<Map<String, dynamic>>))
         .toList();
   }
+
+  Stream<List<dynamic>> getEventsStream({String? inventoryItemId}) {
+    return itemsCollection
+        .doc(inventoryItemId)
+        .collection('events')
+        .snapshots()
+        .map((snap) => snap.docs.map((doc) => doc.data()).toList());
+  }
 }

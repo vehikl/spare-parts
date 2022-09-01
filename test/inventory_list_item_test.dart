@@ -55,36 +55,45 @@ void main() {
     expect(find.text('History'), findsNothing);
   });
 
-  testWidgets('Displays events in the history modal',
-      (WidgetTester tester) async {
-    await firestore.collection('items').doc().set({
-      'id': 'Chair#123',
-      'type': 'Chair',
-      'borrower': null,
-    });
+  testWidgets(
+    'Displays events in the history modal',
+    (WidgetTester tester) async {
+      final testItem = InventoryItem(id: '#re4123', type: 'Chair');
 
-    await firestore
-        .collection('items')
-        .doc('#re1234')
-        .collection('events')
-        .doc()
-        .set({
-      'issuerName': 'Jonny',
-      'type': 'borrow',
-    });
+      final itemDocReference =
+          await firestore.collection('items').add(testItem.toFirestore());
+      testItem.firestoreId = itemDocReference.id;
 
-    final testItem = InventoryItem(id: '#re4123', type: 'Chair');
-    await pumpPage(Scaffold(body: InventoryListItem(item: testItem)), tester,
-        userRole: UserRole.admin);
+      const issuerName = 'Jonny';
+      const eventType = 'Borrow';
 
-    final invetoryItemElement = find.ancestor(
-      of: find.text('#re4123'),
-      matching: find.byType(ListTile),
-    );
+      await firestore
+          .collection('items')
+          .doc(itemDocReference.id)
+          .collection('events')
+          .add({
+        'issuerId': 'foo',
+        'issuerName': issuerName,
+        'type': eventType,
+      });
 
-    await tester.tap(invetoryItemElement);
-    await tester.pumpAndSettle();
+      await pumpPage(
+        Scaffold(body: InventoryListItem(item: testItem)),
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+      );
 
-    expect(find.text('Jonny'), findsOneWidget);
-  });
+      final invetoryItemElement = find.ancestor(
+        of: find.text(testItem.id),
+        matching: find.byType(ListTile),
+      );
+
+      await tester.tap(invetoryItemElement);
+      await tester.pumpAndSettle();
+
+      expect(find.text(issuerName), findsOneWidget);
+      // expect(find.text(eventType), findsOneWidget);
+    },
+  );
 }
