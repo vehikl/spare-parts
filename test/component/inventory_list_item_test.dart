@@ -6,7 +6,7 @@ import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
-import 'test_helpers.dart';
+import '../test_helpers.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
@@ -36,7 +36,7 @@ void main() {
     await tester.tap(invetoryItemElement);
     await tester.pumpAndSettle();
 
-    expect(find.text('History'), findsOneWidget);
+    expect(find.textContaining('History'), findsOneWidget);
   });
 
   testWidgets('Does not display a modal when a non-admin user clicks an item',

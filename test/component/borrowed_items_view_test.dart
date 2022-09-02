@@ -6,7 +6,7 @@ import 'package:mockito/mockito.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
 import 'package:spare_parts/services/firestore_service.dart';
-import 'test_helpers.dart';
+import '../test_helpers.dart';
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +39,7 @@ abstract class ItemAction {
         context: context,
         message: 'Error occured: inventory item was not $message',
       );
+      log(e.toString());
     }
   }
 }
@@ -77,13 +80,13 @@ class BorrowItemAction extends ItemAction {
 
     commonHandle(
       () async {
-        await firestoreService.borrowItem(item, auth.currentUser?.uid);
         final event = Event(
           issuerId: auth.currentUser?.uid ?? '',
           issuerName: auth.currentUser?.displayName ?? '',
           type: 'Borrow',
         );
         await firestoreService.addEvent(item.firestoreId!, event);
+        await firestoreService.borrowItem(item, auth.currentUser?.uid);
       },
       context,
       'borrowed',
@@ -108,13 +111,13 @@ class ReleaseItemAction extends ItemAction {
 
     commonHandle(
       () async {
-        await firestoreService.releaseItem(item);
         final event = Event(
           issuerId: auth.currentUser?.uid ?? '',
           issuerName: auth.currentUser?.displayName ?? '',
           type: 'Release',
         );
         await firestoreService.addEvent(item.firestoreId!, event);
+        await firestoreService.releaseItem(item);
       },
       context,
       'released',

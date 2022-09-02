@@ -35,13 +35,12 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<FirebaseAuth>(create: (_) => FirebaseAuth.instance),
-        Provider<FirestoreService>(create: (_) => FirestoreService(FirebaseFirestore.instance))
+        Provider<FirestoreService>(
+            create: (_) => FirestoreService(FirebaseFirestore.instance))
       ],
       child: MaterialApp(
         title: 'Spare Parts',
-        theme: ThemeData(
-          primarySwatch: kVehiklMaterialColor,
-        ),
+        theme: ThemeData(primarySwatch: kVehiklMaterialColor),
         home: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {

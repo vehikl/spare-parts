@@ -66,9 +66,11 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inventory'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.backpack_outlined), label: 'borrowed items'),
+            icon: Icon(Icons.backpack_outlined),
+            label: 'Borrowed Items',
+          ),
         ],
         currentIndex: _selectedBottomNavItemIndex,
         selectedItemColor: Colors.amber[800],
