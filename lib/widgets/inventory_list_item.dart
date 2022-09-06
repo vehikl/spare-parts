@@ -30,7 +30,7 @@ class InventoryListItem extends StatelessWidget {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-            Text('Interaction History'),
+            Text('Interaction History', style: TextStyle(fontSize: 20)),
             StreamBuilder<List<Event>>(
               stream: firestoreService.getEventsStream(item.firestoreId),
               builder: (context, snapshot) {
