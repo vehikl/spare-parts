@@ -7,6 +7,7 @@ import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
+import 'package:intl/intl.dart';
 
 /// Represents an inventory item with actions
 /// "edit" and "delete" actions are always available to the admin
@@ -58,7 +59,15 @@ class InventoryListItem extends StatelessWidget {
                       .map((event) => ListTile(
                             title: Text(event.issuerName),
                             subtitle: Row(
-                              children: [Text(event.type)],
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(event.type),
+                                Text(
+                                  event.createdAt == null
+                                      ? 'N/A'
+                                      : '${event.createdAt!.month}/${event.createdAt!.day}/${event.createdAt!.year}',
+                                )
+                              ],
                             ),
                           ))
                       .toList(),
