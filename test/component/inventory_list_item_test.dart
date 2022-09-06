@@ -66,10 +66,10 @@ void main() {
       testItem.firestoreId = itemDocReference.id;
 
       final event = Event(
-        issuerId: 'foo',
-        issuerName: 'Jonny',
-        type: 'Borrow',
-      );
+          issuerId: 'foo',
+          issuerName: 'Jonny',
+          type: 'Borrow',
+          createdAt: DateTime.now());
 
       await firestore
           .collection('items')

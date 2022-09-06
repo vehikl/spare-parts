@@ -5,9 +5,11 @@ class Event {
   String issuerName;
   String issuerId;
   String type;
+  DateTime? createdAt;
 
   Event({
     this.id,
+    this.createdAt,
     required this.issuerName,
     required this.issuerId,
     required this.type,
@@ -15,11 +17,13 @@ class Event {
 
   static Event fromFirestore(QueryDocumentSnapshot<Map<String, dynamic>> doc) {
     return Event(
-      id: doc.data()['id'],
-      issuerName: doc.data()['issuerName'],
-      issuerId: doc.data()['issuerId'],
-      type: doc.data()['type'],
-    );
+        id: doc.data()['id'],
+        issuerName: doc.data()['issuerName'],
+        issuerId: doc.data()['issuerId'],
+        type: doc.data()['type'],
+        createdAt: doc.data()['createdAt'] != null
+            ? (doc.data()['createdAt'] as Timestamp).toDate()
+            : null);
   }
 
   Map<String, dynamic> toFirestore() {
@@ -28,6 +32,7 @@ class Event {
       'issuerName': issuerName,
       'issuerId': issuerId,
       'type': type,
+      'createdAt': createdAt == null ? null : Timestamp.fromDate(createdAt!),
     };
   }
 }

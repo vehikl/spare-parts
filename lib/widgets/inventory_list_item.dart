@@ -57,7 +57,9 @@ class InventoryListItem extends StatelessWidget {
                   children: events
                       .map((event) => ListTile(
                             title: Text(event.issuerName),
-                            subtitle: Text(event.type),
+                            subtitle: Row(
+                              children: [Text(event.type)],
+                            ),
                           ))
                       .toList(),
                 );

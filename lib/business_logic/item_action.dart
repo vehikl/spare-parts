@@ -81,10 +81,10 @@ class BorrowItemAction extends ItemAction {
     commonHandle(
       () async {
         final event = Event(
-          issuerId: auth.currentUser?.uid ?? '',
-          issuerName: auth.currentUser?.displayName ?? '',
-          type: 'Borrow',
-        );
+            issuerId: auth.currentUser?.uid ?? '',
+            issuerName: auth.currentUser?.displayName ?? '',
+            type: 'Borrow',
+            createdAt: DateTime.now());
         await firestoreService.addEvent(item.firestoreId!, event);
         await firestoreService.borrowItem(item, auth.currentUser?.uid);
       },
@@ -115,6 +115,7 @@ class ReleaseItemAction extends ItemAction {
           issuerId: auth.currentUser?.uid ?? '',
           issuerName: auth.currentUser?.displayName ?? '',
           type: 'Release',
+          createdAt: DateTime.now(),
         );
         await firestoreService.addEvent(item.firestoreId!, event);
         await firestoreService.releaseItem(item);
