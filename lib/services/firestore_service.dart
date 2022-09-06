@@ -68,6 +68,7 @@ class FirestoreService {
     return itemsCollection
         .doc(inventoryItemId)
         .collection('events')
+        .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snap) =>
             snap.docs.map((doc) => Event.fromFirestore(doc)).toList());
