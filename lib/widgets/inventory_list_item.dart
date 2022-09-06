@@ -26,6 +26,9 @@ class InventoryListItem extends StatelessWidget {
 
     showModalBottomSheet(
       context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
       builder: (_) => Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
