@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spare_parts/models/inventory_item.dart';
+import 'package:spare_parts/entities/event.dart';
+import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
@@ -36,6 +39,7 @@ abstract class ItemAction {
         context: context,
         message: 'Error occured: inventory item was not $message',
       );
+      log(e.toString());
     }
   }
 }
@@ -57,7 +61,7 @@ class DeleteItemAction extends ItemAction {
       'deleted',
     );
   }
-  
+
   @override
   List<UserRole> get allowedRoles => [UserRole.admin];
 }
@@ -75,12 +79,20 @@ class BorrowItemAction extends ItemAction {
     final auth = context.read<FirebaseAuth>();
 
     commonHandle(
-      () => firestoreService.borrowItem(item, auth.currentUser?.uid),
+      () async {
+        final event = Event(
+            issuerId: auth.currentUser?.uid ?? '',
+            issuerName: auth.currentUser?.displayName ?? '',
+            type: 'Borrow',
+            createdAt: DateTime.now());
+        await firestoreService.addEvent(item.firestoreId!, event);
+        await firestoreService.borrowItem(item, auth.currentUser?.uid);
+      },
       context,
       'borrowed',
     );
   }
-  
+
   @override
   List<UserRole> get allowedRoles => [UserRole.admin, UserRole.user];
 }
@@ -95,9 +107,19 @@ class ReleaseItemAction extends ItemAction {
   @override
   handle(BuildContext context, InventoryItem item) {
     final firestoreService = context.read<FirestoreService>();
+    final auth = context.read<FirebaseAuth>();
 
     commonHandle(
-      () => firestoreService.releaseItem(item),
+      () async {
+        final event = Event(
+          issuerId: auth.currentUser?.uid ?? '',
+          issuerName: auth.currentUser?.displayName ?? '',
+          type: 'Release',
+          createdAt: DateTime.now(),
+        );
+        await firestoreService.addEvent(item.firestoreId!, event);
+        await firestoreService.releaseItem(item);
+      },
       context,
       'released',
     );

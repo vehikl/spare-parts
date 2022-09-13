@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
-import 'test_helpers.dart';
+import '../test_helpers.dart';
 
 void main() async {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
@@ -16,7 +16,8 @@ void main() async {
 
   testWidgets('Shows the add button if the user is an admin',
       (WidgetTester tester) async {
-    await pumpPage(HomePage(), tester, userRole: UserRole.admin, firestore: firestore);
+    await pumpPage(HomePage(), tester,
+        userRole: UserRole.admin, firestore: firestore);
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.add), findsOneWidget);
