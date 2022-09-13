@@ -1,7 +1,7 @@
 name: spare_parts
 description: A new Flutter project.
 
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -19,6 +19,7 @@ dependencies:
   fake_cloud_firestore: ^1.2.2
   provider: ^6.0.3
   mockito: ^5.2.0
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

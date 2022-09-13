@@ -65,7 +65,8 @@ class InventoryListItem extends StatelessWidget {
                                 Text(
                                   event.createdAt == null
                                       ? 'N/A'
-                                      : '${event.createdAt!.month}/${event.createdAt!.day}/${event.createdAt!.year}',
+                                      : DateFormat.yMMMd()
+                                          .format(event.createdAt!),
                                 )
                               ],
                             ),
@@ -98,8 +99,8 @@ class InventoryListItem extends StatelessWidget {
           userRole == UserRole.admin ? () => showHistoryModal(context) : null,
       trailing: PopupMenuButton<ItemAction>(
         child: Padding(
-          child: Icon(Icons.more_vert),
           padding: EdgeInsets.all(10.0),
+          child: Icon(Icons.more_vert),
         ),
         itemBuilder: (context) => allowedActions.map((action) {
           return PopupMenuItem(
