@@ -48,13 +48,16 @@ class _InventoryViewState extends State<InventoryView> {
               Row(
                 children: [
                   MultiSelectDialogField<String>(
+                    chipDisplay: MultiSelectChipDisplay.none(),
                     items: inventoryItems.entries
                         .map((entry) => MultiSelectItem(entry.key, entry.key))
                         .toList(),
                     title: Text('Item Type'),
                     selectedColor: Colors.orange,
                     decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
+                      color: _selectedItemTypes == null
+                          ? Colors.orange.withOpacity(0.2)
+                          : Colors.orange,
                       borderRadius: BorderRadius.all(Radius.circular(40)),
                     ),
                     buttonText: Text('Item Type'),
