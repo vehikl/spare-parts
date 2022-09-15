@@ -21,6 +21,7 @@ dependencies:
   mockito: ^5.2.0
   intl: ^0.17.0
   multi_select_flutter: ^4.1.2
+  cloud_functions: ^3.3.7
 
 dev_dependencies:
   flutter_test:

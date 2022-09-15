@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
+import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
+import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
@@ -18,21 +20,23 @@ class InventoryView extends StatefulWidget {
 
 class _InventoryViewState extends State<InventoryView> {
   List<String>? _selectedItemTypes;
-  late final FirestoreService _firestoreService;
+  List<String>? _selectedUserIds;
 
   @override
   void initState() {
-    _firestoreService = context.read<FirestoreService>();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final firestoreService = context.watch<FirestoreService>();
+    final callableService = context.watch<CallableService>();
+
     return Center(
       child: StreamBuilder<List<InventoryItem>>(
-        stream: _firestoreService.getItemsStream(
+        stream: firestoreService.getItemsStream(
           withNoBorrower: true,
-          whereTypesIn: _selectedItemTypes,
+          whereTypeIn: _selectedItemTypes,
         ),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -71,6 +75,36 @@ class _InventoryViewState extends State<InventoryView> {
                       setState(() {
                         _selectedItemTypes = results.isEmpty ? null : results;
                       });
+                    },
+                  ),
+                  FutureBuilder<List<UserDto>>(
+                    future: callableService.getUsers(),
+                    builder: (context, snap) {
+                      if (!snap.hasData || snap.hasError) {
+                        return CircularProgressIndicator();
+                      }
+                      final users = snap.data!;
+
+                      return MultiSelectDialogField<String>(
+                        chipDisplay: MultiSelectChipDisplay.none(),
+                        items: users
+                            .map((user) => MultiSelectItem(user.id, user.name))
+                            .toList(),
+                        title: Text('Users'),
+                        selectedColor: Theme.of(context).primaryColor,
+                        decoration: BoxDecoration(
+                          color: _selectedItemTypes == null
+                              ? Theme.of(context).primaryColor.withOpacity(0.2)
+                              : Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.all(Radius.circular(40)),
+                        ),
+                        buttonText: Text('Users'),
+                        onConfirm: (results) {
+                          setState(() {
+                            _selectedUserIds = results.isEmpty ? null : results;
+                          });
+                        },
+                      );
                     },
                   ),
                 ],
