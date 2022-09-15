@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
@@ -9,7 +8,6 @@ import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
-import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class InventoryView extends StatefulWidget {
   const InventoryView({Key? key}) : super(key: key);
@@ -20,17 +18,11 @@ class InventoryView extends StatefulWidget {
 
 class _InventoryViewState extends State<InventoryView> {
   List<String>? _selectedItemTypes;
-  late final Stream<List<InventoryItem>> _itemsStream;
   late final FirestoreService _firestoreService;
 
   @override
   void initState() {
     _firestoreService = context.read<FirestoreService>();
-    _itemsStream = _firestoreService.getItemsStream(
-      withNoBorrower: true,
-      whereTypesIn: _selectedItemTypes,
-    );
-    log('creating items stream...');
     super.initState();
   }
 
@@ -38,7 +30,10 @@ class _InventoryViewState extends State<InventoryView> {
   Widget build(BuildContext context) {
     return Center(
       child: StreamBuilder<List<InventoryItem>>(
-        stream: _itemsStream,
+        stream: _firestoreService.getItemsStream(
+          withNoBorrower: true,
+          whereTypesIn: _selectedItemTypes,
+        ),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return ErrorContainer(error: snapshot.error.toString());
@@ -54,8 +49,6 @@ class _InventoryViewState extends State<InventoryView> {
             return EmptyListState(message: "No inventory items to display...");
           }
 
-          log('rendering the list of items...');
-
           return Column(
             children: [
               Row(
@@ -66,11 +59,11 @@ class _InventoryViewState extends State<InventoryView> {
                         .map((entry) => MultiSelectItem(entry.key, entry.key))
                         .toList(),
                     title: Text('Item Type'),
-                    selectedColor: Colors.orange,
+                    selectedColor: Theme.of(context).primaryColor,
                     decoration: BoxDecoration(
                       color: _selectedItemTypes == null
-                          ? Colors.orange.withOpacity(0.2)
-                          : Colors.orange,
+                          ? Theme.of(context).primaryColor.withOpacity(0.2)
+                          : Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.all(Radius.circular(40)),
                     ),
                     buttonText: Text('Item Type'),

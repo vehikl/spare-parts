@@ -14,7 +14,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await configureEmulators();
 
@@ -33,14 +33,12 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    log('creating auth stream...');
     _authStream = FirebaseAuth.instance.authStateChanges();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    log('rebuilding main...');
     return MultiProvider(
       providers: [
         Provider<FirebaseAuth>(create: (_) => FirebaseAuth.instance),
