@@ -1,6 +1,6 @@
 class UserDto {
-  final String name;
   final String id;
+  final String name;
 
-  UserDto({required this.name, required this.id});
+  UserDto({required this.id, required this.name});
 }

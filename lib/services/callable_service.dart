@@ -8,6 +8,8 @@ class CallableService {
   Future<List<UserDto>> getUsers() async {
     final response = await _getUsers.call();
 
-    return response.data as List<UserDto>;
+    return (response.data as List<dynamic>)
+        .map((u) => UserDto(id: u["id"], name: u["name"]))
+        .toList();
   }
 }
