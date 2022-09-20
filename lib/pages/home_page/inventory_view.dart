@@ -20,7 +20,7 @@ class InventoryView extends StatefulWidget {
 
 class _InventoryViewState extends State<InventoryView> {
   List<String>? _selectedItemTypes;
-  List<String>? _selectedUserIds;
+  String? _selectedBorrower;
 
   @override
   void initState() {
@@ -35,8 +35,9 @@ class _InventoryViewState extends State<InventoryView> {
     return Center(
       child: StreamBuilder<List<InventoryItem>>(
         stream: firestoreService.getItemsStream(
-          withNoBorrower: true,
+          withNoBorrower: _selectedBorrower == null,
           whereTypeIn: _selectedItemTypes,
+          whereBorrowerIs: _selectedBorrower,
         ),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -48,10 +49,6 @@ class _InventoryViewState extends State<InventoryView> {
           }
 
           final items = snapshot.data!;
-
-          if (items.isEmpty) {
-            return EmptyListState(message: "No inventory items to display...");
-          }
 
           return Column(
             children: [
@@ -83,25 +80,22 @@ class _InventoryViewState extends State<InventoryView> {
                       if (!snap.hasData || snap.hasError) {
                         return CircularProgressIndicator();
                       }
-                      final users = snap.data!;
 
-                      return MultiSelectDialogField<String>(
-                        chipDisplay: MultiSelectChipDisplay.none(),
-                        items: users
-                            .map((user) => MultiSelectItem(user.id, user.name))
-                            .toList(),
-                        title: Text('Users'),
-                        selectedColor: Theme.of(context).primaryColor,
-                        decoration: BoxDecoration(
-                          color: _selectedItemTypes == null
-                              ? Theme.of(context).primaryColor.withOpacity(0.2)
-                              : Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.all(Radius.circular(40)),
-                        ),
-                        buttonText: Text('Users'),
-                        onConfirm: (results) {
+                      final users = snap.data!;
+                      final dropdownItems = [
+                        DropdownMenuItem(value: null, child: Text("None")),
+                        ...users.map((user) => DropdownMenuItem(
+                              value: user.id,
+                              child: Text(user.name),
+                            ))
+                      ];
+
+                      return DropdownButton<String?>(
+                        value: _selectedBorrower,
+                        items: dropdownItems,
+                        onChanged: (selection) {
                           setState(() {
-                            _selectedUserIds = results.isEmpty ? null : results;
+                            _selectedBorrower = selection;
                           });
                         },
                       );
@@ -109,17 +103,19 @@ class _InventoryViewState extends State<InventoryView> {
                   ),
                 ],
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return InventoryListItem(
-                      item: items[index],
-                      actions: [BorrowItemAction()],
-                    );
-                  },
-                ),
-              ),
+              items.isEmpty
+                  ? EmptyListState(message: "No inventory items to display...")
+                  : Expanded(
+                      child: ListView.builder(
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          return InventoryListItem(
+                            item: items[index],
+                            actions: [BorrowItemAction()],
+                          );
+                        },
+                      ),
+                    ),
             ],
           );
         },
