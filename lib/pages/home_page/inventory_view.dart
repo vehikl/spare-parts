@@ -60,6 +60,7 @@ class _InventoryViewState extends State<InventoryView> {
                         .map((entry) => MultiSelectItem(entry.key, entry.key))
                         .toList(),
                     title: Text('Item Type'),
+                    buttonIcon: Icon(Icons.arrow_drop_down),
                     selectedColor: Theme.of(context).primaryColor,
                     decoration: BoxDecoration(
                       color: _selectedItemTypes == null
