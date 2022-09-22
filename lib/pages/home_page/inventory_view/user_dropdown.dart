@@ -27,7 +27,10 @@ class UserDropdown extends StatelessWidget {
           future: callableService.getUsers(),
           builder: (context, snap) {
             if (!snap.hasData || snap.hasError) {
-              return CircularProgressIndicator();
+              return SizedBox.square(
+                dimension: 20,
+                child: CircularProgressIndicator(strokeWidth: 3),
+              );
             }
 
             final users = snap.data!;

@@ -59,40 +59,41 @@ class _InventoryViewState extends State<InventoryView> {
             ],
           ),
         ),
-        StreamBuilder<List<InventoryItem>>(
-          stream: firestoreService.getItemsStream(
-            withNoBorrower: _selectedBorrower == null,
-            whereTypeIn: _selectedItemTypes,
-            whereBorrowerIs: _selectedBorrower,
-          ),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return ErrorContainer(error: snapshot.error.toString());
-            }
+        Divider(),
+        Expanded(
+          child: StreamBuilder<List<InventoryItem>>(
+            stream: firestoreService.getItemsStream(
+              withNoBorrower: _selectedBorrower == null,
+              whereTypeIn: _selectedItemTypes,
+              whereBorrowerIs: _selectedBorrower,
+            ),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return ErrorContainer(error: snapshot.error.toString());
+              }
 
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
-            }
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-            final items = snapshot.data!;
+              final items = snapshot.data!;
 
-            if (items.isEmpty) {
-              return EmptyListState(
-                message: "No inventory items to display...",
-              );
-            }
+              if (items.isEmpty) {
+                return EmptyListState(
+                  message: "No inventory items to display...",
+                );
+              }
 
-            return Expanded(
-              child: ListView(
+              return ListView(
                 children: items
                     .map((item) => InventoryListItem(
                           item: item,
                           actions: [BorrowItemAction()],
                         ))
                     .toList(),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ],
     );
