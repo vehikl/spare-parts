@@ -41,59 +41,60 @@ class _InventoryViewState extends State<InventoryView> {
   Widget build(BuildContext context) {
     final firestoreService = context.watch<FirestoreService>();
 
-    return Center(
-      child: StreamBuilder<List<InventoryItem>>(
-        stream: firestoreService.getItemsStream(
-          withNoBorrower: _selectedBorrower == null,
-          whereTypeIn: _selectedItemTypes,
-          whereBorrowerIs: _selectedBorrower,
-        ),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return ErrorContainer(error: snapshot.error.toString());
-          }
-
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          }
-
-          final items = snapshot.data!;
-
-          return Column(
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    ItemTypeMultiSelect(
-                      value: _selectedItemTypes,
-                      onConfirm: _handleTypesFilterChanged,
-                    ),
-                    SizedBox(width: 10),
-                    UserDropdown(
-                      value: _selectedBorrower,
-                      onChanged: _handleBorrowerChanged,
-                    ),
-                  ],
-                ),
+              ItemTypeMultiSelect(
+                value: _selectedItemTypes,
+                onConfirm: _handleTypesFilterChanged,
               ),
-              items.isEmpty
-                  ? EmptyListState(message: "No inventory items to display...")
-                  : Expanded(
-                      child: ListView.builder(
-                        itemCount: items.length,
-                        itemBuilder: (context, index) {
-                          return InventoryListItem(
-                            item: items[index],
-                            actions: [BorrowItemAction()],
-                          );
-                        },
-                      ),
-                    ),
+              SizedBox(width: 10),
+              UserDropdown(
+                value: _selectedBorrower,
+                onChanged: _handleBorrowerChanged,
+              ),
             ],
-          );
-        },
-      ),
+          ),
+        ),
+        StreamBuilder<List<InventoryItem>>(
+          stream: firestoreService.getItemsStream(
+            withNoBorrower: _selectedBorrower == null,
+            whereTypeIn: _selectedItemTypes,
+            whereBorrowerIs: _selectedBorrower,
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return ErrorContainer(error: snapshot.error.toString());
+            }
+
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            final items = snapshot.data!;
+
+            if (items.isEmpty) {
+              return EmptyListState(
+                message: "No inventory items to display...",
+              );
+            }
+
+            return Expanded(
+              child: ListView(
+                children: items
+                    .map((item) => InventoryListItem(
+                          item: item,
+                          actions: [BorrowItemAction()],
+                        ))
+                    .toList(),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

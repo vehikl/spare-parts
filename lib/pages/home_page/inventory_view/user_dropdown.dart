@@ -20,31 +20,36 @@ class UserDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     final callableService = context.watch<CallableService>();
 
-    return FutureBuilder<List<UserDto>>(
-      future: callableService.getUsers(),
-      builder: (context, snap) {
-        if (!snap.hasData || snap.hasError) {
-          return CircularProgressIndicator();
-        }
+    return Row(
+      children: [
+        Icon(Icons.person),
+        FutureBuilder<List<UserDto>>(
+          future: callableService.getUsers(),
+          builder: (context, snap) {
+            if (!snap.hasData || snap.hasError) {
+              return CircularProgressIndicator();
+            }
 
-        final users = snap.data!;
-        final dropdownItems = [
-          DropdownMenuItem(value: null, child: Text("No borrower")),
-          ...users.map((user) => DropdownMenuItem(
-                value: user.id,
-                child: Text(user.name),
-              ))
-        ];
+            final users = snap.data!;
+            final dropdownItems = [
+              DropdownMenuItem(value: null, child: Text("No borrower")),
+              ...users.map((user) => DropdownMenuItem(
+                    value: user.id,
+                    child: Text(user.name),
+                  ))
+            ];
 
-        return DropdownButtonHideUnderline(
-          child: DropdownButton<String?>(
-            value: value,
-            items: dropdownItems,
-            onChanged: onChanged,
-            borderRadius: kBorderRadius,
-          ),
-        );
-      },
+            return DropdownButtonHideUnderline(
+              child: DropdownButton<String?>(
+                value: value,
+                items: dropdownItems,
+                onChanged: onChanged,
+                borderRadius: kBorderRadius,
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
