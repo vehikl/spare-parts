@@ -30,3 +30,5 @@ const TextStyle kEmptyListStyle = TextStyle(
   fontSize: 24,
   color: Colors.grey,
 );
+
+final kBorderRadius = BorderRadius.circular(5);

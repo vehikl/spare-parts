@@ -48,7 +48,12 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         title: 'Spare Parts',
-        theme: ThemeData(primarySwatch: kVehiklMaterialColor),
+        theme: ThemeData(
+          primarySwatch: kVehiklMaterialColor,
+          buttonTheme: ButtonThemeData(
+            alignedDropdown: true,
+          ),
+        ),
         home: StreamBuilder<User?>(
           stream: _authStream,
           builder: (context, snapshot) {

@@ -61,17 +61,21 @@ class _InventoryViewState extends State<InventoryView> {
 
           return Column(
             children: [
-              Row(
-                children: [
-                  ItemTypeMultiSelect(
-                    value: _selectedItemTypes,
-                    onConfirm: _handleTypesFilterChanged,
-                  ),
-                  UserDropdown(
-                    value: _selectedBorrower,
-                    onChanged: _handleBorrowerChanged,
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    ItemTypeMultiSelect(
+                      value: _selectedItemTypes,
+                      onConfirm: _handleTypesFilterChanged,
+                    ),
+                    SizedBox(width: 10),
+                    UserDropdown(
+                      value: _selectedBorrower,
+                      onChanged: _handleBorrowerChanged,
+                    ),
+                  ],
+                ),
               ),
               items.isEmpty
                   ? EmptyListState(message: "No inventory items to display...")

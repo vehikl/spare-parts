@@ -14,6 +14,8 @@ class ItemTypeMultiSelect extends StatelessWidget {
     required this.onConfirm,
   });
 
+  bool get isValueSet => value != null;
+
   @override
   Widget build(BuildContext context) {
     return MultiSelectDialogField<String>(
@@ -25,12 +27,14 @@ class ItemTypeMultiSelect extends StatelessWidget {
       buttonIcon: Icon(Icons.arrow_drop_down),
       selectedColor: Theme.of(context).primaryColor,
       decoration: BoxDecoration(
-        color: value == null
-            ? Theme.of(context).primaryColor.withOpacity(0.2)
-            : Theme.of(context).primaryColor,
-        borderRadius: BorderRadius.all(Radius.circular(40)),
+        borderRadius: kBorderRadius,
+        color:
+            isValueSet ? Theme.of(context).primaryColor.withOpacity(0.3) : null,
       ),
-      buttonText: Text('Item Type'),
+      buttonText: Text(
+        'Item Type',
+        style: Theme.of(context).textTheme.subtitle1,
+      ),
       onConfirm: onConfirm,
     );
   }

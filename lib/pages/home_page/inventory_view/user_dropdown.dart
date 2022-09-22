@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/services/callable_service.dart';
+import 'package:spare_parts/utilities/constants.dart';
 
 class UserDropdown extends StatelessWidget {
   final String? value;
@@ -12,6 +13,8 @@ class UserDropdown extends StatelessWidget {
     required this.value,
     required this.onChanged,
   });
+
+  bool get isValueSet => value != null;
 
   @override
   Widget build(BuildContext context) {
@@ -26,17 +29,20 @@ class UserDropdown extends StatelessWidget {
 
         final users = snap.data!;
         final dropdownItems = [
-          DropdownMenuItem(value: null, child: Text("None")),
+          DropdownMenuItem(value: null, child: Text("No borrower")),
           ...users.map((user) => DropdownMenuItem(
                 value: user.id,
                 child: Text(user.name),
               ))
         ];
 
-        return DropdownButton<String?>(
-          value: value,
-          items: dropdownItems,
-          onChanged: onChanged,
+        return DropdownButtonHideUnderline(
+          child: DropdownButton<String?>(
+            value: value,
+            items: dropdownItems,
+            onChanged: onChanged,
+            borderRadius: kBorderRadius,
+          ),
         );
       },
     );
