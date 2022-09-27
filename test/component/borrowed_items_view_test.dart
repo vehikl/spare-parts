@@ -15,12 +15,19 @@ class MockFirestoreService extends Mock implements FirestoreService {
   Stream<List<InventoryItem>> getItemsStream({
     String? whereBorrowerIs,
     bool? withNoBorrower,
+    List<String>? whereTypeIn,
+    List<String>? whereUsersIdsIn,
   }) =>
       super.noSuchMethod(
         Invocation.method(
           #getItemsStream,
           [],
-          {#whereBorrowerIs: whereBorrowerIs, #withNoBorrower: withNoBorrower},
+          {
+            #whereBorrowerIs: whereBorrowerIs,
+            #withNoBorrower: withNoBorrower,
+            #whereTypeIn: whereTypeIn,
+            #whereUsersIdsIn: whereUsersIdsIn,
+          },
         ),
         returnValue: Stream<List<InventoryItem>>.empty(),
       );
