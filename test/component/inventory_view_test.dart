@@ -253,38 +253,39 @@ void main() {
       testWidgets(
         'Shows only items of the selected types',
         (WidgetTester tester) async {
-          final authMock = MockFirebaseAuth();
-      final userMock = MockUser();
+          final deskItem = InventoryItem(id: 'Desk#123', type: 'Desk');
+          final monitorItem = InventoryItem(id: 'Monitor#123', type: 'Monitor');
+          await firestore.collection('items').doc().set(deskItem.toFirestore());  
+          await firestore.collection('items').doc().set(monitorItem.toFirestore());  
 
-      when(authMock.currentUser).thenReturn(userMock);
-      when(userMock.uid).thenReturn('foo');
+          await pumpPage(
+            Scaffold(body: InventoryView()),
+            tester,
+            userRole: UserRole.admin,
+            firestore: firestore,
+          );
 
-      await pumpPage(
-        Scaffold(body: InventoryView()),
-        tester,
-        userRole: UserRole.user,
-        firestore: firestore,
-        auth: authMock,
-      );
+          expect(find.text('Chair#123'), findsOneWidget);
+          expect(find.text(deskItem.id), findsOneWidget);
+          expect(find.text(monitorItem.id), findsOneWidget);
 
-      final chairListItem = find.ancestor(
-        of: find.text('Chair#123'),
-        matching: find.byType(ListTile),
-      );
-      final optionsButton = find.descendant(
-        of: chairListItem,
-        matching: find.byIcon(Icons.more_vert),
-      );
+          final deskFilterChip = find.ancestor(
+            of: find.byIcon(inventoryItems['Desk']!),
+            matching: find.byType(FilterChip),
+          );
+          final chairFilterChip = find.ancestor(
+            of: find.byIcon(inventoryItems['Chair']!),
+            matching: find.byType(FilterChip),
+          );
 
-      await tester.tap(optionsButton);
-      await tester.pumpAndSettle();
+          await tester.tap(deskFilterChip);
+          await tester.pumpAndSettle();
+          await tester.tap(chairFilterChip);
+          await tester.pumpAndSettle();
 
-      final borrowButton = find.text('Borrow');
-      await tester.tap(borrowButton);
-      await tester.pumpAndSettle();
-
-      expect(find.text('Chair#123'), findsNothing);
-      expect(find.text('Item has been successfully borrowed'), findsOneWidget);
+          expect(find.text('Chair#123'), findsOneWidget);
+          expect(find.text(deskItem.id), findsOneWidget);
+          expect(find.text(monitorItem.id), findsNothing);
         },
       );
     });
