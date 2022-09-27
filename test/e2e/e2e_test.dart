@@ -7,7 +7,8 @@ import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
-import '../test_helpers.dart';
+import '../helpers/mocks/mocks.dart';
+import '../helpers/test_helpers.dart';
 
 class MockUser extends Mock implements User {
   @override

@@ -10,7 +10,7 @@ import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
-class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+import 'mocks/mocks.dart';
 
 class MockCallableService extends Mock implements CallableService {
   @override
