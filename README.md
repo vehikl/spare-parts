@@ -24,3 +24,10 @@ If you intend to only run the app locally, Firebase Simulators are coming soon. 
 
 - `flutterfire configure` - fetches Firebase project configuration
 - `flutter run` - runs the app on the selected device
+
+### VS Code extensions
+
+- [Flutter](https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter)
+- [Dart](https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code)
+- [Coverage Gutters](https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters)
+- [Flutter Coverage](https://marketplace.visualstudio.com/items?itemName=Flutterando.flutter-coverage)
