@@ -31,7 +31,7 @@ class _InventoryViewState extends State<InventoryView> {
     });
   }
 
-  void _handleBorrowerChanged(String? newBorrower) {
+  void _handleBorrowerFilterChanged(String? newBorrower) {
     setState(() {
       _selectedBorrower = newBorrower;
     });
@@ -54,7 +54,7 @@ class _InventoryViewState extends State<InventoryView> {
               SizedBox(width: 10),
               UserDropdown(
                 value: _selectedBorrower,
-                onChanged: _handleBorrowerChanged,
+                onChanged: _handleBorrowerFilterChanged,
               ),
             ],
           ),
