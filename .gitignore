@@ -46,3 +46,4 @@ app.*.map.json
 **/firebase_options.dart
 
 service-account.json
+coverage/
