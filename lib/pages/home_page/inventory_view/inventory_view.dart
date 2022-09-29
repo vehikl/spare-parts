@@ -19,6 +19,7 @@ class InventoryView extends StatefulWidget {
 class _InventoryViewState extends State<InventoryView> {
   List<String>? _selectedItemTypes;
   String? _selectedBorrower;
+  String searchQuery = '';
 
   @override
   void initState() {
@@ -43,6 +44,18 @@ class _InventoryViewState extends State<InventoryView> {
 
     return Column(
       children: [
+        Row(children: [
+          Expanded(
+            child: TextField(
+              decoration: InputDecoration(hintText: 'Search'),
+              onChanged: (newValue) {
+                setState(() {
+                  searchQuery = newValue;
+                });
+              },
+            ),
+          ),
+        ]),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -84,8 +97,11 @@ class _InventoryViewState extends State<InventoryView> {
                 );
               }
 
+              final filteredItems =
+                  items.where((i) => i.id.contains(searchQuery));
+
               return ListView(
-                children: items
+                children: filteredItems
                     .map((item) => InventoryListItem(
                           item: item,
                           actions: [BorrowItemAction()],

@@ -14,10 +14,11 @@ import '../helpers/test_helpers.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
+  late InventoryItem chairItem;
 
   setUp(() async {
-    final testItem = InventoryItem(id: 'Chair#123', type: 'Chair');
-    await firestore.collection('items').doc().set(testItem.toFirestore());
+    chairItem = InventoryItem(id: 'Chair#123', type: 'Chair');
+    await firestore.collection('items').doc().set(chairItem.toFirestore());
   });
 
   tearDown(() async {
@@ -33,7 +34,7 @@ void main() {
       await pumpPage(Scaffold(body: InventoryView()), tester,
           firestore: firestore);
 
-      expect(find.text('Chair#123'), findsOneWidget);
+      expect(find.text(chairItem.id), findsOneWidget);
     },
   );
 
@@ -93,7 +94,7 @@ void main() {
     testWidgets(
       'Edits an inventory item',
       (WidgetTester tester) async {
-        const oldItemId = 'Chair#123';
+        final oldItemId = chairItem.id;
         const newItemId = 'Chair#321';
 
         await pumpPage(Scaffold(body: InventoryView()), tester,
@@ -148,7 +149,7 @@ void main() {
     testWidgets(
       'Saves the initial value of the item id if not updated',
       (WidgetTester tester) async {
-        const oldItemId = 'Chair#123';
+        final oldItemId = chairItem.id;
 
         await pumpPage(Scaffold(body: InventoryView()), tester,
             userRole: UserRole.admin, firestore: firestore);
@@ -191,7 +192,7 @@ void main() {
             userRole: UserRole.admin, firestore: firestore);
 
         final chairListItem = find.ancestor(
-          of: find.text('Chair#123'),
+          of: find.text(chairItem.id),
           matching: find.byType(ListTile),
         );
         final optionsButton = find.descendant(
@@ -206,7 +207,7 @@ void main() {
         await tester.tap(deleteButton);
         await tester.pumpAndSettle();
 
-        expect(find.text('Chair#123'), findsNothing);
+        expect(find.text(chairItem.id), findsNothing);
       },
     );
   });
@@ -229,7 +230,7 @@ void main() {
       );
 
       final chairListItem = find.ancestor(
-        of: find.text('Chair#123'),
+        of: find.text(chairItem.id),
         matching: find.byType(ListTile),
       );
       final optionsButton = find.descendant(
@@ -244,7 +245,7 @@ void main() {
       await tester.tap(borrowButton);
       await tester.pumpAndSettle();
 
-      expect(find.text('Chair#123'), findsNothing);
+      expect(find.text(chairItem.id), findsNothing);
       expect(find.text('Item has been successfully borrowed'), findsOneWidget);
     },
   );
@@ -256,8 +257,11 @@ void main() {
         (WidgetTester tester) async {
           final deskItem = InventoryItem(id: 'Desk#123', type: 'Desk');
           final monitorItem = InventoryItem(id: 'Monitor#123', type: 'Monitor');
-          await firestore.collection('items').doc().set(deskItem.toFirestore());  
-          await firestore.collection('items').doc().set(monitorItem.toFirestore());  
+          await firestore.collection('items').doc().set(deskItem.toFirestore());
+          await firestore
+              .collection('items')
+              .doc()
+              .set(monitorItem.toFirestore());
 
           await pumpPage(
             Scaffold(body: InventoryView()),
@@ -266,7 +270,7 @@ void main() {
             firestore: firestore,
           );
 
-          expect(find.text('Chair#123'), findsOneWidget);
+          expect(find.text(chairItem.id), findsOneWidget);
           expect(find.text(deskItem.id), findsOneWidget);
           expect(find.text(monitorItem.id), findsOneWidget);
 
@@ -284,7 +288,7 @@ void main() {
           await tester.tap(chairFilterChip);
           await tester.pumpAndSettle();
 
-          expect(find.text('Chair#123'), findsOneWidget);
+          expect(find.text(chairItem.id), findsOneWidget);
           expect(find.text(deskItem.id), findsOneWidget);
           expect(find.text(monitorItem.id), findsNothing);
         },
@@ -297,14 +301,20 @@ void main() {
         (WidgetTester tester) async {
           final user1 = UserDto(id: 'first', name: 'First');
           final user2 = UserDto(id: 'second', name: 'Second');
-          
-          final callableService = MockCallableService();
-          when(callableService.getUsers()).thenAnswer((_) => Future.value([user1, user2]));
 
-          final deskItem = InventoryItem(id: 'Desk#123', type: 'Desk', borrower: user1.id);
-          final monitorItem = InventoryItem(id: 'Monitor#123', type: 'Monitor', borrower: user2.id);
-          await firestore.collection('items').doc().set(deskItem.toFirestore());  
-          await firestore.collection('items').doc().set(monitorItem.toFirestore());  
+          final callableService = MockCallableService();
+          when(callableService.getUsers())
+              .thenAnswer((_) => Future.value([user1, user2]));
+
+          final deskItem =
+              InventoryItem(id: 'Desk#123', type: 'Desk', borrower: user1.id);
+          final monitorItem = InventoryItem(
+              id: 'Monitor#123', type: 'Monitor', borrower: user2.id);
+          await firestore.collection('items').doc().set(deskItem.toFirestore());
+          await firestore
+              .collection('items')
+              .doc()
+              .set(monitorItem.toFirestore());
 
           await pumpPage(
             Scaffold(body: InventoryView()),
@@ -322,11 +332,47 @@ void main() {
           await tester.tap(find.text(user1.name).last);
           await tester.pumpAndSettle();
 
-          expect(find.text('Chair#123'), findsNothing);
+          expect(find.text(chairItem.id), findsNothing);
           expect(find.text(deskItem.id), findsOneWidget);
           expect(find.text(monitorItem.id), findsNothing);
         },
       );
+    });
+  });
+
+  group('Searching for items', () {
+    testWidgets('Should return items with ids containing the query',
+        (WidgetTester tester) async {
+      final deskItem = InventoryItem(id: 'Desk#145', type: 'Desk');
+      final monitorItem = InventoryItem(id: 'Monitor#999', type: 'Monitor');
+      await firestore.collection('items').doc().set(deskItem.toFirestore());
+      await firestore.collection('items').doc().set(monitorItem.toFirestore());
+
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.user,
+        firestore: firestore,
+      );
+
+      final searchField = find.byType(TextField);
+      await tester.enterText(searchField, '#');
+      await tester.pumpAndSettle();
+
+      var listItems = find.byType(InventoryListItem);
+      expect(listItems, findsNWidgets(3));
+
+      await tester.enterText(searchField, '#1');
+      await tester.pumpAndSettle();
+
+      listItems = find.byType(InventoryListItem);
+      expect(listItems, findsNWidgets(2));
+
+      await tester.enterText(searchField, '#14');
+      await tester.pumpAndSettle();
+
+      listItems = find.byType(InventoryListItem);
+      expect(listItems, findsNWidgets(1));
     });
   });
 }
