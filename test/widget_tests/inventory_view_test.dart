@@ -2,6 +2,7 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
@@ -284,6 +285,44 @@ void main() {
           await tester.pumpAndSettle();
 
           expect(find.text('Chair#123'), findsOneWidget);
+          expect(find.text(deskItem.id), findsOneWidget);
+          expect(find.text(monitorItem.id), findsNothing);
+        },
+      );
+    });
+
+    group('By user', () {
+      testWidgets(
+        'Shows only items where borrower matches the selected user',
+        (WidgetTester tester) async {
+          final user1 = UserDto(id: 'first', name: 'First');
+          final user2 = UserDto(id: 'second', name: 'Second');
+          
+          final callableService = MockCallableService();
+          when(callableService.getUsers()).thenAnswer((_) => Future.value([user1, user2]));
+
+          final deskItem = InventoryItem(id: 'Desk#123', type: 'Desk', borrower: user1.id);
+          final monitorItem = InventoryItem(id: 'Monitor#123', type: 'Monitor', borrower: user2.id);
+          await firestore.collection('items').doc().set(deskItem.toFirestore());  
+          await firestore.collection('items').doc().set(monitorItem.toFirestore());  
+
+          await pumpPage(
+            Scaffold(body: InventoryView()),
+            tester,
+            userRole: UserRole.admin,
+            firestore: firestore,
+            callableService: callableService,
+          );
+
+          final borrowerDropdown = find.byType(DropdownButton<String?>);
+
+          await tester.tap(borrowerDropdown);
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.text(user1.name).last);
+          await tester.pumpAndSettle();
+
+          expect(find.text('Chair#123'), findsNothing);
           expect(find.text(deskItem.id), findsOneWidget);
           expect(find.text(monitorItem.id), findsNothing);
         },
