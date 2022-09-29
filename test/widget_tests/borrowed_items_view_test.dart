@@ -5,26 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
-import 'package:spare_parts/services/firestore_service.dart';
-import '../test_helpers.dart';
-
-class MockFirebaseAuth extends Mock implements FirebaseAuth {}
-
-class MockFirestoreService extends Mock implements FirestoreService {
-  @override
-  Stream<List<InventoryItem>> getItemsStream({
-    String? whereBorrowerIs,
-    bool? withNoBorrower,
-  }) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #getItemsStream,
-          [],
-          {#whereBorrowerIs: whereBorrowerIs, #withNoBorrower: withNoBorrower},
-        ),
-        returnValue: Stream<List<InventoryItem>>.empty(),
-      );
-}
+import '../helpers/mocks/mocks.dart';
+import '../helpers/test_helpers.dart';
 
 class MockUser extends Mock implements User {
   @override

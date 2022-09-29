@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
-import '../test_helpers.dart';
+import '../helpers/test_helpers.dart';
 
 void main() async {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();

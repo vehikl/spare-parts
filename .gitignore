@@ -44,3 +44,6 @@ app.*.map.json
 # Paranoid users
 **/google-services.json
 **/firebase_options.dart
+
+service-account.json
+coverage/
