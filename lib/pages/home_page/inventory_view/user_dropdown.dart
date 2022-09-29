@@ -14,8 +14,6 @@ class UserDropdown extends StatelessWidget {
     required this.onChanged,
   });
 
-  bool get isValueSet => value != null;
-
   @override
   Widget build(BuildContext context) {
     final callableService = context.watch<CallableService>();
