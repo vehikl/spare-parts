@@ -374,5 +374,25 @@ void main() {
       listItems = find.byType(InventoryListItem);
       expect(listItems, findsNWidgets(1));
     });
+
+    testWidgets('Should display a clear button if query is not empty',
+        (WidgetTester tester) async {
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.user,
+        firestore: firestore,
+      );
+
+      final searchButton = find.byIcon(Icons.search);
+      expect(searchButton, findsOneWidget);
+
+      final searchField = find.byType(TextField);
+      await tester.enterText(searchField, '#');
+      await tester.pumpAndSettle();
+
+      final clearButton = find.byIcon(Icons.clear);
+      expect(clearButton, findsOneWidget);
+    });
   });
 }
