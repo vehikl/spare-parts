@@ -394,5 +394,49 @@ void main() {
       final clearButton = find.byIcon(Icons.clear);
       expect(clearButton, findsOneWidget);
     });
+
+    testWidgets('Should clear search query when clear button tapped',
+        (WidgetTester tester) async {
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.user,
+        firestore: firestore,
+      );
+
+      const query = '#';
+
+      final searchField = find.byType(TextField);
+      await tester.enterText(searchField, query);
+      await tester.pumpAndSettle();
+
+      final clearButton = find.byIcon(Icons.clear);
+      await tester.tap(clearButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text(query), findsNothing);
+    });
+
+    testWidgets('Should render all inventory items when clear button tapped',
+        (WidgetTester tester) async {
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.user,
+        firestore: firestore,
+      );
+
+      const query = '#';
+
+      final searchField = find.byType(TextField);
+      await tester.enterText(searchField, query);
+      await tester.pumpAndSettle();
+
+      final clearButton = find.byIcon(Icons.clear);
+      await tester.tap(clearButton);
+      await tester.pumpAndSettle();
+
+      // TODO: assert that all inventory items are rendered
+    }, skip: true);
   });
 }
