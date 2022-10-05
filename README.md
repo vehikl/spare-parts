@@ -1,29 +1,51 @@
 # Vehikl Spare Parts
 
-This application is an inventory tracker for the Greater Vehikl team. Chairs, desks, monitors and much more all in one place.
+This application is an inventory tracker for the Greater Vehikl Team. Chairs, desks, monitors and much more all in one place.
 
 
 ## Development setup
 
 ### Requirements
 
-- Flutter v3 [here](https://docs.flutter.dev/get-started/install)
+- Flutter v3 [install here](https://docs.flutter.dev/get-started/install)
 - Firebase Tools: `npm i -g firebase-tools`
 - FlutterFire CLI: `dart pub global activate flutterfire_cli`
 - Optional (but recommended): VS Code or Android Studio for better tooling around Flutter development
 
 ### Setup
 
-If you intend to only run the app locally, Firebase Simulators are coming soon. If you want to run the production app, make sure you have access to the production Spare Parts Firebase project.
+#### Local
 
-1. Run `firebase login` and make sure your user has access to the Spare Parts firebase project.
-2. Run `flutterfire configure` - this fetches Firebase configuration files (`google-services.json` and `flutter_options.dart`) for the specified project.
-3. Use your IDE to run the app or do it through the terminal: `flutter run`. 
+1. Start the Firebase emulators and seed data from `/emulator_data`:
+```
+firebase emulators:start --import ./emulator_data
+```
 
-### Useful Commands
+2. Run the app:
+```
+flutter run -d <device>
+``` 
+or run it through your favourite IDE.
 
-- `flutterfire configure` - fetches Firebase project configuration
-- `flutter run` - runs the app on the selected device
+#### Production
+
+If you want to run the production app, make sure you have access to the production Spare Parts Firebase project.
+
+1. Authenticate with Firebase:
+```
+firebase login
+```
+
+2. Fetch Firebase configuration files (`google-services.json` and `flutter_options.dart`):
+```
+flutterfire configure
+```
+
+3. Run the app:
+```
+flutter run -d <device>
+``` 
+or run it through your favourite IDE.
 
 ### VS Code extensions
 
@@ -31,3 +53,7 @@ If you intend to only run the app locally, Firebase Simulators are coming soon. 
 - [Dart](https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code)
 - [Coverage Gutters](https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters)
 - [Flutter Coverage](https://marketplace.visualstudio.com/items?itemName=Flutterando.flutter-coverage)
+
+## Contributors
+
+Coming Soon...
