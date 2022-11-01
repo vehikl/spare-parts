@@ -44,8 +44,12 @@ void main() {
       (WidgetTester tester) async {
         const itemId = '21DSAdd4';
 
-        await pumpPage(HomePage(), tester,
-            userRole: UserRole.admin, firestore: firestore);
+        await pumpPage(
+          HomePage(),
+          tester,
+          userRole: UserRole.admin,
+          firestore: firestore,
+        );
 
         final fab = find.byIcon(Icons.add);
 
@@ -59,7 +63,10 @@ void main() {
         final deskOption = find.text('Desk').last;
         await tester.tap(deskOption);
 
-        final idInput = find.byType(TextField);
+        final idInput = find.ancestor(
+          of: find.text('ID'),
+          matching: find.byType(TextFormField),
+        );
         await tester.enterText(idInput, itemId);
 
         final addButton = find.text('Save');
@@ -116,7 +123,10 @@ void main() {
         await tester.tap(editButton);
         await tester.pumpAndSettle();
 
-        final idInput = find.byType(TextField);
+        final idInput = find.ancestor(
+          of: find.text('ID'),
+          matching: find.byType(TextFormField),
+        );
         final idInputText = find.descendant(
           of: idInput,
           matching: find.text(oldItemId),
