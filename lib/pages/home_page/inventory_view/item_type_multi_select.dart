@@ -13,7 +13,7 @@ class ItemTypeMultiSelect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: inventoryItems.entries
+      children: itemTypes.entries
           .map((entry) => Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: FilterChip(

@@ -90,7 +90,7 @@ class InventoryListItem extends StatelessWidget {
         allActions.where((action) => action.allowedRoles.contains(userRole));
 
     return ListTile(
-      leading: Icon(inventoryItems[item.type]),
+      leading: Icon(itemTypes[item.type]),
       title: Text(
         item.id,
         style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 22),

@@ -291,11 +291,11 @@ void main() {
           expect(find.text(monitorItem.id), findsOneWidget);
 
           final deskFilterChip = find.ancestor(
-            of: find.byIcon(inventoryItems['Desk']!),
+            of: find.byIcon(itemTypes['Desk']!),
             matching: find.byType(FilterChip),
           );
           final chairFilterChip = find.ancestor(
-            of: find.byIcon(inventoryItems['Chair']!),
+            of: find.byIcon(itemTypes['Chair']!),
             matching: find.byType(FilterChip),
           );
 
