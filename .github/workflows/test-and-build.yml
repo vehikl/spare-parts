@@ -53,16 +53,16 @@ jobs:
         with:
           node-version: 16
 
-      - name: Chage directory
-        run: cd functions
-
       - name: Install dependencies
+        working-directory: ./functions
         run: npm i
 
       - name: Lint
+        working-directory: ./functions
         run: npm run lint
 
       - name: Build
+        working-directory: ./functions
         run: npm run build
 
   # TODO: set up provisioning profiles
