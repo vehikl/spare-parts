@@ -19,12 +19,9 @@ class InventoryView extends StatefulWidget {
 class _InventoryViewState extends State<InventoryView> {
   List<String>? _selectedItemTypes;
   String? _selectedBorrower;
-  String searchQuery = '';
+  String _searchQuery = '';
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  TextEditingController _searchFieldController = TextEditingController();
 
   void _handleTypesFilterChanged(List<String> newTypes) {
     setState(() {
@@ -46,18 +43,37 @@ class _InventoryViewState extends State<InventoryView> {
       children: [
         Row(children: [
           Expanded(
-            child: TextField(
-              decoration: InputDecoration(hintText: 'Search'),
-              onChanged: (newValue) {
-                setState(() {
-                  searchQuery = newValue;
-                });
-              },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _searchFieldController,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(100)),
+                  ),
+                  suffixIcon: IconButton(
+                    icon:
+                        Icon(_searchQuery.isEmpty ? Icons.search : Icons.clear),
+                    onPressed: () {
+                      setState(() {
+                        _searchFieldController.clear();
+                        _searchQuery = '';
+                      });
+                    },
+                  ),
+                ),
+                onChanged: (newValue) {
+                  setState(() {
+                    _searchQuery = newValue;
+                  });
+                },
+              ),
             ),
           ),
         ]),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
             children: [
               ItemTypeMultiSelect(
@@ -97,8 +113,8 @@ class _InventoryViewState extends State<InventoryView> {
                 );
               }
 
-              final filteredItems =
-                  items.where((i) => i.id.contains(searchQuery));
+              final filteredItems = items.where((i) =>
+                  i.id.toLowerCase().contains(_searchQuery.toLowerCase()));
 
               return ListView(
                 children: filteredItems
