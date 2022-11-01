@@ -36,7 +36,7 @@ class InventoryListItem extends StatelessWidget {
           children: [
             Text('Interaction History', style: TextStyle(fontSize: 20)),
             StreamBuilder<List<Event>>(
-              stream: firestoreService.getEventsStream(item.firestoreId),
+              stream: firestoreService.getEventsStream(item.id),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return ErrorContainer(error: snapshot.error.toString());

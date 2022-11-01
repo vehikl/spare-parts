@@ -43,7 +43,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
           await firestoreService.addItem(item);
         } else {
           final item = InventoryItem(id: idValue, type: dropdownValue);
-          await firestoreService.updateItem(widget.item?.firestoreId, item);
+          await firestoreService.updateItem(widget.item?.id, item);
         }
         Navigator.of(context).pop();
       } catch (e) {

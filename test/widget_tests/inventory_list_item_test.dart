@@ -63,7 +63,7 @@ void main() {
 
       final itemDocReference =
           await firestore.collection('items').add(testItem.toFirestore());
-      testItem.firestoreId = itemDocReference.id;
+      testItem.id = itemDocReference.id;
 
       final event = Event(
           issuerId: 'foo',
