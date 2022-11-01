@@ -30,11 +30,12 @@ class FirestoreService {
   }
 
   addItem(InventoryItem item) async {
-    await itemsCollection.add(item.toFirestore());
+    await itemsCollection.doc(item.id).set(item.toFirestore());
   }
 
   updateItem(String? itemId, InventoryItem item) async {
-    await getItemDocumentReference(itemId).set(item.toFirestore());
+    await deleteItem(itemId);
+    await addItem(item);
   }
 
   Stream<List<InventoryItem>> getItemsStream({

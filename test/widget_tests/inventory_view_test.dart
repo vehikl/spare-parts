@@ -18,7 +18,10 @@ void main() {
 
   setUp(() async {
     chairItem = InventoryItem(id: 'Chair#123', type: 'Chair');
-    await firestore.collection('items').doc().set(chairItem.toFirestore());
+    await firestore
+        .collection('items')
+        .doc(chairItem.id)
+        .set(chairItem.toFirestore());
   });
 
   tearDown(() async {
@@ -267,10 +270,13 @@ void main() {
         (WidgetTester tester) async {
           final deskItem = InventoryItem(id: 'Desk#123', type: 'Desk');
           final monitorItem = InventoryItem(id: 'Monitor#123', type: 'Monitor');
-          await firestore.collection('items').doc().set(deskItem.toFirestore());
           await firestore
               .collection('items')
-              .doc()
+              .doc(deskItem.id)
+              .set(deskItem.toFirestore());
+          await firestore
+              .collection('items')
+              .doc(monitorItem.id)
               .set(monitorItem.toFirestore());
 
           await pumpPage(
@@ -320,10 +326,13 @@ void main() {
               InventoryItem(id: 'Desk#123', type: 'Desk', borrower: user1.id);
           final monitorItem = InventoryItem(
               id: 'Monitor#123', type: 'Monitor', borrower: user2.id);
-          await firestore.collection('items').doc().set(deskItem.toFirestore());
           await firestore
               .collection('items')
-              .doc()
+              .doc(deskItem.id)
+              .set(deskItem.toFirestore());
+          await firestore
+              .collection('items')
+              .doc(monitorItem.id)
               .set(monitorItem.toFirestore());
 
           await pumpPage(
@@ -355,8 +364,14 @@ void main() {
         (WidgetTester tester) async {
       final deskItem = InventoryItem(id: 'Desk#145', type: 'Desk');
       final monitorItem = InventoryItem(id: 'Monitor#999', type: 'Monitor');
-      await firestore.collection('items').doc().set(deskItem.toFirestore());
-      await firestore.collection('items').doc().set(monitorItem.toFirestore());
+      await firestore
+          .collection('items')
+          .doc(deskItem.id)
+          .set(deskItem.toFirestore());
+      await firestore
+          .collection('items')
+          .doc(monitorItem.id)
+          .set(monitorItem.toFirestore());
 
       await pumpPage(
         Scaffold(body: InventoryView()),
@@ -453,8 +468,7 @@ void main() {
       expect(listItems, findsOneWidget);
     });
 
-    testWidgets('should be case insensitive',
-        (WidgetTester tester) async {
+    testWidgets('should be case insensitive', (WidgetTester tester) async {
       await pumpPage(
         Scaffold(body: InventoryView()),
         tester,
@@ -469,7 +483,6 @@ void main() {
 
       var listItems = find.byType(InventoryListItem);
       expect(listItems, findsOneWidget);
-
 
       query = chairItem.id.toUpperCase();
       await tester.enterText(searchField, query);

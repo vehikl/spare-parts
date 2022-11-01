@@ -22,14 +22,12 @@ void main() {
   const uid = 'qwe123';
 
   setUp(() async {
-    await firestore.collection('items').doc().set({
-      'id': 'Chair#123',
+    await firestore.collection('items').doc('Chair#123').set({
       'type': 'Chair',
       'borrower': uid,
     });
 
-    await firestore.collection('items').doc().set({
-      'id': 'Desk#321',
+    await firestore.collection('items').doc('Desk#321').set({
       'type': 'Desk',
       'borrower': null,
     });
