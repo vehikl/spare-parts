@@ -49,7 +49,9 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         title: 'Spare Parts',
         theme: ThemeData(
-          primarySwatch: kVehiklMaterialColor,
+          colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: kVehiklMaterialColor,
+          ),
           buttonTheme: ButtonThemeData(
             alignedDropdown: true,
           ),
