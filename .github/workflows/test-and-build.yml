@@ -50,18 +50,20 @@ jobs:
 
       - name: Set up Node
         uses: actions/setup-node@v3
-        with: 
+        with:
           node-version: 16
-      
+
       - name: Chage directory
         run: cd functions
+
+      - name: Install dependencies
+        run: npm i
 
       - name: Lint
         run: npm run lint
 
       - name: Build
         run: npm run build
-
 
   # TODO: set up provisioning profiles
   # build_ios:
