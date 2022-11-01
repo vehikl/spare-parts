@@ -113,8 +113,8 @@ class _InventoryViewState extends State<InventoryView> {
                 );
               }
 
-              final filteredItems =
-                  items.where((i) => i.id.contains(_searchQuery));
+              final filteredItems = items.where((i) =>
+                  i.id.toLowerCase().contains(_searchQuery.toLowerCase()));
 
               return ListView(
                 children: filteredItems

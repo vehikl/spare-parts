@@ -351,7 +351,7 @@ void main() {
   });
 
   group('Searching for items', () {
-    testWidgets('Should return items with ids containing the query',
+    testWidgets('should return items with ids containing the query',
         (WidgetTester tester) async {
       final deskItem = InventoryItem(id: 'Desk#145', type: 'Desk');
       final monitorItem = InventoryItem(id: 'Monitor#999', type: 'Monitor');
@@ -385,7 +385,7 @@ void main() {
       expect(listItems, findsNWidgets(1));
     });
 
-    testWidgets('Should display a clear button if query is not empty',
+    testWidgets('should display a clear button if query is not empty',
         (WidgetTester tester) async {
       await pumpPage(
         Scaffold(body: InventoryView()),
@@ -405,7 +405,7 @@ void main() {
       expect(clearButton, findsOneWidget);
     });
 
-    testWidgets('Should clear search query when clear button tapped',
+    testWidgets('should clear search query when clear button tapped',
         (WidgetTester tester) async {
       await pumpPage(
         Scaffold(body: InventoryView()),
@@ -427,7 +427,7 @@ void main() {
       expect(find.text(query), findsNothing);
     });
 
-    testWidgets('Should render all inventory items when clear button tapped',
+    testWidgets('should render all inventory items when clear button tapped',
         (WidgetTester tester) async {
       await pumpPage(
         Scaffold(body: InventoryView()),
@@ -436,17 +436,47 @@ void main() {
         firestore: firestore,
       );
 
-      const query = '#';
+      const query = '???';
 
       final searchField = find.byType(TextField);
       await tester.enterText(searchField, query);
       await tester.pumpAndSettle();
 
+      var listItems = find.byType(InventoryListItem);
+      expect(listItems, findsNothing);
+
       final clearButton = find.byIcon(Icons.clear);
       await tester.tap(clearButton);
       await tester.pumpAndSettle();
 
-      // TODO: assert that all inventory items are rendered
-    }, skip: true);
+      listItems = find.byType(InventoryListItem);
+      expect(listItems, findsOneWidget);
+    });
+
+    testWidgets('should be case insensitive',
+        (WidgetTester tester) async {
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.user,
+        firestore: firestore,
+      );
+
+      var query = chairItem.id.toLowerCase();
+      final searchField = find.byType(TextField);
+      await tester.enterText(searchField, query);
+      await tester.pumpAndSettle();
+
+      var listItems = find.byType(InventoryListItem);
+      expect(listItems, findsOneWidget);
+
+
+      query = chairItem.id.toUpperCase();
+      await tester.enterText(searchField, query);
+      await tester.pumpAndSettle();
+
+      listItems = find.byType(InventoryListItem);
+      expect(listItems, findsOneWidget);
+    });
   });
 }
