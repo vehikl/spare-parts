@@ -48,9 +48,11 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Inventory'),
         actions: [
-          IconButton(
+          TextButton.icon(
+            label: Text('Logout'),
             onPressed: () => handleSignOut(auth),
             icon: const Icon(Icons.logout),
+            style: TextButton.styleFrom(foregroundColor: Colors.white),
           )
         ],
       ),
