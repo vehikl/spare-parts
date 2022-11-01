@@ -1,36 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/item_type_filter_dialog.dart';
 
 class ItemTypeMultiSelect extends StatelessWidget {
   final List<String>? value;
   final void Function(List<String>) onConfirm;
+
   const ItemTypeMultiSelect({
     super.key,
     required this.value,
     required this.onConfirm,
   });
 
+  void _handleTypesSelect(BuildContext context) async {
+    final newSelectedTypes = await showDialog<List<String>?>(
+      context: context,
+      builder: (context) => ItemTypeFilterDialog(selectedTypes: value ?? []),
+    );
+
+    if (newSelectedTypes != null) {
+      onConfirm(newSelectedTypes);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: itemTypes.entries
-          .map((entry) => Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: FilterChip(
-                  selected: value?.contains(entry.key) ?? false,
-                  label: Icon(entry.value),
-                  onSelected: (selected) {
-                    final newValue = value ?? [];
-                    if (newValue.contains(entry.key)) {
-                      newValue.remove(entry.key);
-                    } else {
-                      newValue.add(entry.key);
-                    }
-                    onConfirm(newValue);
-                  },
-                ),
-              ))
-          .toList(),
+    return TextButton(
+      onPressed: () => _handleTypesSelect(context),
+      child: Text('Item Types'),
     );
   }
 }

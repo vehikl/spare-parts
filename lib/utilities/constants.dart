@@ -41,6 +41,7 @@ Map<String, IconData> itemTypes = {
   "Hamilton's Network Router": Icons.router,
   'Office filer': Icons.folder,
   'HP Printer/scanner': Icons.print,
+  'Other': Icons.miscellaneous_services,
 };
 
 enum UserRole { user, admin }
