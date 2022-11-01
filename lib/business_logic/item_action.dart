@@ -56,7 +56,7 @@ class DeleteItemAction extends ItemAction {
     final firestoreService = context.read<FirestoreService>();
 
     commonHandle(
-      () => firestoreService.deleteItem(item.firestoreId),
+      () => firestoreService.deleteItem(item.id),
       context,
       'deleted',
     );
@@ -85,7 +85,7 @@ class BorrowItemAction extends ItemAction {
             issuerName: auth.currentUser?.displayName ?? '',
             type: 'Borrow',
             createdAt: DateTime.now());
-        await firestoreService.addEvent(item.firestoreId!, event);
+        await firestoreService.addEvent(item.id, event);
         await firestoreService.borrowItem(item, auth.currentUser?.uid);
       },
       context,
@@ -117,7 +117,7 @@ class ReleaseItemAction extends ItemAction {
           type: 'Release',
           createdAt: DateTime.now(),
         );
-        await firestoreService.addEvent(item.firestoreId!, event);
+        await firestoreService.addEvent(item.id, event);
         await firestoreService.releaseItem(item);
       },
       context,

@@ -41,6 +41,30 @@ jobs:
       GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
       DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}
 
+  build_functions:
+    name: Build Firebase Functions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        working-directory: ./functions
+        run: npm i
+
+      - name: Lint
+        working-directory: ./functions
+        run: npm run lint
+
+      - name: Build
+        working-directory: ./functions
+        run: npm run build
+
   # TODO: set up provisioning profiles
   # build_ios:
   #   name: Build IOS App

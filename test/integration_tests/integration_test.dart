@@ -21,7 +21,10 @@ void main() {
   final testItem = InventoryItem(id: 'Chair#123', type: 'Chair');
 
   setUp(() async {
-    await firestore.collection('items').doc().set(testItem.toFirestore());
+    await firestore
+        .collection('items')
+        .doc(testItem.id)
+        .set(testItem.toFirestore());
   });
 
   tearDown(() async {

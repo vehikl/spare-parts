@@ -20,21 +20,22 @@ class FirestoreService {
   }
 
   borrowItem(InventoryItem item, String? uid) async {
-    await getItemDocumentReference(item.firestoreId).update({
+    await getItemDocumentReference(item.id).update({
       'borrower': uid,
     });
   }
 
   releaseItem(InventoryItem item) async {
-    await getItemDocumentReference(item.firestoreId).update({'borrower': null});
+    await getItemDocumentReference(item.id).update({'borrower': null});
   }
 
   addItem(InventoryItem item) async {
-    await itemsCollection.add(item.toFirestore());
+    await itemsCollection.doc(item.id).set(item.toFirestore());
   }
 
   updateItem(String? itemId, InventoryItem item) async {
-    await getItemDocumentReference(itemId).set(item.toFirestore());
+    await deleteItem(itemId);
+    await addItem(item);
   }
 
   Stream<List<InventoryItem>> getItemsStream({

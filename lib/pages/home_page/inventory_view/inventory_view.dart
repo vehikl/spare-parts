@@ -21,7 +21,7 @@ class _InventoryViewState extends State<InventoryView> {
   String? _selectedBorrower;
   String _searchQuery = '';
 
-  TextEditingController _searchFieldController = TextEditingController();
+  final _searchFieldController = TextEditingController();
 
   void _handleTypesFilterChanged(List<String> newTypes) {
     setState(() {
