@@ -77,7 +77,7 @@ class _InventoryViewState extends State<InventoryView> {
           child: Row(
             children: [
               ItemTypeMultiSelect(
-                value: _selectedItemTypes,
+                selectedTypes: _selectedItemTypes,
                 onConfirm: _handleTypesFilterChanged,
               ),
               SizedBox(width: 10),

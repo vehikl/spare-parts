@@ -264,9 +264,9 @@ void main() {
   );
 
   group('Filtering items', () {
-    group('By Type', () {
+    group('By type', () {
       testWidgets(
-        'Shows only items of the selected types',
+        'shows only items of the selected types',
         (WidgetTester tester) async {
           final deskItem = InventoryItem(id: 'Desk#123', type: 'Desk');
           final monitorItem = InventoryItem(id: 'Monitor#123', type: 'Monitor');
@@ -290,18 +290,15 @@ void main() {
           expect(find.text(deskItem.id), findsOneWidget);
           expect(find.text(monitorItem.id), findsOneWidget);
 
-          final deskFilterChip = find.ancestor(
-            of: find.byIcon(itemTypes['Desk']!),
-            matching: find.byType(FilterChip),
-          );
-          final chairFilterChip = find.ancestor(
-            of: find.byIcon(itemTypes['Chair']!),
-            matching: find.byType(FilterChip),
-          );
-
-          await tester.tap(deskFilterChip);
+          await tester.tap(find.text('Item Types'));
           await tester.pumpAndSettle();
-          await tester.tap(chairFilterChip);
+
+          await tester.tap(find.text('Chair'));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('Desk'));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.text('Filter'));
           await tester.pumpAndSettle();
 
           expect(find.text(chairItem.id), findsOneWidget);
