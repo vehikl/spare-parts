@@ -43,7 +43,6 @@ class MultiselectButton extends StatelessWidget {
         foregroundColor: selectedValues.isEmpty
             ? Theme.of(context).textTheme.bodyText1!.color
             : null,
-        shape: RoundedRectangleBorder(borderRadius: kBorderRadius),
       ),
       onPressed: () => _handleChangeSelection(context),
     );

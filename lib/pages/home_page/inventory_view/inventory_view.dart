@@ -75,25 +75,22 @@ class _InventoryViewState extends State<InventoryView> {
         ]),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: SizedBox(
-            height: 40,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                MultiselectButton(
-                  label: 'Item Types',
-                  values: itemTypes.keys.toList(),
-                  selectedValues: _selectedItemTypes ?? [],
-                  iconBuilder: (itemType) => itemTypes[itemType] ?? itemTypes['Other']!,
-                  onConfirm: _handleTypesFilterChanged,
-                ),
-                SizedBox(width: 10),
-                UserDropdown(
-                  value: _selectedBorrower,
-                  onChanged: _handleBorrowerFilterChanged,
-                ),
-              ],
-            ),
+          child: Row(
+            children: [
+              MultiselectButton(
+                label: 'Item Types',
+                values: itemTypes.keys.toList(),
+                selectedValues: _selectedItemTypes ?? [],
+                iconBuilder: (itemType) =>
+                    itemTypes[itemType] ?? itemTypes['Other']!,
+                onConfirm: _handleTypesFilterChanged,
+              ),
+              SizedBox(width: 10),
+              UserDropdown(
+                value: _selectedBorrower,
+                onChanged: _handleBorrowerFilterChanged,
+              ),
+            ],
           ),
         ),
         Divider(),
