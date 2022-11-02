@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/item_type_multi_select.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/multiselect_button.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/user_dropdown.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
@@ -74,18 +75,25 @@ class _InventoryViewState extends State<InventoryView> {
         ]),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            children: [
-              ItemTypeMultiSelect(
-                selectedTypes: _selectedItemTypes,
-                onConfirm: _handleTypesFilterChanged,
-              ),
-              SizedBox(width: 10),
-              UserDropdown(
-                value: _selectedBorrower,
-                onChanged: _handleBorrowerFilterChanged,
-              ),
-            ],
+          child: SizedBox(
+            height: 40,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                MultiselectButton(
+                  label: 'Item Types',
+                  values: itemTypes.keys.toList(),
+                  selectedValues: _selectedItemTypes ?? [],
+                  iconBuilder: (itemType) => itemTypes[itemType] ?? itemTypes['Other']!,
+                  onConfirm: _handleTypesFilterChanged,
+                ),
+                SizedBox(width: 10),
+                UserDropdown(
+                  value: _selectedBorrower,
+                  onChanged: _handleBorrowerFilterChanged,
+                ),
+              ],
+            ),
           ),
         ),
         Divider(),
