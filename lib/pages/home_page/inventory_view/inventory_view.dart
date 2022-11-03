@@ -18,21 +18,21 @@ class InventoryView extends StatefulWidget {
 }
 
 class _InventoryViewState extends State<InventoryView> {
-  List<String>? _selectedItemTypes;
-  String? _selectedBorrower;
+  List<String> _selectedItemTypes = [];
+  List<String> _selectedBorrowers = [];
   String _searchQuery = '';
 
   final _searchFieldController = TextEditingController();
 
   void _handleTypesFilterChanged(List<String> newTypes) {
     setState(() {
-      _selectedItemTypes = newTypes.isEmpty ? null : newTypes;
+      _selectedItemTypes = newTypes;
     });
   }
 
-  void _handleBorrowerFilterChanged(String? newBorrower) {
+  void _handleBorrowersFilterChanged(List<String> newBorrowers) {
     setState(() {
-      _selectedBorrower = newBorrower;
+      _selectedBorrowers = newBorrowers;
     });
   }
 
@@ -78,17 +78,17 @@ class _InventoryViewState extends State<InventoryView> {
           child: Row(
             children: [
               MultiselectButton(
-                label: 'Item Types',
+                buttonLabel: 'Item Types',
                 values: itemTypes.keys.toList(),
-                selectedValues: _selectedItemTypes ?? [],
+                selectedValues: _selectedItemTypes,
                 iconBuilder: (itemType) =>
                     itemTypes[itemType] ?? itemTypes['Other']!,
                 onConfirm: _handleTypesFilterChanged,
               ),
               SizedBox(width: 10),
               UserDropdown(
-                value: _selectedBorrower,
-                onChanged: _handleBorrowerFilterChanged,
+                selectedUsers: _selectedBorrowers,
+                onChanged: _handleBorrowersFilterChanged,
               ),
             ],
           ),
@@ -97,9 +97,11 @@ class _InventoryViewState extends State<InventoryView> {
         Expanded(
           child: StreamBuilder<List<InventoryItem>>(
             stream: firestoreService.getItemsStream(
-              withNoBorrower: _selectedBorrower == null,
-              whereTypeIn: _selectedItemTypes,
-              whereBorrowerIs: _selectedBorrower,
+              withNoBorrower: _selectedBorrowers.isEmpty,
+              whereTypeIn:
+                  _selectedItemTypes.isEmpty ? null : _selectedItemTypes,
+              whereBorrowerIn:
+                  _selectedBorrowers.isEmpty ? null : _selectedBorrowers,
             ),
             builder: (context, snapshot) {
               if (snapshot.hasError) {

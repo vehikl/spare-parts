@@ -3,15 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/multiselect_button.dart';
 import 'package:spare_parts/services/callable_service.dart';
-import 'package:spare_parts/utilities/constants.dart';
 
 class UserDropdown extends StatelessWidget {
-  final String? value;
-  final void Function(String?) onChanged;
+  final List<String> selectedUsers;
+  final void Function(List<String>) onChanged;
 
   const UserDropdown({
     super.key,
-    required this.value,
+    required this.selectedUsers,
     required this.onChanged,
   });
 
@@ -32,11 +31,12 @@ class UserDropdown extends StatelessWidget {
         final users = snap.data!;
 
         return MultiselectButton(
-          values: users.map((u) => u.name).toList(),
-          selectedValues: value == null ? [] : [value!],
-          onConfirm: (selectedValues) =>
-              onChanged(selectedValues.isEmpty ? null : selectedValues.first),
-          label: 'Borrowers',
+          buttonLabel: 'Borrowers',
+          values: users.map((u) => u.id).toList(),
+          selectedValues: selectedUsers,
+          onConfirm: onChanged,
+          labelBuilder: (uid) =>
+              users.singleWhere((user) => user.id == uid).name,
         );
       },
     );

@@ -40,9 +40,9 @@ class FirestoreService {
 
   Stream<List<InventoryItem>> getItemsStream({
     String? whereBorrowerIs,
+    List<String>? whereBorrowerIn,
     bool? withNoBorrower,
     List<String>? whereTypeIn,
-    List<String>? whereUsersIdsIn,
   }) {
     Query<Object?>? query;
 
@@ -54,14 +54,16 @@ class FirestoreService {
       query = itemsCollection.where('borrower', isEqualTo: whereBorrowerIs);
     }
 
+    if (whereBorrowerIn != null) {
+      query = (query ?? itemsCollection).where(
+        'borrower',
+        whereIn: whereBorrowerIn,
+      );
+    }
+
     if (whereTypeIn != null) {
       query = (query ?? itemsCollection).where('type', whereIn: whereTypeIn);
     }
-
-    // TODO: implement
-    // if (whereUsersIdsIn != null) {
-    //   query = (query ?? itemsCollection).where('type', whereIn: whereUsersIdsIn);
-    // }
 
     return (query ?? itemsCollection)
         .snapshots()

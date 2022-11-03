@@ -6,6 +6,7 @@ class MultiselectDialog extends StatefulWidget {
   final List<String> values;
   final String title;
   final IconData Function(String value)? iconBuilder;
+  final String Function(String value)? labelBuilder;
 
   const MultiselectDialog({
     super.key,
@@ -13,6 +14,7 @@ class MultiselectDialog extends StatefulWidget {
     required this.title,
     required this.values,
     this.iconBuilder,
+    this.labelBuilder,
   });
 
   @override
@@ -48,7 +50,9 @@ class _MultiselectDialogState extends State<MultiselectDialog> {
                 shrinkWrap: true,
                 children: widget.values
                     .map((value) => ListTile(
-                          title: Text(value),
+                          title: Text(widget.labelBuilder == null
+                              ? value
+                              : widget.labelBuilder!(value)),
                           leading: widget.iconBuilder == null
                               ? null
                               : Icon(widget.iconBuilder!(value)),
