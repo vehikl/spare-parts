@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/multiselect_dialog.dart';
-import 'package:spare_parts/utilities/constants.dart';
 
 class MultiselectButton extends StatelessWidget {
   final List<String> values;

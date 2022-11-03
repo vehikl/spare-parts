@@ -39,9 +39,9 @@ class FirestoreService {
   }
 
   Stream<List<InventoryItem>> getItemsStream({
+    bool? withNoBorrower,
     String? whereBorrowerIs,
     List<String>? whereBorrowerIn,
-    bool? withNoBorrower,
     List<String>? whereTypeIn,
   }) {
     Query<Object?>? query;

@@ -264,7 +264,7 @@ void main() {
   );
 
   group('Filtering items', () {
-    group('By type', () {
+    group('by type', () {
       testWidgets(
         'shows only items of the selected types',
         (WidgetTester tester) async {
@@ -294,11 +294,9 @@ void main() {
           await tester.pumpAndSettle();
 
           await tester.tap(find.text('Chair'));
-          await tester.pumpAndSettle();
           await tester.tap(find.text('Desk'));
-          await tester.pumpAndSettle();
 
-          await tester.tap(find.text('Filter'));
+          await tester.tap(find.text('Select'));
           await tester.pumpAndSettle();
 
           expect(find.text(chairItem.id), findsOneWidget);
@@ -308,9 +306,9 @@ void main() {
       );
     });
 
-    group('By user', () {
+    group('by user', () {
       testWidgets(
-        'Shows only items where borrower matches the selected user',
+        'shows only items where borrower matches the selected users',
         (WidgetTester tester) async {
           final user1 = UserDto(id: 'first', name: 'First');
           final user2 = UserDto(id: 'second', name: 'Second');
@@ -319,10 +317,16 @@ void main() {
           when(callableService.getUsers())
               .thenAnswer((_) => Future.value([user1, user2]));
 
-          final deskItem =
-              InventoryItem(id: 'Desk#123', type: 'Desk', borrower: user1.id);
+          final deskItem = InventoryItem(
+            id: 'Desk#123',
+            type: 'Desk',
+            borrower: user1.id,
+          );
           final monitorItem = InventoryItem(
-              id: 'Monitor#123', type: 'Monitor', borrower: user2.id);
+            id: 'Monitor#123',
+            type: 'Monitor',
+            borrower: user2.id,
+          );
           await firestore
               .collection('items')
               .doc(deskItem.id)
@@ -340,12 +344,12 @@ void main() {
             callableService: callableService,
           );
 
-          final borrowerDropdown = find.byType(DropdownButton<String?>);
-
-          await tester.tap(borrowerDropdown);
+          await tester.tap(find.text('Borrowers'));
           await tester.pumpAndSettle();
 
-          await tester.tap(find.text(user1.name).last);
+          await tester.tap(find.text(user1.name));
+
+          await tester.tap(find.text('Select'));
           await tester.pumpAndSettle();
 
           expect(find.text(chairItem.id), findsNothing);
