@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/dtos/user_dto.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/multiselect_button.dart';
 import 'package:spare_parts/services/callable_service.dart';
+import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
 
 class UserDropdown extends StatelessWidget {
   final List<String> selectedUsers;

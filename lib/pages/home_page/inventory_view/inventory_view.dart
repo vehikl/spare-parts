@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/multiselect_button.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/search_field.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/user_dropdown.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
+import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
 class InventoryView extends StatefulWidget {
@@ -21,8 +22,6 @@ class _InventoryViewState extends State<InventoryView> {
   List<String> _selectedItemTypes = [];
   List<String> _selectedBorrowers = [];
   String _searchQuery = '';
-
-  final _searchFieldController = TextEditingController();
 
   void _handleTypesFilterChanged(List<String> newTypes) {
     setState(() {
@@ -42,37 +41,21 @@ class _InventoryViewState extends State<InventoryView> {
 
     return Column(
       children: [
-        Row(children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: _searchFieldController,
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(100)),
-                  ),
-                  suffixIcon: IconButton(
-                    icon:
-                        Icon(_searchQuery.isEmpty ? Icons.search : Icons.clear),
-                    onPressed: () {
-                      setState(() {
-                        _searchFieldController.clear();
-                        _searchQuery = '';
-                      });
-                    },
-                  ),
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SearchField(
+                  value: _searchQuery,
+                  onChanged: (value) => setState(() {
+                    _searchQuery = value;
+                  }),
                 ),
-                onChanged: (newValue) {
-                  setState(() {
-                    _searchQuery = newValue;
-                  });
-                },
               ),
             ),
-          ),
-        ]),
+          ],
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
