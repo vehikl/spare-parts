@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
@@ -21,6 +23,7 @@ class InventoryView extends StatefulWidget {
 class _InventoryViewState extends State<InventoryView> {
   List<String> _selectedItemTypes = [];
   List<String> _selectedBorrowers = [];
+  bool _showOnlyAvailableItems = false;
   String _searchQuery = '';
 
   void _handleTypesFilterChanged(List<String> newTypes) {
@@ -33,6 +36,10 @@ class _InventoryViewState extends State<InventoryView> {
     setState(() {
       _selectedBorrowers = newBorrowers;
     });
+  }
+
+  void _handleAvailableItemsFilterChanged() {
+    setState(() => _showOnlyAvailableItems = !_showOnlyAvailableItems);
   }
 
   @override
@@ -72,6 +79,19 @@ class _InventoryViewState extends State<InventoryView> {
               UserDropdown(
                 selectedUsers: _selectedBorrowers,
                 onChanged: _handleBorrowersFilterChanged,
+              ),
+              SizedBox(width: 10),
+              TextButton.icon(
+                label: Text('Only available items'),
+                icon: Icon(
+                  _showOnlyAvailableItems
+                      ? Icons.check_box
+                      : Icons.check_box_outline_blank,
+                ),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
+                ),
+                onPressed: _handleAvailableItemsFilterChanged,
               ),
             ],
           ),

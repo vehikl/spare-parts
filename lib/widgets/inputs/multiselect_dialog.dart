@@ -45,6 +45,7 @@ class _MultiselectDialogState extends State<MultiselectDialog> {
               }),
               child: Text('Clear'),
             ),
+            Divider(),
             Expanded(
               child: ListView(
                 shrinkWrap: true,
