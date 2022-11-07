@@ -358,6 +358,69 @@ void main() {
         },
       );
     });
+
+    group('for only available ones', () {
+      final userRoleVariants = ValueVariant({UserRole.admin, UserRole.user});
+
+      testWidgets(
+        'is enabled by default for admins and disabled for other users',
+        (WidgetTester tester) async {
+          await pumpPage(
+            Scaffold(body: InventoryView()),
+            tester,
+            userRole: userRoleVariants.currentValue,
+            firestore: firestore,
+          );
+
+          expect(
+            find.byIcon(
+              userRoleVariants.currentValue == UserRole.admin
+                  ? Icons.check_box_outline_blank
+                  : Icons.check_box,
+            ),
+            findsOneWidget,
+          );
+        },
+        variant: userRoleVariants,
+      );
+
+      testWidgets(
+        'shows only the items that have no borrower',
+        (WidgetTester tester) async {
+          final borrowedItem = InventoryItem(
+            id: 'Desk#123',
+            type: 'Desk',
+            borrower: 'foo',
+          );
+          await firestore
+              .collection('items')
+              .doc(borrowedItem.id)
+              .set(borrowedItem.toFirestore());
+
+          await pumpPage(
+            Scaffold(body: InventoryView()),
+            tester,
+            userRole: UserRole.admin,
+            firestore: firestore,
+          );
+
+          // admins see all items by default
+          expect(find.text(chairItem.id), findsOneWidget);
+          expect(find.text(borrowedItem.id), findsOneWidget);
+
+          final filterBorrowedItemsCheckbox = find.byIcon(
+            userRoleVariants.currentValue == UserRole.admin
+                ? Icons.check_box
+                : Icons.check_box_outline_blank,
+          );
+          await tester.tap(filterBorrowedItemsCheckbox);
+          await tester.pumpAndSettle();
+
+          expect(find.text(chairItem.id), findsOneWidget);
+          expect(find.text(borrowedItem.id), findsNothing);
+        },
+      );
+    });
   });
 
   group('Searching for items', () {

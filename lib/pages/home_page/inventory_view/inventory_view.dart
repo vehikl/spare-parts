@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
@@ -23,8 +21,16 @@ class InventoryView extends StatefulWidget {
 class _InventoryViewState extends State<InventoryView> {
   List<String> _selectedItemTypes = [];
   List<String> _selectedBorrowers = [];
-  bool _showOnlyAvailableItems = false;
+  late bool _showOnlyAvailableItems;
   String _searchQuery = '';
+
+  @override
+  void initState() {
+    final isAdmin = context.read<UserRole>() == UserRole.admin;
+    _showOnlyAvailableItems = !isAdmin;
+
+    super.initState();
+  }
 
   void _handleTypesFilterChanged(List<String> newTypes) {
     setState(() {
@@ -100,7 +106,8 @@ class _InventoryViewState extends State<InventoryView> {
         Expanded(
           child: StreamBuilder<List<InventoryItem>>(
             stream: firestoreService.getItemsStream(
-              withNoBorrower: _selectedBorrowers.isEmpty,
+              withNoBorrower:
+                  _selectedBorrowers.isEmpty && _showOnlyAvailableItems,
               whereTypeIn:
                   _selectedItemTypes.isEmpty ? null : _selectedItemTypes,
               whereBorrowerIn:
