@@ -24,9 +24,10 @@ class _InventoryViewState extends State<InventoryView> {
   late bool _showOnlyAvailableItems;
   String _searchQuery = '';
 
+  bool get isAdmin => context.read<UserRole>() == UserRole.admin;
+
   @override
   void initState() {
-    final isAdmin = context.read<UserRole>() == UserRole.admin;
     _showOnlyAvailableItems = !isAdmin;
 
     super.initState();
@@ -81,24 +82,27 @@ class _InventoryViewState extends State<InventoryView> {
                     itemTypes[itemType] ?? itemTypes['Other']!,
                 onConfirm: _handleTypesFilterChanged,
               ),
-              SizedBox(width: 10),
-              UserDropdown(
-                selectedUsers: _selectedBorrowers,
-                onChanged: _handleBorrowersFilterChanged,
-              ),
-              SizedBox(width: 10),
-              TextButton.icon(
-                label: Text('Only available items'),
-                icon: Icon(
-                  _showOnlyAvailableItems
-                      ? Icons.check_box
-                      : Icons.check_box_outline_blank,
+              if (isAdmin) ...[
+                SizedBox(width: 10),
+                UserDropdown(
+                  selectedUsers: _selectedBorrowers,
+                  onChanged: _handleBorrowersFilterChanged,
                 ),
-                style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
+                SizedBox(width: 10),
+                TextButton.icon(
+                  label: Text('Only available items'),
+                  icon: Icon(
+                    _showOnlyAvailableItems
+                        ? Icons.check_box
+                        : Icons.check_box_outline_blank,
+                  ),
+                  style: TextButton.styleFrom(
+                    foregroundColor:
+                        Theme.of(context).textTheme.bodyText1!.color,
+                  ),
+                  onPressed: _handleAvailableItemsFilterChanged,
                 ),
-                onPressed: _handleAvailableItemsFilterChanged,
-              ),
+              ],
             ],
           ),
         ),
