@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/item_type_multi_select.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/search_field.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/user_dropdown.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
+import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
 class InventoryView extends StatefulWidget {
@@ -17,22 +19,34 @@ class InventoryView extends StatefulWidget {
 }
 
 class _InventoryViewState extends State<InventoryView> {
-  List<String>? _selectedItemTypes;
-  String? _selectedBorrower;
+  List<String> _selectedItemTypes = [];
+  List<String> _selectedBorrowers = [];
+  late bool _showOnlyAvailableItems;
   String _searchQuery = '';
 
-  final _searchFieldController = TextEditingController();
+  bool get isAdmin => context.read<UserRole>() == UserRole.admin;
+
+  @override
+  void initState() {
+    _showOnlyAvailableItems = !isAdmin;
+
+    super.initState();
+  }
 
   void _handleTypesFilterChanged(List<String> newTypes) {
     setState(() {
-      _selectedItemTypes = newTypes.isEmpty ? null : newTypes;
+      _selectedItemTypes = newTypes;
     });
   }
 
-  void _handleBorrowerFilterChanged(String? newBorrower) {
+  void _handleBorrowersFilterChanged(List<String> newBorrowers) {
     setState(() {
-      _selectedBorrower = newBorrower;
+      _selectedBorrowers = newBorrowers;
     });
+  }
+
+  void _handleAvailableItemsFilterChanged() {
+    setState(() => _showOnlyAvailableItems = !_showOnlyAvailableItems);
   }
 
   @override
@@ -41,50 +55,54 @@ class _InventoryViewState extends State<InventoryView> {
 
     return Column(
       children: [
-        Row(children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: _searchFieldController,
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(100)),
-                  ),
-                  suffixIcon: IconButton(
-                    icon:
-                        Icon(_searchQuery.isEmpty ? Icons.search : Icons.clear),
-                    onPressed: () {
-                      setState(() {
-                        _searchFieldController.clear();
-                        _searchQuery = '';
-                      });
-                    },
-                  ),
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SearchField(
+                  value: _searchQuery,
+                  onChanged: (value) => setState(() {
+                    _searchQuery = value;
+                  }),
                 ),
-                onChanged: (newValue) {
-                  setState(() {
-                    _searchQuery = newValue;
-                  });
-                },
               ),
             ),
-          ),
-        ]),
+          ],
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
             children: [
-              ItemTypeMultiSelect(
-                value: _selectedItemTypes,
+              MultiselectButton(
+                buttonLabel: 'Item Types',
+                values: itemTypes.keys.toList(),
+                selectedValues: _selectedItemTypes,
+                iconBuilder: (itemType) =>
+                    itemTypes[itemType] ?? itemTypes['Other']!,
                 onConfirm: _handleTypesFilterChanged,
               ),
-              SizedBox(width: 10),
-              UserDropdown(
-                value: _selectedBorrower,
-                onChanged: _handleBorrowerFilterChanged,
-              ),
+              if (isAdmin) ...[
+                SizedBox(width: 10),
+                UserDropdown(
+                  selectedUsers: _selectedBorrowers,
+                  onChanged: _handleBorrowersFilterChanged,
+                ),
+                SizedBox(width: 10),
+                TextButton.icon(
+                  label: Text('Only available items'),
+                  icon: Icon(
+                    _showOnlyAvailableItems
+                        ? Icons.check_box
+                        : Icons.check_box_outline_blank,
+                  ),
+                  style: TextButton.styleFrom(
+                    foregroundColor:
+                        Theme.of(context).textTheme.bodyText1!.color,
+                  ),
+                  onPressed: _handleAvailableItemsFilterChanged,
+                ),
+              ],
             ],
           ),
         ),
@@ -92,9 +110,12 @@ class _InventoryViewState extends State<InventoryView> {
         Expanded(
           child: StreamBuilder<List<InventoryItem>>(
             stream: firestoreService.getItemsStream(
-              withNoBorrower: _selectedBorrower == null,
-              whereTypeIn: _selectedItemTypes,
-              whereBorrowerIs: _selectedBorrower,
+              withNoBorrower:
+                  _selectedBorrowers.isEmpty && _showOnlyAvailableItems,
+              whereTypeIn:
+                  _selectedItemTypes.isEmpty ? null : _selectedItemTypes,
+              whereBorrowerIn:
+                  _selectedBorrowers.isEmpty ? null : _selectedBorrowers,
             ),
             builder: (context, snapshot) {
               if (snapshot.hasError) {

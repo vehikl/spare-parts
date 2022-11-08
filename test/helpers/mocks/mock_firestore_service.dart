@@ -5,20 +5,20 @@ import 'package:spare_parts/services/firestore_service.dart';
 class MockFirestoreService extends Mock implements FirestoreService {
   @override
   Stream<List<InventoryItem>> getItemsStream({
-    String? whereBorrowerIs,
     bool? withNoBorrower,
+    String? whereBorrowerIs,
+    List<String>? whereBorrowerIn,
     List<String>? whereTypeIn,
-    List<String>? whereUsersIdsIn,
   }) =>
       super.noSuchMethod(
         Invocation.method(
           #getItemsStream,
           [],
           {
-            #whereBorrowerIs: whereBorrowerIs,
             #withNoBorrower: withNoBorrower,
+            #whereBorrowerIs: whereBorrowerIs,
+            #whereBorrowerIn: whereBorrowerIn,
             #whereTypeIn: whereTypeIn,
-            #whereUsersIdsIn: whereUsersIdsIn,
           },
         ),
         returnValue: Stream<List<InventoryItem>>.empty(),

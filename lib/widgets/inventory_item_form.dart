@@ -20,7 +20,7 @@ class InventoryItemForm extends StatefulWidget {
 
 class _InventoryItemFormState extends State<InventoryItemForm> {
   final _formKey = GlobalKey<FormState>();
-  String dropdownValue = inventoryItems.keys.first;
+  String dropdownValue = itemTypes.keys.first;
   String idValue = '';
 
   @override
@@ -67,8 +67,8 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
           children: [
             DropdownButton<String>(
               value: dropdownValue,
-              items: inventoryItems.keys
-                  .map<DropdownMenuItem<String>>((String value) {
+              items:
+                  itemTypes.keys.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),

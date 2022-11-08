@@ -264,9 +264,9 @@ void main() {
   );
 
   group('Filtering items', () {
-    group('By Type', () {
+    group('by type', () {
       testWidgets(
-        'Shows only items of the selected types',
+        'shows only items of the selected types',
         (WidgetTester tester) async {
           final deskItem = InventoryItem(id: 'Desk#123', type: 'Desk');
           final monitorItem = InventoryItem(id: 'Monitor#123', type: 'Monitor');
@@ -290,18 +290,13 @@ void main() {
           expect(find.text(deskItem.id), findsOneWidget);
           expect(find.text(monitorItem.id), findsOneWidget);
 
-          final deskFilterChip = find.ancestor(
-            of: find.byIcon(inventoryItems['Desk']!),
-            matching: find.byType(FilterChip),
-          );
-          final chairFilterChip = find.ancestor(
-            of: find.byIcon(inventoryItems['Chair']!),
-            matching: find.byType(FilterChip),
-          );
-
-          await tester.tap(deskFilterChip);
+          await tester.tap(find.text('Item Types'));
           await tester.pumpAndSettle();
-          await tester.tap(chairFilterChip);
+
+          await tester.tap(find.text('Chair'));
+          await tester.tap(find.text('Desk'));
+
+          await tester.tap(find.text('Select'));
           await tester.pumpAndSettle();
 
           expect(find.text(chairItem.id), findsOneWidget);
@@ -311,9 +306,9 @@ void main() {
       );
     });
 
-    group('By user', () {
+    group('by user', () {
       testWidgets(
-        'Shows only items where borrower matches the selected user',
+        'shows only items where borrower matches the selected users',
         (WidgetTester tester) async {
           final user1 = UserDto(id: 'first', name: 'First');
           final user2 = UserDto(id: 'second', name: 'Second');
@@ -322,10 +317,16 @@ void main() {
           when(callableService.getUsers())
               .thenAnswer((_) => Future.value([user1, user2]));
 
-          final deskItem =
-              InventoryItem(id: 'Desk#123', type: 'Desk', borrower: user1.id);
+          final deskItem = InventoryItem(
+            id: 'Desk#123',
+            type: 'Desk',
+            borrower: user1.id,
+          );
           final monitorItem = InventoryItem(
-              id: 'Monitor#123', type: 'Monitor', borrower: user2.id);
+            id: 'Monitor#123',
+            type: 'Monitor',
+            borrower: user2.id,
+          );
           await firestore
               .collection('items')
               .doc(deskItem.id)
@@ -343,17 +344,80 @@ void main() {
             callableService: callableService,
           );
 
-          final borrowerDropdown = find.byType(DropdownButton<String?>);
-
-          await tester.tap(borrowerDropdown);
+          await tester.tap(find.text('Borrowers'));
           await tester.pumpAndSettle();
 
-          await tester.tap(find.text(user1.name).last);
+          await tester.tap(find.text(user1.name));
+
+          await tester.tap(find.text('Select'));
           await tester.pumpAndSettle();
 
           expect(find.text(chairItem.id), findsNothing);
           expect(find.text(deskItem.id), findsOneWidget);
           expect(find.text(monitorItem.id), findsNothing);
+        },
+      );
+    });
+
+    group('for only available ones', () {
+      testWidgets(
+        'is enabled by default for admins',
+        (WidgetTester tester) async {
+          await pumpPage(
+            Scaffold(body: InventoryView()),
+            tester,
+            userRole: UserRole.admin,
+            firestore: firestore,
+          );
+
+          expect(find.byIcon(Icons.check_box_outline_blank), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'is not visible for other users',
+        (WidgetTester tester) async {
+          await pumpPage(
+            Scaffold(body: InventoryView()),
+            tester,
+            userRole: UserRole.user,
+            firestore: firestore,
+          );
+
+          expect(find.text('Only available items'), findsNothing);
+        },
+      );
+
+      testWidgets(
+        'shows only the items that have no borrower',
+        (WidgetTester tester) async {
+          final borrowedItem = InventoryItem(
+            id: 'Desk#123',
+            type: 'Desk',
+            borrower: 'foo',
+          );
+          await firestore
+              .collection('items')
+              .doc(borrowedItem.id)
+              .set(borrowedItem.toFirestore());
+
+          await pumpPage(
+            Scaffold(body: InventoryView()),
+            tester,
+            userRole: UserRole.admin,
+            firestore: firestore,
+          );
+
+          // admins see all items by default
+          expect(find.text(chairItem.id), findsOneWidget);
+          expect(find.text(borrowedItem.id), findsOneWidget);
+
+          final filterBorrowedItemsCheckbox = find.text('Only available items');
+          await tester.tap(filterBorrowedItemsCheckbox);
+          await tester.pumpAndSettle();
+
+          expect(find.text(chairItem.id), findsOneWidget);
+          expect(find.text(borrowedItem.id), findsNothing);
         },
       );
     });

@@ -17,11 +17,31 @@ Map<int, Color> colorCodes = {
 
 MaterialColor kVehiklMaterialColor = MaterialColor(0xFFDD5F13, colorCodes);
 
-Map<String, IconData> inventoryItems = {
-  "Desk": Icons.desk,
-  "Chair": Icons.chair,
-  "Monitor": Icons.monitor,
-  "Laptop": Icons.laptop
+Map<String, IconData> itemTypes = {
+  'Desk': Icons.desk,
+  'Chair': Icons.chair,
+  'Monitor': Icons.monitor,
+  'Laptop': Icons.laptop,
+  'Dongle': Icons.electrical_services,
+  'Power Cord': Icons.electrical_services,
+  'Keyboard': Icons.keyboard,
+  'Mouse or Trackpad': Icons.mouse,
+  'Webcam': Icons.photo_camera,
+  'Stand Up Desk': Icons.desk,
+  'USB-C extender cable': Icons.electrical_services,
+  'Monitor Arm': Icons.precision_manufacturing,
+  'SnowBall Mic': Icons.mic,
+  'Laptop Stand': Icons.laptop,
+  'HDMI Cable': Icons.electrical_services,
+  'Projector': Icons.videocam,
+  '100" Screen': Icons.monitor,
+  'Webcam Stand': Icons.precision_manufacturing,
+  'London Desk': Icons.desk,
+  'Ethernet Cable': Icons.electrical_services,
+  "Hamilton's Network Router": Icons.router,
+  'Office filer': Icons.folder,
+  'HP Printer/scanner': Icons.print,
+  'Other': Icons.miscellaneous_services,
 };
 
 enum UserRole { user, admin }
