@@ -360,28 +360,32 @@ void main() {
     });
 
     group('for only available ones', () {
-      final userRoleVariants = ValueVariant({UserRole.admin, UserRole.user});
-
       testWidgets(
-        'is enabled by default for admins and disabled for other users',
+        'is enabled by default for admins',
         (WidgetTester tester) async {
           await pumpPage(
             Scaffold(body: InventoryView()),
             tester,
-            userRole: userRoleVariants.currentValue,
+            userRole: UserRole.admin,
             firestore: firestore,
           );
 
-          expect(
-            find.byIcon(
-              userRoleVariants.currentValue == UserRole.admin
-                  ? Icons.check_box_outline_blank
-                  : Icons.check_box,
-            ),
-            findsOneWidget,
-          );
+          expect(find.byIcon(Icons.check_box_outline_blank), findsOneWidget);
         },
-        variant: userRoleVariants,
+      );
+
+      testWidgets(
+        'is not visible for other users',
+        (WidgetTester tester) async {
+          await pumpPage(
+            Scaffold(body: InventoryView()),
+            tester,
+            userRole: UserRole.user,
+            firestore: firestore,
+          );
+
+          expect(find.text('Only available items'), findsNothing);
+        },
       );
 
       testWidgets(
@@ -408,11 +412,7 @@ void main() {
           expect(find.text(chairItem.id), findsOneWidget);
           expect(find.text(borrowedItem.id), findsOneWidget);
 
-          final filterBorrowedItemsCheckbox = find.byIcon(
-            userRoleVariants.currentValue == UserRole.admin
-                ? Icons.check_box
-                : Icons.check_box_outline_blank,
-          );
+          final filterBorrowedItemsCheckbox = find.text('Only available items');
           await tester.tap(filterBorrowedItemsCheckbox);
           await tester.pumpAndSettle();
 
