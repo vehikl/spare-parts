@@ -17,7 +17,8 @@ class _HomePageState extends State<HomePage> {
   int _selectedBottomNavItemIndex = 0;
   final PageController pageController = PageController();
 
-  handleSignOut(FirebaseAuth auth) {
+  _handleSignOut() {
+    final auth = context.read<FirebaseAuth>();
     auth.signOut();
   }
 
@@ -39,25 +40,23 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  bool get isAdmin => context.read<UserRole>() == UserRole.admin;
+
   @override
   Widget build(BuildContext context) {
-    final auth = context.read<FirebaseAuth>();
-    final userRole = context.read<UserRole>();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inventory'),
         actions: [
           TextButton.icon(
             label: Text('Logout'),
-            onPressed: () => handleSignOut(auth),
+            onPressed: _handleSignOut,
             icon: const Icon(Icons.logout),
             style: TextButton.styleFrom(foregroundColor: Colors.white),
           )
         ],
       ),
-      floatingActionButton:
-          userRole == UserRole.admin ? AddInventoryItemButton() : null,
+      floatingActionButton: AddInventoryItemButton(),
       body: PageView(
         controller: pageController,
         onPageChanged: _onPageChanged,
