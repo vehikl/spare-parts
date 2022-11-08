@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
+import 'package:spare_parts/pages/home_page/settings_view.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/add_inventory_item_button.dart';
 
@@ -60,18 +61,24 @@ class _HomePageState extends State<HomePage> {
       body: PageView(
         controller: pageController,
         onPageChanged: _onPageChanged,
-        children: const [
+        children: [
           InventoryView(),
           BorrowedItemsView(),
+          if (isAdmin) SettingsView()
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
+        items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inventory'),
           BottomNavigationBarItem(
             icon: Icon(Icons.backpack_outlined),
             label: 'Borrowed Items',
           ),
+          if (isAdmin)
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Settings',
+            ),
         ],
         currentIndex: _selectedBottomNavItemIndex,
         selectedItemColor: Colors.amber[800],
