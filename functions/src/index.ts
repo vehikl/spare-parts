@@ -13,3 +13,13 @@ export const getUsers = functions.https.onCall(async (data, context) => {
     name: user.displayName,
   }))
 })
+
+export const setAdmin = functions.https.onCall(async (data, context) => {
+  const uid = data.uid
+
+  if (!uid) throw new Error('The `uid` parameter is required')
+
+  return await admin.auth().setCustomUserClaims(uid, {
+    role: 'admin',
+  })
+})
