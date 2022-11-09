@@ -4,6 +4,14 @@ import * as admin from 'firebase-admin'
 
 admin.initializeApp()
 
+export const deleteIfIncorrectEmail = functions.auth.user().onCreate((user, context) => {
+  if (!user.email?.endsWith('@vehikl.com')) {
+    console.log(`Deleting user with incorrect email: ${user.email}`);
+    return admin.auth().deleteUser(user.uid)
+  }
+  return null
+})
+
 export const getUsers = functions.https.onCall(async (data, context) => {
   const userListResult = await admin.auth().listUsers()
   const users = userListResult.users

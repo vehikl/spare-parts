@@ -61,23 +61,28 @@ class _MyAppState extends State<MyApp> {
           builder: (context, snapshot) {
             final user = snapshot.data;
 
-            if (user?.email != null && user!.email!.endsWith('vehikl.com')) {
-              return FutureBuilder<IdTokenResult>(
-                future: user.getIdTokenResult(true),
-                builder: (context, snap) {
-                  if (!snap.hasData) return Scaffold(body: Container());
+            var userEmailValid = user?.email?.endsWith('vehikl.com') ?? false;
 
-                  final isAdmin = snap.data?.claims?['role'] == 'admin';
-                  return Provider<UserRole>(
-                    create: (context) =>
-                        isAdmin ? UserRole.admin : UserRole.user,
-                    child: HomePage(),
-                  );
-                },
+            if (!userEmailValid) {
+              return SignInPage(
+                error: user == null
+                    ? null
+                    : 'Please log in with your Vehikl email',
               );
             }
 
-            return const SignInPage();
+            return FutureBuilder<IdTokenResult>(
+              future: user!.getIdTokenResult(true),
+              builder: (context, snap) {
+                if (!snap.hasData) return Scaffold(body: Container());
+
+                final isAdmin = snap.data?.claims?['role'] == 'admin';
+                return Provider<UserRole>(
+                  create: (context) => isAdmin ? UserRole.admin : UserRole.user,
+                  child: HomePage(),
+                );
+              },
+            );
           },
         ),
       ),
