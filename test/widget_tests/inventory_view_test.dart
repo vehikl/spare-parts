@@ -310,8 +310,16 @@ void main() {
       testWidgets(
         'shows only items where borrower matches the selected users',
         (WidgetTester tester) async {
-          final user1 = UserDto(id: 'first', name: 'First');
-          final user2 = UserDto(id: 'second', name: 'Second');
+          final user1 = UserDto(
+            id: 'first',
+            name: 'First',
+            role: UserRole.user,
+          );
+          final user2 = UserDto(
+            id: 'second',
+            name: 'Second',
+            role: UserRole.user,
+          );
 
           final callableService = MockCallableService();
           when(callableService.getUsers())

@@ -17,7 +17,13 @@ class MockCallableService extends Mock implements CallableService {
   Future<List<UserDto>> getUsers() {
     return super.noSuchMethod(
       Invocation.method(#getUsers, []),
-      returnValue: Future.value([UserDto(id: 'foo', name: 'Foo')]),
+      returnValue: Future.value([
+        UserDto(
+          id: 'foo',
+          name: 'Foo',
+          role: UserRole.user,
+        )
+      ]),
     );
   }
 }
@@ -32,9 +38,14 @@ Future<void> pumpPage(
   CallableService? callableService,
 }) async {
   final mockCallableService = MockCallableService();
-  when(mockCallableService.getUsers())
-      .thenAnswer((_) => Future.value([UserDto(id: 'foo', name: 'Foo')]));
-      
+  when(mockCallableService.getUsers()).thenAnswer((_) => Future.value([
+        UserDto(
+          id: 'foo',
+          name: 'Foo',
+          role: UserRole.admin,
+        )
+      ]));
+
   await tester.pumpWidget(
     MultiProvider(
       providers: [
