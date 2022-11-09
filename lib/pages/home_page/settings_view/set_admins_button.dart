@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/services/callable_service.dart';
@@ -20,20 +21,24 @@ class _SetAdminsButtonState extends State<SetAdminsButton> {
     });
 
     final callableService = context.read<CallableService>();
+    final auth = context.read<FirebaseAuth>();
     final users = await callableService.getUsers();
+    final otherUsers =
+        users.where((user) => user.id != auth.currentUser?.uid).toList();
 
     final newSelectedValues = await showDialog<List<String>?>(
       context: context,
       builder: (context) => MultiselectDialog(
-        title: 'Pick a new admin',
-        values: users.map((u) => u.id).toList(),
-        selectedValues: users
+        title: 'Pick admins',
+        values: otherUsers.map((u) => u.id).toList(),
+        selectedValues: otherUsers
             .where((u) => u.role == UserRole.admin)
             .map((u) => u.id)
             .toList(),
-        labelBuilder: (uid) => users.singleWhere((user) => user.id == uid).name,
+        labelBuilder: (uid) =>
+            otherUsers.singleWhere((user) => user.id == uid).name,
         leadingBuilder: (uid) {
-          final user = users.singleWhere((user) => user.id == uid);
+          final user = otherUsers.singleWhere((user) => user.id == uid);
           if (user.photoUrl == null || user.photoUrl == '') {
             return Icon(Icons.person);
           }
