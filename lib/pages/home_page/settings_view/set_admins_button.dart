@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spare_parts/dtos/user_dto.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/user_dropdown.dart';
 import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/inputs/multiselect_dialog.dart';
 
-class SettingsView extends StatelessWidget {
-  const SettingsView({super.key});
+class SetAdminsButton extends StatefulWidget {
+  const SetAdminsButton({super.key});
+
+  @override
+  State<SetAdminsButton> createState() => _SetAdminsButtonState();
+}
+
+class _SetAdminsButtonState extends State<SetAdminsButton> {
+  bool _loading = false;
 
   void _handleSetAdmins(BuildContext context) async {
+    setState(() {
+      _loading = true;
+    });
+
     final callableService = context.read<CallableService>();
     final users = await callableService.getUsers();
 
@@ -36,7 +45,12 @@ class SettingsView extends StatelessWidget {
       ),
     );
 
-    if (newSelectedValues == null) return;
+    if (newSelectedValues == null) {
+      setState(() {
+        _loading = false;
+      });
+      return null;
+    }
 
     try {
       await callableService.setAdmins(newSelectedValues);
@@ -53,19 +67,20 @@ class SettingsView extends StatelessWidget {
           backgroundColor: Colors.red,
         ),
       );
+    } finally {
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text('Settings'),
-        ElevatedButton(
-          onPressed: () => _handleSetAdmins(context),
-          child: Text('Set admins'),
-        )
-      ],
+    if (_loading) return CircularProgressIndicator();
+
+    return ElevatedButton(
+      onPressed: () => _handleSetAdmins(context),
+      child: Text('Set admins'),
     );
   }
 }
