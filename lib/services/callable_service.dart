@@ -9,7 +9,11 @@ class CallableService {
     final response = await _getUsers.call();
 
     return (response.data as List<dynamic>)
-        .map((u) => UserDto(id: u["id"], name: u["name"]))
+        .map((u) => UserDto(
+              id: u["id"],
+              name: u["name"],
+              photoUrl: u["photoUrl"],
+            ))
         .toList();
   }
 }

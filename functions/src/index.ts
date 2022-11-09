@@ -19,6 +19,7 @@ export const getUsers = functions.https.onCall(async (data, context) => {
   return users.map((user) => ({
     id: user.uid,
     name: user.displayName,
+    photoUrl: user.photoURL
   }))
 })
 

@@ -31,13 +31,22 @@ class UserDropdown extends StatelessWidget {
         final users = snap.data!;
 
         return MultiselectButton(
-          buttonLabel: 'Borrowers',
-          values: users.map((u) => u.id).toList(),
-          selectedValues: selectedUsers,
-          onConfirm: onChanged,
-          labelBuilder: (uid) =>
-              users.singleWhere((user) => user.id == uid).name,
-        );
+            buttonLabel: 'Borrowers',
+            values: users.map((u) => u.id).toList(),
+            selectedValues: selectedUsers,
+            onConfirm: onChanged,
+            labelBuilder: (uid) =>
+                users.singleWhere((user) => user.id == uid).name,
+            leadingBuilder: (uid) {
+              final user = users.singleWhere((user) => user.id == uid);
+              if (user.photoUrl == null || user.photoUrl == '') {
+                return Icon(Icons.person);
+              }
+
+              return CircleAvatar(
+                foregroundImage: NetworkImage(user.photoUrl!),
+              );
+            });
       },
     );
   }

@@ -6,7 +6,7 @@ class MultiselectButton extends StatelessWidget {
   final List<String> selectedValues;
   final String buttonLabel;
   final void Function(List<String>) onConfirm;
-  final IconData Function(String value)? iconBuilder;
+  final Widget Function(String value)? leadingBuilder;
   final String Function(String value)? labelBuilder;
 
   const MultiselectButton({
@@ -15,7 +15,7 @@ class MultiselectButton extends StatelessWidget {
     required this.onConfirm,
     required this.buttonLabel,
     required this.values,
-    this.iconBuilder,
+    this.leadingBuilder,
     this.labelBuilder,
   });
 
@@ -23,12 +23,11 @@ class MultiselectButton extends StatelessWidget {
     final newSelectedValues = await showDialog<List<String>?>(
       context: context,
       builder: (context) => MultiselectDialog(
-        title: 'Pick $buttonLabel',
-        values: values,
-        selectedValues: selectedValues,
-        iconBuilder: iconBuilder,
-        labelBuilder: labelBuilder
-      ),
+          title: 'Pick $buttonLabel',
+          values: values,
+          selectedValues: selectedValues,
+          leadingBuilder: leadingBuilder,
+          labelBuilder: labelBuilder),
     );
 
     if (newSelectedValues != null) {
