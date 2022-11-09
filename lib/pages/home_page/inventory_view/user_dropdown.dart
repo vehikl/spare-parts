@@ -7,11 +7,13 @@ import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
 class UserDropdown extends StatelessWidget {
   final List<String> selectedUsers;
   final void Function(List<String>) onChanged;
+  final IconData? icon;
 
   const UserDropdown({
     super.key,
     required this.selectedUsers,
     required this.onChanged,
+    this.icon,
   });
 
   @override
@@ -31,22 +33,24 @@ class UserDropdown extends StatelessWidget {
         final users = snap.data!;
 
         return MultiselectButton(
-            buttonLabel: 'Borrowers',
-            values: users.map((u) => u.id).toList(),
-            selectedValues: selectedUsers,
-            onConfirm: onChanged,
-            labelBuilder: (uid) =>
-                users.singleWhere((user) => user.id == uid).name,
-            leadingBuilder: (uid) {
-              final user = users.singleWhere((user) => user.id == uid);
-              if (user.photoUrl == null || user.photoUrl == '') {
-                return Icon(Icons.person);
-              }
+          buttonLabel: 'Borrowers',
+          values: users.map((u) => u.id).toList(),
+          selectedValues: selectedUsers,
+          onConfirm: onChanged,
+          icon: icon,
+          labelBuilder: (uid) =>
+              users.singleWhere((user) => user.id == uid).name,
+          leadingBuilder: (uid) {
+            final user = users.singleWhere((user) => user.id == uid);
+            if (user.photoUrl == null || user.photoUrl == '') {
+              return Icon(Icons.person);
+            }
 
-              return CircleAvatar(
-                foregroundImage: NetworkImage(user.photoUrl!),
-              );
-            });
+            return CircleAvatar(
+              foregroundImage: NetworkImage(user.photoUrl!),
+            );
+          },
+        );
       },
     );
   }

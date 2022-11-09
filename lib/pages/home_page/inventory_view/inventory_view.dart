@@ -85,6 +85,7 @@ class _InventoryViewState extends State<InventoryView> {
               if (isAdmin) ...[
                 SizedBox(width: 10),
                 UserDropdown(
+                  icon: Icons.filter_alt,
                   selectedUsers: _selectedBorrowers,
                   onChanged: _handleBorrowersFilterChanged,
                 ),

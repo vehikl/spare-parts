@@ -19,16 +19,24 @@ export const getUsers = functions.https.onCall(async (data, context) => {
   return users.map((user) => ({
     id: user.uid,
     name: user.displayName,
-    photoUrl: user.photoURL
+    photoUrl: user.photoURL,
+    role: user.customClaims?.role
   }))
 })
 
-export const setAdmin = functions.https.onCall(async (data, context) => {
-  const uid = data.uid
+export const setAdmins = functions.https.onCall(async (data, context) => {
+  const uids = data.uids as string[]
 
-  if (!uid) throw new Error('The `uid` parameter is required')
+  if (!uids) throw new Error('The `uids` parameter is required')
 
-  return await admin.auth().setCustomUserClaims(uid, {
-    role: 'admin',
-  })
+  const userListResult = await admin.auth().listUsers()
+  const users = userListResult.users
+
+  for (const user of users) {
+    await admin.auth().setCustomUserClaims(user.uid, {
+      role: uids.includes(user.uid) ? 'admin' : 'user',
+    })
+  }
+
+  return null
 })

@@ -8,6 +8,7 @@ class MultiselectButton extends StatelessWidget {
   final void Function(List<String>) onConfirm;
   final Widget Function(String value)? leadingBuilder;
   final String Function(String value)? labelBuilder;
+  final IconData? icon;
 
   const MultiselectButton({
     super.key,
@@ -17,17 +18,19 @@ class MultiselectButton extends StatelessWidget {
     required this.values,
     this.leadingBuilder,
     this.labelBuilder,
+    this.icon,
   });
 
   void _handleChangeSelection(BuildContext context) async {
     final newSelectedValues = await showDialog<List<String>?>(
       context: context,
       builder: (context) => MultiselectDialog(
-          title: 'Pick $buttonLabel',
-          values: values,
-          selectedValues: selectedValues,
-          leadingBuilder: leadingBuilder,
-          labelBuilder: labelBuilder),
+        title: 'Pick $buttonLabel',
+        values: values,
+        selectedValues: selectedValues,
+        leadingBuilder: leadingBuilder,
+        labelBuilder: labelBuilder,
+      ),
     );
 
     if (newSelectedValues != null) {
@@ -37,14 +40,23 @@ class MultiselectButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final buttonStyle = TextButton.styleFrom(
+      foregroundColor: selectedValues.isEmpty
+          ? Theme.of(context).textTheme.bodyText1!.color
+          : null,
+    );
+    if (icon == null) {
+      return TextButton(
+        style: buttonStyle,
+        onPressed: () => _handleChangeSelection(context),
+        child: Text(buttonLabel),
+      );
+    }
+
     return TextButton.icon(
       label: Text(buttonLabel),
-      icon: Icon(Icons.filter_alt),
-      style: TextButton.styleFrom(
-        foregroundColor: selectedValues.isEmpty
-            ? Theme.of(context).textTheme.bodyText1!.color
-            : null,
-      ),
+      icon: Icon(icon),
+      style: buttonStyle,
       onPressed: () => _handleChangeSelection(context),
     );
   }

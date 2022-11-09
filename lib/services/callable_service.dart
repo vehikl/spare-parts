@@ -5,15 +5,20 @@ class CallableService {
   final HttpsCallable _getUsers =
       FirebaseFunctions.instance.httpsCallable('getUsers');
 
+  final HttpsCallable _setAdmins =
+      FirebaseFunctions.instance.httpsCallable('setAdmins');
+
   Future<List<UserDto>> getUsers() async {
     final response = await _getUsers.call();
 
     return (response.data as List<dynamic>)
-        .map((u) => UserDto(
-              id: u["id"],
-              name: u["name"],
-              photoUrl: u["photoUrl"],
-            ))
+        .map((u) => UserDto.fromJson(u))
         .toList();
+  }
+
+  Future setAdmins(List<String> uids) async {
+    await _setAdmins.call({
+      'uids': uids
+    });
   }
 }
