@@ -9,7 +9,7 @@ class UserDto {
   UserDto({
     required this.id,
     required this.name,
-    required this.photoUrl,
+    this.photoUrl,
     required this.role,
   });
 

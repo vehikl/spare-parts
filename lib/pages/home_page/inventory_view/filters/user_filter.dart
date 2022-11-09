@@ -4,12 +4,12 @@ import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
 
-class UserDropdown extends StatelessWidget {
+class UserFilter extends StatelessWidget {
   final List<String> selectedUsers;
   final void Function(List<String>) onChanged;
   final IconData? icon;
 
-  const UserDropdown({
+  const UserFilter({
     super.key,
     required this.selectedUsers,
     required this.onChanged,

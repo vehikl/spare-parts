@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/search_field.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/user_dropdown.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/filters/available_items_filter.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/filters/search_field.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/filters/user_filter.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
@@ -84,23 +85,14 @@ class _InventoryViewState extends State<InventoryView> {
               ),
               if (isAdmin) ...[
                 SizedBox(width: 10),
-                UserDropdown(
+                UserFilter(
                   icon: Icons.filter_alt,
                   selectedUsers: _selectedBorrowers,
                   onChanged: _handleBorrowersFilterChanged,
                 ),
                 SizedBox(width: 10),
-                TextButton.icon(
-                  label: Text('Only available items'),
-                  icon: Icon(
-                    _showOnlyAvailableItems
-                        ? Icons.check_box
-                        : Icons.check_box_outline_blank,
-                  ),
-                  style: TextButton.styleFrom(
-                    foregroundColor:
-                        Theme.of(context).textTheme.bodyText1!.color,
-                  ),
+                AvailableItemsFilter(
+                  value: _showOnlyAvailableItems,
                   onPressed: _handleAvailableItemsFilterChanged,
                 ),
               ],
