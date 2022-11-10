@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
+import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/add_inventory_item_button.dart';
 
@@ -17,7 +18,8 @@ class _HomePageState extends State<HomePage> {
   int _selectedBottomNavItemIndex = 0;
   final PageController pageController = PageController();
 
-  handleSignOut(FirebaseAuth auth) {
+  _handleSignOut() {
+    final auth = context.read<FirebaseAuth>();
     auth.signOut();
   }
 
@@ -39,40 +41,44 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  bool get isAdmin => context.read<UserRole>() == UserRole.admin;
+
   @override
   Widget build(BuildContext context) {
-    final auth = context.read<FirebaseAuth>();
-    final userRole = context.read<UserRole>();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inventory'),
         actions: [
           TextButton.icon(
             label: Text('Logout'),
-            onPressed: () => handleSignOut(auth),
+            onPressed: _handleSignOut,
             icon: const Icon(Icons.logout),
             style: TextButton.styleFrom(foregroundColor: Colors.white),
           )
         ],
       ),
-      floatingActionButton:
-          userRole == UserRole.admin ? AddInventoryItemButton() : null,
+      floatingActionButton: AddInventoryItemButton(),
       body: PageView(
         controller: pageController,
         onPageChanged: _onPageChanged,
-        children: const [
+        children: [
           InventoryView(),
           BorrowedItemsView(),
+          if (isAdmin) SettingsView()
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
+        items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inventory'),
           BottomNavigationBarItem(
             icon: Icon(Icons.backpack_outlined),
             label: 'Borrowed Items',
           ),
+          if (isAdmin)
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Settings',
+            ),
         ],
         currentIndex: _selectedBottomNavItemIndex,
         selectedItemColor: Colors.amber[800],

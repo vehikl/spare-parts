@@ -5,7 +5,7 @@ class MultiselectDialog extends StatefulWidget {
   final List<String> selectedValues;
   final List<String> values;
   final String title;
-  final IconData Function(String value)? iconBuilder;
+  final Widget Function(String value)? leadingBuilder;
   final String Function(String value)? labelBuilder;
 
   const MultiselectDialog({
@@ -13,7 +13,7 @@ class MultiselectDialog extends StatefulWidget {
     required this.selectedValues,
     required this.title,
     required this.values,
-    this.iconBuilder,
+    this.leadingBuilder,
     this.labelBuilder,
   });
 
@@ -54,9 +54,9 @@ class _MultiselectDialogState extends State<MultiselectDialog> {
                           title: Text(widget.labelBuilder == null
                               ? value
                               : widget.labelBuilder!(value)),
-                          leading: widget.iconBuilder == null
+                          leading: widget.leadingBuilder == null
                               ? null
-                              : Icon(widget.iconBuilder!(value)),
+                              : widget.leadingBuilder!(value),
                           selected: widget.selectedValues.contains(value),
                           selectedTileColor: kVehiklMaterialColor,
                           selectedColor: Colors.white,

@@ -47,3 +47,5 @@ app.*.map.json
 
 service-account.json
 coverage/
+admin/
+*.mocks.dart

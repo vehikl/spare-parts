@@ -7,20 +7,11 @@ import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/services/callable_service.dart';
+import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 import 'mocks/mocks.dart';
-
-class MockCallableService extends Mock implements CallableService {
-  @override
-  Future<List<UserDto>> getUsers() {
-    return super.noSuchMethod(
-      Invocation.method(#getUsers, []),
-      returnValue: Future.value([UserDto(id: 'foo', name: 'Foo')]),
-    );
-  }
-}
 
 Future<void> pumpPage(
   Widget page,
@@ -32,9 +23,14 @@ Future<void> pumpPage(
   CallableService? callableService,
 }) async {
   final mockCallableService = MockCallableService();
-  when(mockCallableService.getUsers())
-      .thenAnswer((_) => Future.value([UserDto(id: 'foo', name: 'Foo')]));
-      
+  when(mockCallableService.getUsers()).thenAnswer((_) => Future.value([
+        UserDto(
+          id: 'foo',
+          name: 'Foo',
+          role: UserRole.admin,
+        )
+      ]));
+
   await tester.pumpWidget(
     MultiProvider(
       providers: [

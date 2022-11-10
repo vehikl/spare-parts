@@ -5,12 +5,15 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-void displayError({required BuildContext context, required String message}) {
+void showError({required BuildContext context, required String message}) {
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.red,
-    ),
+    SnackBar(content: Text(message), backgroundColor: Colors.red),
+  );
+}
+
+void showSuccess({required BuildContext context, required String message}) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(message), backgroundColor: Colors.green),
   );
 }
 

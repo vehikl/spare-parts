@@ -14,6 +14,11 @@ This application is an inventory tracker for the Greater Vehikl Team. Chairs, de
 
 ### Setup
 
+Similarly to npm scripts, Flutter uses `derry` to run custom scripts. All scripts are defined in the `pubspec.yaml` under `scripts`. Install derry globally: 
+```
+flutter pub global activate derry
+```
+
 #### Local
 
 1. Start the Firebase emulators and seed data from `/emulator_data`:
@@ -46,6 +51,23 @@ flutterfire configure
 flutter run -d <device>
 ``` 
 or run it through your favourite IDE.
+
+### Testing
+
+Before running the tests it is required to build mock classes with 
+```
+derry build-mocks
+```
+
+Run the tests:
+```
+flutter test
+```
+
+Generate coverage:
+```
+flutter test --coverage
+```
 
 ### VS Code extensions
 

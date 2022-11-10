@@ -3,15 +3,18 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
+import 'package:spare_parts/widgets/user_avatar.dart';
 
 class UserFilter extends StatelessWidget {
   final List<String> selectedUsers;
   final void Function(List<String>) onChanged;
+  final IconData? icon;
 
   const UserFilter({
     super.key,
     required this.selectedUsers,
     required this.onChanged,
+    this.icon,
   });
 
   @override
@@ -35,8 +38,13 @@ class UserFilter extends StatelessWidget {
           values: users.map((u) => u.id).toList(),
           selectedValues: selectedUsers,
           onConfirm: onChanged,
+          icon: icon,
           labelBuilder: (uid) =>
               users.singleWhere((user) => user.id == uid).name,
+          leadingBuilder: (uid) {
+            final user = users.singleWhere((user) => user.id == uid);
+            return UserAvatar(photoUrl: user.photoUrl);
+          },
         );
       },
     );

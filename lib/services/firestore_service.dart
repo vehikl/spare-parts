@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mockito/annotations.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 
+@GenerateNiceMocks([MockSpec<FirestoreService>()])
 class FirestoreService {
   late FirebaseFirestore _firestore;
 

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
+import 'package:spare_parts/services/firestore_service.mocks.dart';
 import '../helpers/mocks/mocks.dart';
 import '../helpers/test_helpers.dart';
 
@@ -17,11 +18,12 @@ class MockUser extends Mock implements User {
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
   final authMock = MockFirebaseAuth();
-  final firestoreServiceMock = MockFirestoreService();
+  MockFirestoreService firestoreServiceMock = MockFirestoreService();
   final userMock = MockUser();
   const uid = 'qwe123';
 
   setUp(() async {
+    firestoreServiceMock = MockFirestoreService();
     await firestore.collection('items').doc('Chair#123').set({
       'type': 'Chair',
       'borrower': uid,
@@ -124,7 +126,11 @@ void main() {
     'Displays error message if error occurs',
     (WidgetTester tester) async {
       const String errorMessage = 'Something went wrong';
-      when(firestoreServiceMock.getItemsStream()).thenAnswer(
+      when(
+        firestoreServiceMock.getItemsStream(
+          whereBorrowerIs: anyNamed('whereBorrowerIs'),
+        ),
+      ).thenAnswer(
         (_) => Stream<List<InventoryItem>>.error(Exception(errorMessage)),
       );
 
@@ -137,6 +143,5 @@ void main() {
 
       expect(find.textContaining(errorMessage), findsOneWidget);
     },
-    skip: true,
   );
 }

@@ -79,13 +79,14 @@ class _InventoryViewState extends State<InventoryView> {
                 buttonLabel: 'Item Types',
                 values: itemTypes.keys.toList(),
                 selectedValues: _selectedItemTypes,
-                iconBuilder: (itemType) =>
-                    itemTypes[itemType] ?? itemTypes['Other']!,
+                leadingBuilder: (itemType) =>
+                    Icon(itemTypes[itemType] ?? itemTypes['Other']!),
                 onConfirm: _handleTypesFilterChanged,
               ),
               if (isAdmin) ...[
                 SizedBox(width: 10),
                 UserFilter(
+                  icon: Icons.filter_alt,
                   selectedUsers: _selectedBorrowers,
                   onChanged: _handleBorrowersFilterChanged,
                 ),

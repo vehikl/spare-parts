@@ -6,6 +6,7 @@ import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
+import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
@@ -310,8 +311,16 @@ void main() {
       testWidgets(
         'shows only items where borrower matches the selected users',
         (WidgetTester tester) async {
-          final user1 = UserDto(id: 'first', name: 'First');
-          final user2 = UserDto(id: 'second', name: 'Second');
+          final user1 = UserDto(
+            id: 'first',
+            name: 'First',
+            role: UserRole.user,
+          );
+          final user2 = UserDto(
+            id: 'second',
+            name: 'Second',
+            role: UserRole.user,
+          );
 
           final callableService = MockCallableService();
           when(callableService.getUsers())
