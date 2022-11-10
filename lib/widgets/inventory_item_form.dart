@@ -47,7 +47,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
         }
         Navigator.of(context).pop();
       } catch (e) {
-        displayError(
+        showError(
           context: context,
           message: 'Error occured while saving inventory item',
         );

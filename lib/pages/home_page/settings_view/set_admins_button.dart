@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/inputs/multiselect_dialog.dart';
+import 'package:spare_parts/widgets/user_avatar.dart';
 
 class SetAdminsButton extends StatefulWidget {
   const SetAdminsButton({super.key});
@@ -39,13 +41,7 @@ class _SetAdminsButtonState extends State<SetAdminsButton> {
             otherUsers.singleWhere((user) => user.id == uid).name,
         leadingBuilder: (uid) {
           final user = otherUsers.singleWhere((user) => user.id == uid);
-          if (user.photoUrl == null || user.photoUrl == '') {
-            return Icon(Icons.person);
-          }
-
-          return CircleAvatar(
-            foregroundImage: NetworkImage(user.photoUrl!),
-          );
+          return UserAvatar(photoUrl: user.photoUrl);
         },
       ),
     );
@@ -59,18 +55,11 @@ class _SetAdminsButtonState extends State<SetAdminsButton> {
 
     try {
       await callableService.setAdmins(newSelectedValues);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Successfuly modified admins'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      showSuccess(context: context, message: 'Successfuly modified admins');
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Something went wrong while modifying admins'),
-          backgroundColor: Colors.red,
-        ),
+      showError(
+        context: context,
+        message: 'Something went wrong while modifying admins',
       );
     } finally {
       setState(() {

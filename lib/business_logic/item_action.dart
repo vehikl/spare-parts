@@ -35,7 +35,7 @@ abstract class ItemAction {
         content: Text('Item has been successfully $message'),
       ));
     } catch (e) {
-      displayError(
+      showError(
         context: context,
         message: 'Error occured: inventory item was not $message',
       );

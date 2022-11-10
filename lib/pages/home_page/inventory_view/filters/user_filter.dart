@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
+import 'package:spare_parts/widgets/user_avatar.dart';
 
 class UserFilter extends StatelessWidget {
   final List<String> selectedUsers;
@@ -42,13 +43,7 @@ class UserFilter extends StatelessWidget {
               users.singleWhere((user) => user.id == uid).name,
           leadingBuilder: (uid) {
             final user = users.singleWhere((user) => user.id == uid);
-            if (user.photoUrl == null || user.photoUrl == '') {
-              return Icon(Icons.person);
-            }
-
-            return CircleAvatar(
-              foregroundImage: NetworkImage(user.photoUrl!),
-            );
+            return UserAvatar(photoUrl: user.photoUrl);
           },
         );
       },

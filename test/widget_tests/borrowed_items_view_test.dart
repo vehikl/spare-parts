@@ -18,11 +18,12 @@ class MockUser extends Mock implements User {
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
   final authMock = MockFirebaseAuth();
-  final firestoreServiceMock = MockFirestoreService();
+  MockFirestoreService firestoreServiceMock = MockFirestoreService();
   final userMock = MockUser();
   const uid = 'qwe123';
 
   setUp(() async {
+    firestoreServiceMock = MockFirestoreService();
     await firestore.collection('items').doc('Chair#123').set({
       'type': 'Chair',
       'borrower': uid,
@@ -125,7 +126,11 @@ void main() {
     'Displays error message if error occurs',
     (WidgetTester tester) async {
       const String errorMessage = 'Something went wrong';
-      when(firestoreServiceMock.getItemsStream()).thenAnswer(
+      when(
+        firestoreServiceMock.getItemsStream(
+          whereBorrowerIs: anyNamed('whereBorrowerIs'),
+        ),
+      ).thenAnswer(
         (_) => Stream<List<InventoryItem>>.error(Exception(errorMessage)),
       );
 
