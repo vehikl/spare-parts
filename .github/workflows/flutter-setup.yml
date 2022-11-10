@@ -14,7 +14,7 @@ on:
       runs_on:
         type: string
         required: true
-    secrets: 
+    secrets:
       GOOGLE_SERVICES:
         required: true
       DART_FIREBASE_OPTIONS:
@@ -34,12 +34,12 @@ jobs:
       - name: Download Java
         uses: actions/setup-java@v1
         with:
-          java-version: '12.x'
+          java-version: "12.x"
 
       - name: Download Flutter
         uses: subosito/flutter-action@v1
         with:
-          channel: 'stable'
+          channel: "stable"
 
       - name: Copy google-services.json
         env:
@@ -53,6 +53,9 @@ jobs:
 
       - name: Get dependencies
         run: flutter pub get
+
+      - name: Install derry
+        run: flutter pub global activate derry
 
       - name: ${{ inputs.final_command_name }}
         run: ${{ inputs.final_command }}
