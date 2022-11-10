@@ -6,7 +6,7 @@ admin.initializeApp()
 
 export const deleteIfIncorrectEmail = functions.auth.user().onCreate((user, context) => {
   if (!user.email?.endsWith('@vehikl.com')) {
-    console.log(`Deleting user with incorrect email: ${user.email}`);
+    console.log(`Deleting user with incorrect email: ${user.email}`)
     return admin.auth().deleteUser(user.uid)
   }
   return null
@@ -20,7 +20,7 @@ export const getUsers = functions.https.onCall(async (data, context) => {
     id: user.uid,
     name: user.displayName,
     photoUrl: user.photoURL,
-    role: user.customClaims?.role
+    role: user.customClaims?.role,
   }))
 })
 
