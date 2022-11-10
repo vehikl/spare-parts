@@ -14,7 +14,7 @@ jobs:
     with:
       runs_on: ubuntu-latest
       final_command_name: Run tests
-      final_command: flutter test
+      final_command: derry build-mocks && flutter test
     secrets:
       GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
       DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}

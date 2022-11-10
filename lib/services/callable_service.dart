@@ -1,6 +1,8 @@
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:mockito/annotations.dart';
 import 'package:spare_parts/dtos/user_dto.dart';
 
+@GenerateNiceMocks([MockSpec<CallableService>()])
 class CallableService {
   final HttpsCallable _getUsers =
       FirebaseFunctions.instance.httpsCallable('getUsers');
@@ -16,7 +18,7 @@ class CallableService {
         .toList();
   }
 
-  Future setAdmins(List<String> uids) async {
+  Future<void> setAdmins(List<String> uids) async {
     await _setAdmins.call({
       'uids': uids
     });
