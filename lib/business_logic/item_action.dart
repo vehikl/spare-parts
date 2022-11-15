@@ -5,12 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
+import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
+import 'package:spare_parts/widgets/inputs/multiselect_dialog.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
+import 'package:spare_parts/widgets/user_avatar.dart';
 
-enum ItemActionType { delete, edit, borrow, release }
+enum ItemActionType { delete, edit, borrow, release, assign }
 
 abstract class ItemAction {
   ItemActionType get actionType;
@@ -59,6 +62,52 @@ class DeleteItemAction extends ItemAction {
       () => firestoreService.deleteItem(item.id),
       context,
       'deleted',
+    );
+  }
+
+  @override
+  List<UserRole> get allowedRoles => [UserRole.admin];
+}
+
+class AssignItemAction extends ItemAction {
+  @override
+  ItemActionType get actionType => ItemActionType.assign;
+
+  @override
+  IconData get icon => Icons.assignment;
+
+  @override
+  handle(BuildContext context, InventoryItem item) {
+    final firestoreService = context.read<FirestoreService>();
+    final callableService = context.read<CallableService>();
+
+    commonHandle(
+      () async {
+        final users = await callableService.getUsers();
+
+        final userId = await showDialog<String?>(
+          context: context,
+          builder: (context) => MultiselectDialog(
+            isSingleSelection: true,
+            title: 'Select user',
+            values: users.map((u) => u.id).toList(),
+            selectedValues: const [],
+            labelBuilder: (uid) =>
+                users.singleWhere((user) => user.id == uid).name,
+            leadingBuilder: (uid) {
+              final user = users.singleWhere((user) => user.id == uid);
+              return UserAvatar(photoUrl: user.photoUrl);
+            },
+          ),
+        );
+
+        if (userId == null) return;
+
+        item.borrower = userId;
+        await firestoreService.updateItem(item.id, item);
+      },
+      context,
+      'assigned',
     );
   }
 

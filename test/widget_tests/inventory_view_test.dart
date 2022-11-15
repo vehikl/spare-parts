@@ -198,33 +198,31 @@ void main() {
     );
   });
 
-  group('Deleting an item', () {
-    testWidgets(
-      'Deletes an item from the list',
-      (WidgetTester tester) async {
-        await pumpPage(Scaffold(body: InventoryView()), tester,
-            userRole: UserRole.admin, firestore: firestore);
+  testWidgets(
+    'Deletes an item from the list',
+    (WidgetTester tester) async {
+      await pumpPage(Scaffold(body: InventoryView()), tester,
+          userRole: UserRole.admin, firestore: firestore);
 
-        final chairListItem = find.ancestor(
-          of: find.text(chairItem.id),
-          matching: find.byType(ListTile),
-        );
-        final optionsButton = find.descendant(
-          of: chairListItem,
-          matching: find.byIcon(Icons.more_vert),
-        );
+      final chairListItem = find.ancestor(
+        of: find.text(chairItem.id),
+        matching: find.byType(ListTile),
+      );
+      final optionsButton = find.descendant(
+        of: chairListItem,
+        matching: find.byIcon(Icons.more_vert),
+      );
 
-        await tester.tap(optionsButton);
-        await tester.pumpAndSettle();
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
 
-        final deleteButton = find.text('Delete');
-        await tester.tap(deleteButton);
-        await tester.pumpAndSettle();
+      final deleteButton = find.text('Delete');
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
 
-        expect(find.text(chairItem.id), findsNothing);
-      },
-    );
-  });
+      expect(find.text(chairItem.id), findsNothing);
+    },
+  );
 
   testWidgets(
     'User can borrow an item from the list',
@@ -261,6 +259,55 @@ void main() {
 
       expect(find.text(chairItem.id), findsNothing);
       expect(find.text('Item has been successfully borrowed'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Admin can assign an item to a user',
+    (WidgetTester tester) async {
+      final authMock = MockFirebaseAuth();
+      final user = UserDto(
+        id: 'foo',
+        name: 'Foo',
+        role: UserRole.user,
+      );
+      final mockCallableService = MockCallableService();
+      when(mockCallableService.getUsers())
+          .thenAnswer((_) => Future.value([user]));
+
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+        auth: authMock,
+      );
+
+      final chairListItem = find.ancestor(
+        of: find.text(chairItem.id),
+        matching: find.byType(ListTile),
+      );
+      final optionsButton = find.descendant(
+        of: chairListItem,
+        matching: find.byIcon(Icons.more_vert),
+      );
+
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
+
+      final assignButton = find.text('Assign');
+      await tester.tap(assignButton);
+      await tester.pumpAndSettle();
+
+      final userOption = find.text(user.name);
+      await tester.tap(userOption);
+      await tester.pumpAndSettle();
+      final selectButton = find.text('Select');
+      await tester.tap(selectButton);
+      await tester.pumpAndSettle();
+
+      final chair = await firestore.collection('items').doc(chairItem.id).get();
+      expect(user.id, chair.get('borrower'));
     },
   );
 

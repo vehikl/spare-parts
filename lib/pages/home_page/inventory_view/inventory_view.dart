@@ -135,7 +135,7 @@ class _InventoryViewState extends State<InventoryView> {
                 children: filteredItems
                     .map((item) => InventoryListItem(
                           item: item,
-                          actions: [BorrowItemAction()],
+                          actions: [BorrowItemAction(), AssignItemAction()],
                         ))
                     .toList(),
               );
