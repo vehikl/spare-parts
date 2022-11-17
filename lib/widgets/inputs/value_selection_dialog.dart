@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
-class MultiselectDialog extends StatefulWidget {
+class ValueSelectionDialog extends StatefulWidget {
   final List<String> selectedValues;
   final List<String> values;
   final String title;
@@ -9,7 +9,7 @@ class MultiselectDialog extends StatefulWidget {
   final Widget Function(String value)? leadingBuilder;
   final String Function(String value)? labelBuilder;
 
-  const MultiselectDialog({
+  const ValueSelectionDialog({
     super.key,
     required this.selectedValues,
     required this.title,
@@ -20,10 +20,10 @@ class MultiselectDialog extends StatefulWidget {
   });
 
   @override
-  State<MultiselectDialog> createState() => _MultiselectDialogState();
+  State<ValueSelectionDialog> createState() => _ValueSelectionDialogState();
 }
 
-class _MultiselectDialogState extends State<MultiselectDialog> {
+class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
   late final List<String> _newSelectedValues;
 
   @override

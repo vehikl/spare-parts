@@ -3,13 +3,14 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
-import 'package:spare_parts/widgets/inputs/multiselect_dialog.dart';
+import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
 
@@ -87,7 +88,7 @@ class AssignItemAction extends ItemAction {
 
         final userId = await showDialog<String?>(
           context: context,
-          builder: (context) => MultiselectDialog(
+          builder: (context) => ValueSelectionDialog(
             isSingleSelection: true,
             title: 'Select user',
             values: users.map((u) => u.id).toList(),
@@ -103,7 +104,7 @@ class AssignItemAction extends ItemAction {
 
         if (userId == null) return;
 
-        item.borrower = userId;
+        item.borrower = users.firstWhere((u) => u.id == userId).toCustomUser();
         await firestoreService.updateItem(item.id, item);
       },
       context,
@@ -129,13 +130,20 @@ class BorrowItemAction extends ItemAction {
 
     commonHandle(
       () async {
+        final user = auth.currentUser;
+        if (user == null) return;
+
         final event = Event(
-            issuerId: auth.currentUser?.uid ?? '',
-            issuerName: auth.currentUser?.displayName ?? '',
-            type: 'Borrow',
-            createdAt: DateTime.now());
+          issuerId: user.uid,
+          issuerName: user.displayName ?? 'anonymous',
+          type: 'Borrow',
+          createdAt: DateTime.now(),
+        );
         await firestoreService.addEvent(item.id, event);
-        await firestoreService.borrowItem(item, auth.currentUser?.uid);
+        await firestoreService.borrowItem(
+          item,
+          CustomUser.fromUser(user),
+        );
       },
       context,
       'borrowed',

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spare_parts/widgets/inputs/multiselect_dialog.dart';
+import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 
 class MultiselectButton extends StatelessWidget {
   final List<String> values;
@@ -24,7 +24,7 @@ class MultiselectButton extends StatelessWidget {
   void _handleChangeSelection(BuildContext context) async {
     final newSelectedValues = await showDialog<List<String>?>(
       context: context,
-      builder: (context) => MultiselectDialog(
+      builder: (context) => ValueSelectionDialog(
         title: 'Pick $buttonLabel',
         values: values,
         selectedValues: selectedValues,

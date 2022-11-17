@@ -95,6 +95,7 @@ class InventoryListItem extends StatelessWidget {
         item.id,
         style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 22),
       ),
+      subtitle: item.borrower?.name == null ? null : Text(item.borrower!.name!),
       onTap:
           userRole == UserRole.admin ? () => showHistoryModal(context) : null,
       trailing: PopupMenuButton<ItemAction>(

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
 import 'package:spare_parts/services/firestore_service.mocks.dart';
@@ -20,21 +21,25 @@ void main() {
   final authMock = MockFirebaseAuth();
   MockFirestoreService firestoreServiceMock = MockFirestoreService();
   final userMock = MockUser();
-  const uid = 'qwe123';
+  const user = CustomUser(uid: 'qwe123');
+  final chairItem =
+      InventoryItem(id: 'Chair#123', type: 'Chair', borrower: user);
+  final deskItem = InventoryItem(id: 'Desk#321', type: 'Desk');
 
   setUp(() async {
     firestoreServiceMock = MockFirestoreService();
-    await firestore.collection('items').doc('Chair#123').set({
-      'type': 'Chair',
-      'borrower': uid,
-    });
+    await firestore
+        .collection('items')
+        .doc(chairItem.id)
+        .set(chairItem.toFirestore());
 
-    await firestore.collection('items').doc('Desk#321').set({
-      'type': 'Desk',
-      'borrower': null,
-    });
+    await firestore
+        .collection('items')
+        .doc(deskItem.id)
+        .set(deskItem.toFirestore());
 
-    when(userMock.uid).thenReturn(uid);
+    when(userMock.uid).thenReturn(user.uid);
+    when(authMock.currentUser).thenReturn(userMock);
   });
 
   tearDown(() async {
@@ -56,8 +61,8 @@ void main() {
         auth: authMock,
       );
 
-      expect(find.text('Chair#123'), findsOneWidget);
-      expect(find.text('Desk#321'), findsNothing);
+      expect(find.text(chairItem.id), findsOneWidget);
+      expect(find.text(deskItem.id), findsNothing);
     },
   );
 
@@ -74,7 +79,7 @@ void main() {
       );
 
       final chairListItem = find.ancestor(
-        of: find.text('Chair#123'),
+        of: find.text(chairItem.id),
         matching: find.byType(ListTile),
       );
       final optionsButton = find.descendant(
@@ -102,7 +107,7 @@ void main() {
       );
 
       final chairListItem = find.ancestor(
-        of: find.text('Chair#123'),
+        of: find.text(chairItem.id),
         matching: find.byType(ListTile),
       );
       final optionsButton = find.descendant(
@@ -117,7 +122,7 @@ void main() {
       await tester.tap(releaseButton);
       await tester.pumpAndSettle();
 
-      expect(find.text('Chair#123'), findsNothing);
+      expect(find.text(chairItem.id), findsNothing);
       expect(find.text('Item has been successfully released'), findsOneWidget);
     },
   );

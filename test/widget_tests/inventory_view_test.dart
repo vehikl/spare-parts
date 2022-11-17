@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:spare_parts/dtos/user_dto.dart';
+import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
 import '../helpers/mocks/mocks.dart';
@@ -283,7 +285,7 @@ void main() {
         auth: authMock,
       );
 
-      final chairListItem = find.ancestor(
+      var chairListItem = find.ancestor(
         of: find.text(chairItem.id),
         matching: find.byType(ListTile),
       );
@@ -306,8 +308,18 @@ void main() {
       await tester.tap(selectButton);
       await tester.pumpAndSettle();
 
-      final chair = await firestore.collection('items').doc(chairItem.id).get();
-      expect(user.id, chair.get('borrower'));
+
+      chairListItem = find.ancestor(
+        of: find.text(chairItem.id),
+        matching: find.byType(ListTile),
+      );
+
+      final borrower = find.descendant(
+        of: chairListItem,
+        matching: find.text(user.name),
+      );
+
+      expect(borrower, findsOneWidget);
     },
   );
 
@@ -358,30 +370,23 @@ void main() {
       testWidgets(
         'shows only items where borrower matches the selected users',
         (WidgetTester tester) async {
-          final user1 = UserDto(
-            id: 'first',
-            name: 'First',
-            role: UserRole.user,
-          );
-          final user2 = UserDto(
-            id: 'second',
-            name: 'Second',
-            role: UserRole.user,
-          );
+          final user1 = CustomUser(uid: 'first', name: 'First');
+          final user2 = CustomUser(uid: 'second', name: 'Second');
 
           final callableService = MockCallableService();
-          when(callableService.getUsers())
-              .thenAnswer((_) => Future.value([user1, user2]));
+          when(callableService.getUsers()).thenAnswer((_) => Future.value(
+                [user1, user2].map(UserDto.fromCustomUser).toList(),
+              ));
 
           final deskItem = InventoryItem(
             id: 'Desk#123',
             type: 'Desk',
-            borrower: user1.id,
+            borrower: user1,
           );
           final monitorItem = InventoryItem(
             id: 'Monitor#123',
             type: 'Monitor',
-            borrower: user2.id,
+            borrower: user2,
           );
           await firestore
               .collection('items')
@@ -403,7 +408,10 @@ void main() {
           await tester.tap(find.text('Borrowers'));
           await tester.pumpAndSettle();
 
-          await tester.tap(find.text(user1.name));
+          await tester.tap(find.descendant(
+            of: find.byType(ValueSelectionDialog),
+            matching: find.text(user1.name!),
+          ));
 
           await tester.tap(find.text('Select'));
           await tester.pumpAndSettle();
@@ -450,7 +458,7 @@ void main() {
           final borrowedItem = InventoryItem(
             id: 'Desk#123',
             type: 'Desk',
-            borrower: 'foo',
+            borrower: CustomUser(uid: 'foo'),
           );
           await firestore
               .collection('items')
