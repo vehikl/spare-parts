@@ -25,10 +25,21 @@ void main() {
   testWidgets(
     'Displays current borrower of item',
     (WidgetTester tester) async {
-      final borrower = CustomUser(uid: 'foo', name: 'Foo', photoURL: 'example.com');
-      final testItem = InventoryItem(id: '#re4123', type: 'Chair', borrower: borrower);
+      final borrower = CustomUser(
+        uid: 'foo',
+        name: 'Foo',
+        photoURL: 'example.com',
+      );
+      final testItem = InventoryItem(
+        id: '#re4123',
+        type: 'Chair',
+        borrower: borrower,
+      );
 
-      await pumpPage(Scaffold(body: InventoryListItem(item: testItem)), tester);
+      await pumpPage(
+        Scaffold(body: InventoryListItem(item: testItem, showBorrower: true)),
+        tester,
+      );
 
       expect(find.text(borrower.name!), findsOneWidget);
     },
