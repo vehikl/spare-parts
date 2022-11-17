@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
-import 'package:spare_parts/widgets/inputs/multiselect_dialog.dart';
+import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
 
 class SetAdminsButton extends StatefulWidget {
@@ -30,7 +30,7 @@ class _SetAdminsButtonState extends State<SetAdminsButton> {
 
     final newSelectedValues = await showDialog<List<String>?>(
       context: context,
-      builder: (context) => MultiselectDialog(
+      builder: (context) => ValueSelectionDialog(
         title: 'Pick admins',
         values: otherUsers.map((u) => u.id).toList(),
         selectedValues: otherUsers

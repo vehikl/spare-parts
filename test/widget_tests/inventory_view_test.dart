@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:spare_parts/dtos/user_dto.dart';
+import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
 import '../helpers/mocks/mocks.dart';
@@ -198,33 +200,31 @@ void main() {
     );
   });
 
-  group('Deleting an item', () {
-    testWidgets(
-      'Deletes an item from the list',
-      (WidgetTester tester) async {
-        await pumpPage(Scaffold(body: InventoryView()), tester,
-            userRole: UserRole.admin, firestore: firestore);
+  testWidgets(
+    'Deletes an item from the list',
+    (WidgetTester tester) async {
+      await pumpPage(Scaffold(body: InventoryView()), tester,
+          userRole: UserRole.admin, firestore: firestore);
 
-        final chairListItem = find.ancestor(
-          of: find.text(chairItem.id),
-          matching: find.byType(ListTile),
-        );
-        final optionsButton = find.descendant(
-          of: chairListItem,
-          matching: find.byIcon(Icons.more_vert),
-        );
+      final chairListItem = find.ancestor(
+        of: find.text(chairItem.id),
+        matching: find.byType(ListTile),
+      );
+      final optionsButton = find.descendant(
+        of: chairListItem,
+        matching: find.byIcon(Icons.more_vert),
+      );
 
-        await tester.tap(optionsButton);
-        await tester.pumpAndSettle();
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
 
-        final deleteButton = find.text('Delete');
-        await tester.tap(deleteButton);
-        await tester.pumpAndSettle();
+      final deleteButton = find.text('Delete');
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
 
-        expect(find.text(chairItem.id), findsNothing);
-      },
-    );
-  });
+      expect(find.text(chairItem.id), findsNothing);
+    },
+  );
 
   testWidgets(
     'User can borrow an item from the list',
@@ -261,6 +261,65 @@ void main() {
 
       expect(find.text(chairItem.id), findsNothing);
       expect(find.text('Item has been successfully borrowed'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Admin can assign an item to a user',
+    (WidgetTester tester) async {
+      final authMock = MockFirebaseAuth();
+      final user = UserDto(
+        id: 'foo',
+        name: 'Foo',
+        role: UserRole.user,
+      );
+      final mockCallableService = MockCallableService();
+      when(mockCallableService.getUsers())
+          .thenAnswer((_) => Future.value([user]));
+
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+        auth: authMock,
+      );
+
+      var chairListItem = find.ancestor(
+        of: find.text(chairItem.id),
+        matching: find.byType(ListTile),
+      );
+      final optionsButton = find.descendant(
+        of: chairListItem,
+        matching: find.byIcon(Icons.more_vert),
+      );
+
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
+
+      final assignButton = find.text('Assign');
+      await tester.tap(assignButton);
+      await tester.pumpAndSettle();
+
+      final userOption = find.text(user.name);
+      await tester.tap(userOption);
+      await tester.pumpAndSettle();
+      final selectButton = find.text('Select');
+      await tester.tap(selectButton);
+      await tester.pumpAndSettle();
+
+
+      chairListItem = find.ancestor(
+        of: find.text(chairItem.id),
+        matching: find.byType(ListTile),
+      );
+
+      final borrower = find.descendant(
+        of: chairListItem,
+        matching: find.text(user.name),
+      );
+
+      expect(borrower, findsOneWidget);
     },
   );
 
@@ -311,30 +370,23 @@ void main() {
       testWidgets(
         'shows only items where borrower matches the selected users',
         (WidgetTester tester) async {
-          final user1 = UserDto(
-            id: 'first',
-            name: 'First',
-            role: UserRole.user,
-          );
-          final user2 = UserDto(
-            id: 'second',
-            name: 'Second',
-            role: UserRole.user,
-          );
+          final user1 = CustomUser(uid: 'first', name: 'First');
+          final user2 = CustomUser(uid: 'second', name: 'Second');
 
           final callableService = MockCallableService();
-          when(callableService.getUsers())
-              .thenAnswer((_) => Future.value([user1, user2]));
+          when(callableService.getUsers()).thenAnswer((_) => Future.value(
+                [user1, user2].map(UserDto.fromCustomUser).toList(),
+              ));
 
           final deskItem = InventoryItem(
             id: 'Desk#123',
             type: 'Desk',
-            borrower: user1.id,
+            borrower: user1,
           );
           final monitorItem = InventoryItem(
             id: 'Monitor#123',
             type: 'Monitor',
-            borrower: user2.id,
+            borrower: user2,
           );
           await firestore
               .collection('items')
@@ -356,7 +408,10 @@ void main() {
           await tester.tap(find.text('Borrowers'));
           await tester.pumpAndSettle();
 
-          await tester.tap(find.text(user1.name));
+          await tester.tap(find.descendant(
+            of: find.byType(ValueSelectionDialog),
+            matching: find.text(user1.name!),
+          ));
 
           await tester.tap(find.text('Select'));
           await tester.pumpAndSettle();
@@ -403,7 +458,7 @@ void main() {
           final borrowedItem = InventoryItem(
             id: 'Desk#123',
             type: 'Desk',
-            borrower: 'foo',
+            borrower: CustomUser(uid: 'foo'),
           );
           await firestore
               .collection('items')

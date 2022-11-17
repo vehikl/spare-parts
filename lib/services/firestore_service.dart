@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mockito/annotations.dart';
+import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 
@@ -21,14 +22,18 @@ class FirestoreService {
     await getItemDocumentReference(itemId).delete();
   }
 
-  borrowItem(InventoryItem item, String? uid) async {
+  borrowItem(InventoryItem item, CustomUser user) async {
     await getItemDocumentReference(item.id).update({
-      'borrower': uid,
+      'borrower': user.toFirestore(),
+      'borrowerId': user.uid,
     });
   }
 
   releaseItem(InventoryItem item) async {
-    await getItemDocumentReference(item.id).update({'borrower': null});
+    await getItemDocumentReference(item.id).update({
+      'borrower': null,
+      'borrowerId': null,
+    });
   }
 
   addItem(InventoryItem item) async {
@@ -49,16 +54,16 @@ class FirestoreService {
     Query<Object?>? query;
 
     if (withNoBorrower != null && withNoBorrower) {
-      query = itemsCollection.where('borrower', isNull: true);
+      query = itemsCollection.where('borrowerId', isNull: true);
     }
 
     if (whereBorrowerIs != null) {
-      query = itemsCollection.where('borrower', isEqualTo: whereBorrowerIs);
+      query = itemsCollection.where('borrowerId', isEqualTo: whereBorrowerIs);
     }
 
     if (whereBorrowerIn != null) {
       query = (query ?? itemsCollection).where(
-        'borrower',
+        'borrowerId',
         whereIn: whereBorrowerIn,
       );
     }

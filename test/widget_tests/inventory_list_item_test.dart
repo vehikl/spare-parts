@@ -1,6 +1,7 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/utilities/constants.dart';
@@ -18,6 +19,29 @@ void main() {
       await pumpPage(Scaffold(body: InventoryListItem(item: testItem)), tester);
 
       expect(find.text(testItem.id), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Displays current borrower of item',
+    (WidgetTester tester) async {
+      final borrower = CustomUser(
+        uid: 'foo',
+        name: 'Foo',
+        photoURL: 'example.com',
+      );
+      final testItem = InventoryItem(
+        id: '#re4123',
+        type: 'Chair',
+        borrower: borrower,
+      );
+
+      await pumpPage(
+        Scaffold(body: InventoryListItem(item: testItem, showBorrower: true)),
+        tester,
+      );
+
+      expect(find.text(borrower.name!), findsOneWidget);
     },
   );
 

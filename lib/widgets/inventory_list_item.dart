@@ -13,10 +13,13 @@ import 'package:intl/intl.dart';
 /// "edit" and "delete" actions are always available to the admin
 /// optional actions can be supplied through the [actions] property
 class InventoryListItem extends StatelessWidget {
+  final bool showBorrower;
+
   const InventoryListItem({
     Key? key,
     required this.item,
     this.actions = const [],
+    this.showBorrower = false,
   }) : super(key: key);
 
   final InventoryItem item;
@@ -95,6 +98,9 @@ class InventoryListItem extends StatelessWidget {
         item.id,
         style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 22),
       ),
+      subtitle: !showBorrower || item.borrower?.name == null
+          ? null
+          : Text(item.borrower!.name!),
       onTap:
           userRole == UserRole.admin ? () => showHistoryModal(context) : null,
       trailing: PopupMenuButton<ItemAction>(

@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
-class MultiselectDialog extends StatefulWidget {
+class ValueSelectionDialog extends StatefulWidget {
   final List<String> selectedValues;
   final List<String> values;
   final String title;
+  final bool isSingleSelection;
   final Widget Function(String value)? leadingBuilder;
   final String Function(String value)? labelBuilder;
 
-  const MultiselectDialog({
+  const ValueSelectionDialog({
     super.key,
     required this.selectedValues,
     required this.title,
     required this.values,
+    this.isSingleSelection = false,
     this.leadingBuilder,
     this.labelBuilder,
   });
 
   @override
-  State<MultiselectDialog> createState() => _MultiselectDialogState();
+  State<ValueSelectionDialog> createState() => _ValueSelectionDialogState();
 }
 
-class _MultiselectDialogState extends State<MultiselectDialog> {
+class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
   late final List<String> _newSelectedValues;
 
   @override
   void initState() {
-    _newSelectedValues = widget.selectedValues;
+    _newSelectedValues = [...widget.selectedValues];
     super.initState();
   }
 
@@ -57,7 +59,7 @@ class _MultiselectDialogState extends State<MultiselectDialog> {
                           leading: widget.leadingBuilder == null
                               ? null
                               : widget.leadingBuilder!(value),
-                          selected: widget.selectedValues.contains(value),
+                          selected: _newSelectedValues.contains(value),
                           selectedTileColor: kVehiklMaterialColor,
                           selectedColor: Colors.white,
                           onTap: () {
@@ -65,6 +67,9 @@ class _MultiselectDialogState extends State<MultiselectDialog> {
                               if (_newSelectedValues.contains(value)) {
                                 _newSelectedValues.remove(value);
                               } else {
+                                if (widget.isSingleSelection) {
+                                  _newSelectedValues.clear();
+                                }
                                 _newSelectedValues.add(value);
                               }
                             });
@@ -83,7 +88,14 @@ class _MultiselectDialogState extends State<MultiselectDialog> {
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.pop(context, _newSelectedValues);
+            Navigator.pop(
+              context,
+              widget.isSingleSelection
+                  ? _newSelectedValues.isEmpty
+                      ? null
+                      : _newSelectedValues.first
+                  : _newSelectedValues,
+            );
           },
           child: Text('Select'),
         )

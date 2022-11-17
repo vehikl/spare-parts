@@ -79,6 +79,7 @@ class _InventoryViewState extends State<InventoryView> {
                 buttonLabel: 'Item Types',
                 values: itemTypes.keys.toList(),
                 selectedValues: _selectedItemTypes,
+                icon: Icons.filter_alt,
                 leadingBuilder: (itemType) =>
                     Icon(itemTypes[itemType] ?? itemTypes['Other']!),
                 onConfirm: _handleTypesFilterChanged,
@@ -134,7 +135,8 @@ class _InventoryViewState extends State<InventoryView> {
                 children: filteredItems
                     .map((item) => InventoryListItem(
                           item: item,
-                          actions: [BorrowItemAction()],
+                          showBorrower: true,
+                          actions: [BorrowItemAction(), AssignItemAction()],
                         ))
                     .toList(),
               );
