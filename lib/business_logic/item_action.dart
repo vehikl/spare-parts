@@ -92,7 +92,10 @@ class AssignItemAction extends ItemAction {
             isSingleSelection: true,
             title: 'Select user',
             values: users.map((u) => u.id).toList(),
-            selectedValues: const [],
+            selectedValues: users
+                .where((user) => user.id == item.borrower?.uid)
+                .map((user) => user.id)
+                .toList(),
             labelBuilder: (uid) =>
                 users.singleWhere((user) => user.id == uid).name,
             leadingBuilder: (uid) {
@@ -102,9 +105,9 @@ class AssignItemAction extends ItemAction {
           ),
         );
 
-        if (userId == null) return;
-
-        item.borrower = users.firstWhere((u) => u.id == userId).toCustomUser();
+        item.borrower = userId == null
+            ? null
+            : users.firstWhere((u) => u.id == userId).toCustomUser();
         await firestoreService.updateItem(item.id, item);
       },
       context,
