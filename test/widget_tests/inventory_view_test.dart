@@ -396,6 +396,71 @@ void main() {
     );
 
     testWidgets(
+      'should not remove the borrower from an item if canceling out from the dialog',
+      (WidgetTester tester) async {
+        final authMock = MockFirebaseAuth();
+        final user = UserDto(
+          id: 'foo',
+          name: 'Foo',
+          role: UserRole.user,
+        );
+        final mockCallableService = MockCallableService();
+        when(mockCallableService.getUsers())
+            .thenAnswer((_) => Future.value([user]));
+
+        final monitorItem = InventoryItem(
+          id: 'Monitor#123',
+          type: 'Monitor',
+          borrower: user.toCustomUser(),
+        );
+        await firestore
+            .collection('items')
+            .doc(monitorItem.id)
+            .set(monitorItem.toFirestore());
+
+        await pumpPage(
+          Scaffold(body: InventoryView()),
+          tester,
+          userRole: UserRole.admin,
+          firestore: firestore,
+          auth: authMock,
+        );
+
+        var monitorListItem = find.ancestor(
+          of: find.text(monitorItem.id),
+          matching: find.byType(ListTile),
+        );
+
+        final optionsButton = find.descendant(
+          of: monitorListItem,
+          matching: find.byIcon(Icons.more_vert),
+        );
+        await tester.tap(optionsButton);
+        await tester.pumpAndSettle();
+
+        final assignButton = find.text('Assign');
+        await tester.tap(assignButton);
+        await tester.pumpAndSettle();
+        
+        final selectButton = find.text('Cancel');
+        await tester.tap(selectButton);
+        await tester.pumpAndSettle();
+
+        monitorListItem = find.ancestor(
+          of: find.text(monitorItem.id),
+          matching: find.byType(ListTile),
+        );
+
+        final borrower = find.descendant(
+          of: monitorListItem,
+          matching: find.text(user.name),
+        );
+
+        expect(borrower, findsOneWidget);
+      },
+    );
+
+    testWidgets(
       'shows the current borrower as selected',
       (WidgetTester tester) async {
         final authMock = MockFirebaseAuth();

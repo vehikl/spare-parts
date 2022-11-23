@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,15 +30,17 @@ abstract class ItemAction {
   }
 
   void commonHandle(
-    Function action,
+    FutureOr<bool> Function() action,
     BuildContext context,
     String message,
   ) async {
     try {
-      await action();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Item has been successfully $message'),
-      ));
+      final showSuccess = await action();
+      if (showSuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Item has been successfully $message'),
+        ));
+      }
     } catch (e) {
       showError(
         context: context,
@@ -86,7 +89,7 @@ class AssignItemAction extends ItemAction {
       () async {
         final users = await callableService.getUsers();
 
-        final userId = await showDialog<String?>(
+        final userIds = await showDialog<List<String>?>(
           context: context,
           builder: (context) => ValueSelectionDialog(
             isSingleSelection: true,
@@ -105,10 +108,13 @@ class AssignItemAction extends ItemAction {
           ),
         );
 
-        item.borrower = userId == null
+        if (userIds == null) return false;
+
+        item.borrower = userIds.isEmpty
             ? null
-            : users.firstWhere((u) => u.id == userId).toCustomUser();
+            : users.firstWhere((u) => u.id == userIds.first).toCustomUser();
         await firestoreService.updateItem(item.id, item);
+        return true;
       },
       context,
       'assigned',
@@ -134,7 +140,7 @@ class BorrowItemAction extends ItemAction {
     commonHandle(
       () async {
         final user = auth.currentUser;
-        if (user == null) return;
+        if (user == null) return false;
 
         final event = Event(
           issuerId: user.uid,
@@ -147,6 +153,8 @@ class BorrowItemAction extends ItemAction {
           item,
           CustomUser.fromUser(user),
         );
+
+        return true;
       },
       context,
       'borrowed',
@@ -179,6 +187,8 @@ class ReleaseItemAction extends ItemAction {
         );
         await firestoreService.addEvent(item.id, event);
         await firestoreService.releaseItem(item);
+
+        return true;
       },
       context,
       'released',
