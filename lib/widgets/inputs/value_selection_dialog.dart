@@ -88,14 +88,7 @@ class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.pop(
-              context,
-              widget.isSingleSelection
-                  ? _newSelectedValues.isEmpty
-                      ? null
-                      : _newSelectedValues.first
-                  : _newSelectedValues,
-            );
+            Navigator.pop(context, _newSelectedValues);
           },
           child: Text('Select'),
         )

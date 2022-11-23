@@ -5,7 +5,7 @@ import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
 
-class UserFilter extends StatelessWidget {
+class UserFilter extends StatefulWidget {
   final List<String> selectedUsers;
   final void Function(List<String>) onChanged;
   final IconData? icon;
@@ -18,11 +18,24 @@ class UserFilter extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final callableService = context.watch<CallableService>();
+  State<UserFilter> createState() => _UserFilterState();
+}
 
+class _UserFilterState extends State<UserFilter> {
+  late Future<List<UserDto>> _userQuery;
+
+  @override
+  void initState() {
+    final callableService = context.read<CallableService>();
+    _userQuery = callableService.getUsers();
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder<List<UserDto>>(
-      future: callableService.getUsers(),
+      future: _userQuery,
       builder: (context, snap) {
         if (!snap.hasData || snap.hasError) {
           return SizedBox.square(
@@ -36,9 +49,9 @@ class UserFilter extends StatelessWidget {
         return MultiselectButton(
           buttonLabel: 'Borrowers',
           values: users.map((u) => u.id).toList(),
-          selectedValues: selectedUsers,
-          onConfirm: onChanged,
-          icon: icon,
+          selectedValues: widget.selectedUsers,
+          onConfirm: widget.onChanged,
+          icon: widget.icon,
           labelBuilder: (uid) =>
               users.singleWhere((user) => user.id == uid).name,
           leadingBuilder: (uid) {
