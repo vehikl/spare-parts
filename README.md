@@ -88,7 +88,7 @@ flutter test --coverage
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://andreyden.github.io/"><img src="https://avatars.githubusercontent.com/u/25109066?v=4?s=100" width="100px;" alt="Andrii Denysenko"/><br /><sub><b>Andrii Denysenko</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=ANDREYDEN" title="Code">💻</a> <a href="#design-ANDREYDEN" title="Design">🎨</a> <a href="#ideas-ANDREYDEN" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/vehikl/spare-parts/commits?author=ANDREYDEN" title="Tests">⚠️</a> <a href="https://github.com/vehikl/spare-parts/pulls?q=is%3Apr+reviewed-by%3AANDREYDEN" title="Reviewed Pull Requests">👀</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/alisondraV"><img src="https://avatars.githubusercontent.com/u/56138100?v=4?s=100" width="100px;" alt="Alisa Vynohradova"/><br /><sub><b>Alisa Vynohradova</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=alisondraV" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/alisondraV"><img src="https://avatars.githubusercontent.com/u/56138100?v=4?s=100" width="100px;" alt="Alisa Vynohradova"/><br /><sub><b>Alisa Vynohradova</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=alisondraV" title="Code">💻</a> <a href="#design-alisondraV" title="Design">🎨</a></td>
     </tr>
   </tbody>
   <tfoot>
