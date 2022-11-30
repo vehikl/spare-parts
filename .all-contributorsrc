@@ -18,6 +18,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "ANDREYDEN",
+      "name": "Andrii Denysenko",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25109066?v=4",
+      "profile": "https://andreyden.github.io/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

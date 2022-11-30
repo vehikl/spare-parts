@@ -1,6 +1,6 @@
 # Vehikl Spare Parts
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 This application is an inventory tracker for the Greater Vehikl Team. Chairs, desks, monitors and much more all in one place.
@@ -88,6 +88,7 @@ flutter test --coverage
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/alisondraV"><img src="https://avatars.githubusercontent.com/u/56138100?v=4?s=100" width="100px;" alt="Alisa Vynohradova"/><br /><sub><b>Alisa Vynohradova</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=alisondraV" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://andreyden.github.io/"><img src="https://avatars.githubusercontent.com/u/25109066?v=4?s=100" width="100px;" alt="Andrii Denysenko"/><br /><sub><b>Andrii Denysenko</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=ANDREYDEN" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
