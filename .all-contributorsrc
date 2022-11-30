@@ -1,0 +1,25 @@
+{
+  "projectName": "spare-parts",
+  "projectOwner": "vehikl",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "alisondraV",
+      "name": "Alisa Vynohradova",
+      "avatar_url": "https://avatars.githubusercontent.com/u/56138100?v=4",
+      "profile": "https://github.com/alisondraV",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "linkToUsage": true
+}
