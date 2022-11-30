@@ -1,6 +1,6 @@
 # Vehikl Spare Parts
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 This application is an inventory tracker for the Greater Vehikl Team. Chairs, desks, monitors and much more all in one place.
@@ -92,6 +92,7 @@ flutter test --coverage
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/kgallego"><img src="https://avatars.githubusercontent.com/u/37840194?v=4?s=100" width="100px;" alt="Karen Gallego"/><br /><sub><b>Karen Gallego</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=kgallego" title="Code">💻</a> <a href="#design-kgallego" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/FrankyFrankFrank"><img src="https://avatars.githubusercontent.com/u/6907518?v=4?s=100" width="100px;" alt="Adam Frank"/><br /><sub><b>Adam Frank</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=FrankyFrankFrank" title="Code">💻</a> <a href="#design-FrankyFrankFrank" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.whitforddesign.ca/"><img src="https://avatars.githubusercontent.com/u/60898437?v=4?s=100" width="100px;" alt="whitfona"/><br /><sub><b>whitfona</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=whitfona" title="Code">💻</a> <a href="#design-whitfona" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/OleksandrLevinskyi"><img src="https://avatars.githubusercontent.com/u/72713236?v=4?s=100" width="100px;" alt="Oleksandr Levinskyi"/><br /><sub><b>Oleksandr Levinskyi</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=OleksandrLevinskyi" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
