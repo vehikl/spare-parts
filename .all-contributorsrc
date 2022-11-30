@@ -42,6 +42,16 @@
         "code",
         "design"
       ]
+    },
+    {
+      "login": "FrankyFrankFrank",
+      "name": "Adam Frank",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6907518?v=4",
+      "profile": "https://github.com/FrankyFrankFrank",
+      "contributions": [
+        "code",
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,
