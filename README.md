@@ -87,8 +87,8 @@ flutter test --coverage
 <table>
   <tbody>
     <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://andreyden.github.io/"><img src="https://avatars.githubusercontent.com/u/25109066?v=4?s=100" width="100px;" alt="Andrii Denysenko"/><br /><sub><b>Andrii Denysenko</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=ANDREYDEN" title="Code">💻</a> <a href="#design-ANDREYDEN" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/alisondraV"><img src="https://avatars.githubusercontent.com/u/56138100?v=4?s=100" width="100px;" alt="Alisa Vynohradova"/><br /><sub><b>Alisa Vynohradova</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=alisondraV" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://andreyden.github.io/"><img src="https://avatars.githubusercontent.com/u/25109066?v=4?s=100" width="100px;" alt="Andrii Denysenko"/><br /><sub><b>Andrii Denysenko</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=ANDREYDEN" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>

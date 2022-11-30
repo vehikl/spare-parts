@@ -11,19 +11,20 @@
   "commitConvention": "none",
   "contributors": [
     {
-      "login": "alisondraV",
-      "name": "Alisa Vynohradova",
-      "avatar_url": "https://avatars.githubusercontent.com/u/56138100?v=4",
-      "profile": "https://github.com/alisondraV",
-      "contributions": [
-        "code"
-      ]
-    },
-    {
       "login": "ANDREYDEN",
       "name": "Andrii Denysenko",
       "avatar_url": "https://avatars.githubusercontent.com/u/25109066?v=4",
       "profile": "https://andreyden.github.io/",
+      "contributions": [
+        "code",
+        "design"
+      ]
+    },
+    {
+      "login": "alisondraV",
+      "name": "Alisa Vynohradova",
+      "avatar_url": "https://avatars.githubusercontent.com/u/56138100?v=4",
+      "profile": "https://github.com/alisondraV",
       "contributions": [
         "code"
       ]
