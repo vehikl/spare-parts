@@ -1,4 +1,7 @@
 # Vehikl Spare Parts
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 This application is an inventory tracker for the Greater Vehikl Team. Chairs, desks, monitors and much more all in one place.
 
@@ -78,4 +81,38 @@ flutter test --coverage
 
 ## Contributors
 
-Coming Soon...
+Thanks go to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://andreyden.github.io/"><img src="https://avatars.githubusercontent.com/u/25109066?v=4?s=100" width="100px;" alt="Andrii Denysenko"/><br /><sub><b>Andrii Denysenko</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=ANDREYDEN" title="Code">💻</a> <a href="#design-ANDREYDEN" title="Design">🎨</a> <a href="#ideas-ANDREYDEN" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/vehikl/spare-parts/commits?author=ANDREYDEN" title="Tests">⚠️</a> <a href="https://github.com/vehikl/spare-parts/pulls?q=is%3Apr+reviewed-by%3AANDREYDEN" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/alisondraV"><img src="https://avatars.githubusercontent.com/u/56138100?v=4?s=100" width="100px;" alt="Alisa Vynohradova"/><br /><sub><b>Alisa Vynohradova</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=alisondraV" title="Code">💻</a> <a href="#design-alisondraV" title="Design">🎨</a> <a href="#ideas-alisondraV" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/vehikl/spare-parts/commits?author=alisondraV" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kgallego"><img src="https://avatars.githubusercontent.com/u/37840194?v=4?s=100" width="100px;" alt="Karen Gallego"/><br /><sub><b>Karen Gallego</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=kgallego" title="Code">💻</a> <a href="#design-kgallego" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/FrankyFrankFrank"><img src="https://avatars.githubusercontent.com/u/6907518?v=4?s=100" width="100px;" alt="Adam Frank"/><br /><sub><b>Adam Frank</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=FrankyFrankFrank" title="Code">💻</a> <a href="#design-FrankyFrankFrank" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.whitforddesign.ca/"><img src="https://avatars.githubusercontent.com/u/60898437?v=4?s=100" width="100px;" alt="whitfona"/><br /><sub><b>whitfona</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=whitfona" title="Code">💻</a> <a href="#design-whitfona" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/OleksandrLevinskyi"><img src="https://avatars.githubusercontent.com/u/72713236?v=4?s=100" width="100px;" alt="Oleksandr Levinskyi"/><br /><sub><b>Oleksandr Levinskyi</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=OleksandrLevinskyi" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Becs403"><img src="https://avatars.githubusercontent.com/u/77449012?v=4?s=100" width="100px;" alt="Becs403"/><br /><sub><b>Becs403</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=Becs403" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.deeppanchal.com/"><img src="https://avatars.githubusercontent.com/u/39134481?v=4?s=100" width="100px;" alt="Deep Panchal"/><br /><sub><b>Deep Panchal</b></sub></a><br /><a href="https://github.com/vehikl/spare-parts/commits?author=panchaldeep009" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td align="center" size="13px" colspan="7">
+        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
+          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
+        </img>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->

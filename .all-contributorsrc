@@ -1,0 +1,98 @@
+{
+  "projectName": "spare-parts",
+  "projectOwner": "vehikl",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "ANDREYDEN",
+      "name": "Andrii Denysenko",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25109066?v=4",
+      "profile": "https://andreyden.github.io/",
+      "contributions": [
+        "code",
+        "design",
+        "ideas",
+        "test",
+        "review"
+      ]
+    },
+    {
+      "login": "alisondraV",
+      "name": "Alisa Vynohradova",
+      "avatar_url": "https://avatars.githubusercontent.com/u/56138100?v=4",
+      "profile": "https://github.com/alisondraV",
+      "contributions": [
+        "code",
+        "design",
+        "ideas",
+        "test"
+      ]
+    },
+    {
+      "login": "kgallego",
+      "name": "Karen Gallego",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37840194?v=4",
+      "profile": "https://github.com/kgallego",
+      "contributions": [
+        "code",
+        "design"
+      ]
+    },
+    {
+      "login": "FrankyFrankFrank",
+      "name": "Adam Frank",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6907518?v=4",
+      "profile": "https://github.com/FrankyFrankFrank",
+      "contributions": [
+        "code",
+        "design"
+      ]
+    },
+    {
+      "login": "whitfona",
+      "name": "whitfona",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60898437?v=4",
+      "profile": "https://www.whitforddesign.ca/",
+      "contributions": [
+        "code",
+        "design"
+      ]
+    },
+    {
+      "login": "OleksandrLevinskyi",
+      "name": "Oleksandr Levinskyi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/72713236?v=4",
+      "profile": "https://github.com/OleksandrLevinskyi",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Becs403",
+      "name": "Becs403",
+      "avatar_url": "https://avatars.githubusercontent.com/u/77449012?v=4",
+      "profile": "https://github.com/Becs403",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "panchaldeep009",
+      "name": "Deep Panchal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39134481?v=4",
+      "profile": "http://www.deeppanchal.com/",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "linkToUsage": true
+}
