@@ -55,6 +55,7 @@ class _InventoryViewState extends State<InventoryView> {
     final firestoreService = context.watch<FirestoreService>();
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           children: [
@@ -71,8 +72,8 @@ class _InventoryViewState extends State<InventoryView> {
             ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
           child: Row(
             children: [
               MultiselectButton(
