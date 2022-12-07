@@ -19,12 +19,12 @@ class _HomePageState extends State<HomePage> {
   int _selectedBottomNavItemIndex = 0;
   final PageController pageController = PageController();
 
-  _handleSignOut() {
+  void _handleSignOut() {
     final auth = context.read<FirebaseAuth>();
     auth.signOut();
   }
 
-  _handleSettings() {
+  void _handleSettings() {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -68,67 +68,72 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomLayoutBuilder(builder: (context, layout) {
-      return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Inventory'),
-          actions: [
-            if (layout == LayoutType.desktop && isAdmin)
+    return CustomLayoutBuilder(
+      builder: (context, layout) {
+        return Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: const Text('Inventory'),
+            actions: [
+              if (layout == LayoutType.desktop && isAdmin)
+                TextButton.icon(
+                  label: Text('Settings'),
+                  onPressed: _handleSettings,
+                  icon: Icon(Icons.settings),
+                  style: TextButton.styleFrom(foregroundColor: Colors.white),
+                ),
               TextButton.icon(
-                label: Text('Settings'),
-                onPressed: _handleSettings,
-                icon: Icon(Icons.settings),
+                label: Text('Logout'),
+                onPressed: _handleSignOut,
+                icon: const Icon(Icons.logout),
                 style: TextButton.styleFrom(foregroundColor: Colors.white),
               ),
-            TextButton.icon(
-              label: Text('Logout'),
-              onPressed: _handleSignOut,
-              icon: const Icon(Icons.logout),
-              style: TextButton.styleFrom(foregroundColor: Colors.white),
-            ),
-          ],
-        ),
-        floatingActionButton: AddInventoryItemButton(),
-        body: layout == LayoutType.desktop
-            ? SizedBox(
-                child: Row(
-                  children: const [
-                    Expanded(child: InventoryView()),
-                    Expanded(child: BorrowedItemsView())
+            ],
+          ),
+          floatingActionButton: AddInventoryItemButton(),
+          body: layout == LayoutType.desktop
+              ? SizedBox(
+                  child: Row(
+                    children: const [
+                      Expanded(child: InventoryView()),
+                      VerticalDivider(),
+                      Expanded(child: BorrowedItemsView())
+                    ],
+                  ),
+                )
+              : PageView(
+                  controller: pageController,
+                  onPageChanged: _onPageChanged,
+                  children: [
+                    InventoryView(),
+                    BorrowedItemsView(),
+                    if (isAdmin) SettingsView()
                   ],
                 ),
-              )
-            : PageView(
-                controller: pageController,
-                onPageChanged: _onPageChanged,
-                children: [
-                  InventoryView(),
-                  BorrowedItemsView(),
-                  if (isAdmin) SettingsView()
-                ],
-              ),
-        bottomNavigationBar: layout == LayoutType.desktop
-            ? null
-            : BottomNavigationBar(
-                items: [
-                  BottomNavigationBarItem(
-                      icon: Icon(Icons.home), label: 'Inventory'),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.backpack_outlined),
-                    label: 'Borrowed Items',
-                  ),
-                  if (isAdmin)
+          bottomNavigationBar: layout == LayoutType.desktop
+              ? null
+              : BottomNavigationBar(
+                  items: [
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.settings),
-                      label: 'Settings',
+                      icon: Icon(Icons.home),
+                      label: 'Inventory',
                     ),
-                ],
-                currentIndex: _selectedBottomNavItemIndex,
-                selectedItemColor: Colors.amber[800],
-                onTap: _onBottomNavItemTapped,
-              ),
-      );
-    });
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.backpack_outlined),
+                      label: 'Borrowed Items',
+                    ),
+                    if (isAdmin)
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.settings),
+                        label: 'Settings',
+                      ),
+                  ],
+                  currentIndex: _selectedBottomNavItemIndex,
+                  selectedItemColor: Colors.amber[800],
+                  onTap: _onBottomNavItemTapped,
+                ),
+        );
+      },
+    );
   }
 }
