@@ -7,6 +7,7 @@ import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/add_inventory_item_button.dart';
 import 'package:spare_parts/widgets/custom_layout_builder.dart';
+import 'package:spare_parts/widgets/title_text.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -73,7 +74,7 @@ class _HomePageState extends State<HomePage> {
         return Scaffold(
           appBar: AppBar(
             centerTitle: true,
-            title: const Text('Inventory'),
+            title: const Text('Spare Parts'),
             actions: [
               if (layout == LayoutType.desktop && isAdmin)
                 TextButton.icon(
@@ -94,10 +95,24 @@ class _HomePageState extends State<HomePage> {
           body: layout == LayoutType.desktop
               ? SizedBox(
                   child: Row(
-                    children: const [
-                      Expanded(child: InventoryView()),
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: const [
+                            TitleText('Inventory'),
+                            Expanded(child: InventoryView()),
+                          ],
+                        ),
+                      ),
                       VerticalDivider(),
-                      Expanded(child: BorrowedItemsView())
+                      Expanded(
+                        child: Column(
+                          children: const [
+                            TitleText('Borrowed Items'),
+                            Expanded(child: BorrowedItemsView())
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 )
