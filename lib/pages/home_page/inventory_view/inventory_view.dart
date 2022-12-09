@@ -35,15 +35,11 @@ class _InventoryViewState extends State<InventoryView> {
   }
 
   void _handleTypesFilterChanged(List<String> newTypes) {
-    setState(() {
-      _selectedItemTypes = newTypes;
-    });
+    setState(() => _selectedItemTypes = newTypes);
   }
 
   void _handleBorrowersFilterChanged(List<String> newBorrowers) {
-    setState(() {
-      _selectedBorrowers = newBorrowers;
-    });
+    setState(() => _selectedBorrowers = newBorrowers);
   }
 
   void _handleAvailableItemsFilterChanged() {
@@ -55,6 +51,7 @@ class _InventoryViewState extends State<InventoryView> {
     final firestoreService = context.watch<FirestoreService>();
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           children: [
@@ -71,8 +68,8 @@ class _InventoryViewState extends State<InventoryView> {
             ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
           child: Row(
             children: [
               MultiselectButton(

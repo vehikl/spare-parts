@@ -94,10 +94,7 @@ class InventoryListItem extends StatelessWidget {
 
     return ListTile(
       leading: Icon(itemTypes[item.type]),
-      title: Text(
-        item.id,
-        style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 22),
-      ),
+      title: Text(item.id),
       subtitle: !showBorrower || item.borrower?.name == null
           ? null
           : Text(item.borrower!.name!),
