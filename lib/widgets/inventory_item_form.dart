@@ -65,8 +65,59 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DropdownButton<String>(
+            TextFormField(
+              initialValue: widget.item?.id,
+              decoration: const InputDecoration(
+                label: Text('ID'),
+              ),
+              onChanged: (String newValue) {
+                setState(() {
+                  idValue = newValue;
+                });
+              },
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'You must set an ID';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              initialValue: widget.item?.id,
+              decoration: const InputDecoration(
+                label: Text('Name'),
+              ),
+              onChanged: (String newValue) {
+                setState(() {
+                  idValue = newValue;
+                });
+              },
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'You must set a name';
+                }
+                return null;
+              },
+            ),
+            DropdownButtonFormField<String>(
               value: dropdownValue,
+              decoration: InputDecoration(label: Text('Item Type')),
+              items:
+                  itemTypes.keys.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  dropdownValue = newValue!;
+                });
+              },
+            ),
+            DropdownButtonFormField<String>(
+              value: dropdownValue,
+              decoration: InputDecoration(label: Text('Storage Location')),
               items:
                   itemTypes.keys.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
@@ -83,7 +134,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
             TextFormField(
               initialValue: widget.item?.id,
               decoration: const InputDecoration(
-                label: Text('ID'),
+                label: Text('Description'),
               ),
               onChanged: (String newValue) {
                 setState(() {
@@ -92,7 +143,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
               },
               validator: (text) {
                 if (text == null || text.isEmpty) {
-                  return 'You must set an ID';
+                  return 'You must set a name';
                 }
                 return null;
               },

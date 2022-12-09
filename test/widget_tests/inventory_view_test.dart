@@ -14,6 +14,7 @@ import 'package:spare_parts/widgets/inventory_list_item.dart';
 
 import '../helpers/mocks/mocks.dart';
 import '../helpers/test_helpers.dart';
+import '../helpers/tester_extension.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
@@ -49,6 +50,10 @@ void main() {
       'Adds new item to inventory list',
       (WidgetTester tester) async {
         const itemId = '21DSAdd4';
+        const itemName = 'Table #3';
+        const itemType = 'Desk';
+        const itemStorageLocation = 'Waterloo';
+        const itemDescription = 'This item used to be stored somewhere else';
 
         await pumpPage(
           HomePage(),
@@ -62,23 +67,27 @@ void main() {
         await tester.tap(fab);
         await tester.pumpAndSettle();
 
-        final typeInput = find.byType(DropdownButton<String>);
-        await tester.tap(typeInput);
-        await tester.pumpAndSettle();
-
-        final deskOption = find.text('Desk').last;
-        await tester.tap(deskOption);
-
-        final idInput = find.ancestor(
-          of: find.text('ID'),
-          matching: find.byType(TextFormField),
+        await tester.enterTextByLabel('ID', itemId);
+        await tester.enterTextByLabel('Name', itemName);
+        await tester.enterTextByLabel('Description', itemDescription);
+        await tester.selectDropdownOption('Item Type', itemType);
+        await tester.selectDropdownOption(
+          'Storage Location',
+          itemStorageLocation,
         );
-        await tester.enterText(idInput, itemId);
 
-        final addButton = find.text('Save');
-        await tester.tap(addButton);
+        await tester.tap(find.text('Save'));
+
+        final newItemListItem = find.text(itemName);
+        expect(newItemListItem, findsOneWidget);
+
+        await tester.tap(newItemListItem);
 
         expect(find.text(itemId), findsOneWidget);
+        expect(find.text(itemName), findsOneWidget);
+        expect(find.text(itemDescription), findsOneWidget);
+        expect(find.text(itemType), findsOneWidget);
+        expect(find.text(itemStorageLocation), findsOneWidget);
       },
     );
 
@@ -441,7 +450,7 @@ void main() {
         final assignButton = find.text('Assign');
         await tester.tap(assignButton);
         await tester.pumpAndSettle();
-        
+
         final selectButton = find.text('Cancel');
         await tester.tap(selectButton);
         await tester.pumpAndSettle();
