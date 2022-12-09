@@ -72,6 +72,9 @@ class _HomePageState extends State<HomePage> {
     return CustomLayoutBuilder(
       builder: (context, layout) {
         return Scaffold(
+          floatingActionButtonLocation: layout == LayoutType.desktop
+              ? FloatingActionButtonLocation.startFloat
+              : null,
           appBar: AppBar(
             centerTitle: true,
             title: const Text('Spare Parts'),
