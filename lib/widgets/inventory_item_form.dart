@@ -20,15 +20,18 @@ class InventoryItemForm extends StatefulWidget {
 
 class _InventoryItemFormState extends State<InventoryItemForm> {
   final _formKey = GlobalKey<FormState>();
-  String dropdownValue = itemTypes.keys.first;
-  String idValue = '';
+  String _newId = '';
+  String? _newName;
+  String? _newDescription;
+  String _newType = itemTypes.keys.first;
+  String? _newStorageLocation;
 
   @override
   void initState() {
     final item = widget.item;
     if (item != null) {
-      idValue = item.id;
-      dropdownValue = item.type;
+      _newId = item.id;
+      _newType = item.type;
     }
     super.initState();
   }
@@ -38,11 +41,10 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
 
     if (_formKey.currentState!.validate()) {
       try {
+        final item = InventoryItem(id: _newId, type: _newType);
         if (widget.formState == InventoryFormState.add) {
-          final item = InventoryItem(id: idValue, type: dropdownValue);
           await firestoreService.addItem(item);
         } else {
-          final item = InventoryItem(id: idValue, type: dropdownValue);
           await firestoreService.updateItem(widget.item?.id, item);
         }
         Navigator.of(context).pop();
@@ -67,12 +69,10 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
           children: [
             TextFormField(
               initialValue: widget.item?.id,
-              decoration: const InputDecoration(
-                label: Text('ID'),
-              ),
+              decoration: const InputDecoration(label: Text('ID')),
               onChanged: (String newValue) {
                 setState(() {
-                  idValue = newValue;
+                  _newId = newValue;
                 });
               },
               validator: (text) {
@@ -83,13 +83,11 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
               },
             ),
             TextFormField(
-              initialValue: widget.item?.id,
-              decoration: const InputDecoration(
-                label: Text('Name'),
-              ),
+              initialValue: '',
+              decoration: const InputDecoration(label: Text('Name')),
               onChanged: (String newValue) {
                 setState(() {
-                  idValue = newValue;
+                  _newName = newValue;
                 });
               },
               validator: (text) {
@@ -100,7 +98,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
               },
             ),
             DropdownButtonFormField<String>(
-              value: dropdownValue,
+              value: _newType,
               decoration: InputDecoration(label: Text('Item Type')),
               items:
                   itemTypes.keys.map<DropdownMenuItem<String>>((String value) {
@@ -111,15 +109,14 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
               }).toList(),
               onChanged: (String? newValue) {
                 setState(() {
-                  dropdownValue = newValue!;
+                  _newType = newValue!;
                 });
               },
             ),
             DropdownButtonFormField<String>(
-              value: dropdownValue,
+              value: _newStorageLocation,
               decoration: InputDecoration(label: Text('Storage Location')),
-              items:
-                  itemTypes.keys.map<DropdownMenuItem<String>>((String value) {
+              items: ['Waterloo'].map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -127,18 +124,18 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
               }).toList(),
               onChanged: (String? newValue) {
                 setState(() {
-                  dropdownValue = newValue!;
+                  _newStorageLocation = newValue!;
                 });
               },
             ),
             TextFormField(
-              initialValue: widget.item?.id,
+              initialValue: '',
               decoration: const InputDecoration(
                 label: Text('Description'),
               ),
               onChanged: (String newValue) {
                 setState(() {
-                  idValue = newValue;
+                  _newDescription = newValue;
                 });
               },
               validator: (text) {

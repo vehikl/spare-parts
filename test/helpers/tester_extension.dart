@@ -12,6 +12,7 @@ extension CustomTester on WidgetTester {
 
     final option = find.text(optionName).last;
     await tap(option);
+    await pumpAndSettle();
   }
 
   Future enterTextByLabel(String label, String text) async {
