@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 
@@ -19,12 +20,21 @@ class EventHistoryModal extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Interaction History', style: TextStyle(fontSize: 20)),
+          Center(
+            child: Text('Interaction History', style: TextStyle(fontSize: 20)),
+          ),
           Row(children: [
-            // Text('ID'),
-            Text(item.id),
+            Icon(itemTypes[item.type]),
+            Text('${item.name} [${item.id}]'),
           ]),
+          if (item.storageLocation != null)
+            Text('Usually stored at ${item.storageLocation}')
+          else
+            Text('No usual storage location'),
+          if (item.description != null)
+            Flexible(child: Text(item.description!)),
           StreamBuilder<List<Event>>(
             stream: firestoreService.getEventsStream(item.id),
             builder: (context, snapshot) {

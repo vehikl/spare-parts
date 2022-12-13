@@ -21,7 +21,7 @@ class InventoryItemForm extends StatefulWidget {
 class _InventoryItemFormState extends State<InventoryItemForm> {
   final _formKey = GlobalKey<FormState>();
   String _newId = '';
-  String? _newName;
+  String _newName = '';
   String? _newDescription;
   String _newType = itemTypes.keys.first;
   String? _newStorageLocation;
@@ -41,7 +41,13 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
 
     if (_formKey.currentState!.validate()) {
       try {
-        final item = InventoryItem(id: _newId, type: _newType);
+        final item = InventoryItem(
+          id: _newId,
+          type: _newType,
+          name: _newName,
+          description: _newDescription,
+          storageLocation: _newStorageLocation,
+        );
         if (widget.formState == InventoryFormState.add) {
           await firestoreService.addItem(item);
         } else {

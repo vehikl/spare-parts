@@ -3,17 +3,30 @@ import 'package:spare_parts/entities/custom_user.dart';
 
 class InventoryItem {
   String id;
+  String name;
+  String? description;
+  String? storageLocation;
   String type;
   CustomUser? borrower;
 
-  InventoryItem({required this.id, required this.type, this.borrower});
+  InventoryItem({
+    required this.id,
+    required this.type,
+    String? name,
+    this.description,
+    this.storageLocation,
+    this.borrower,
+  }) : name = name ?? id;
 
   static InventoryItem fromFirestore(
     QueryDocumentSnapshot<Map<String, dynamic>> doc,
   ) {
     return InventoryItem(
       id: doc.id,
+      name: doc.data()['name'] ?? doc.id,
       type: doc.data()['type'],
+      description: doc.data()['description'],
+      storageLocation: doc.data()['storageLocation'],
       borrower: doc.data()['borrower'] == null
           ? null
           : CustomUser.fromFirestore(doc.data()['borrower']),
@@ -23,6 +36,9 @@ class InventoryItem {
   Map<String, dynamic> toFirestore() {
     return {
       'type': type,
+      'name': name,
+      'description': description,
+      'storageLocation': storageLocation,
       'borrower': borrower?.toFirestore(),
       'borrowerId': borrower?.uid,
     };

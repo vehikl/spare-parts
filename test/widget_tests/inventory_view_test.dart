@@ -11,6 +11,7 @@ import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/widgets/event_history_modal.dart';
 import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
@@ -23,7 +24,11 @@ void main() {
   late InventoryItem chairItem;
 
   setUp(() async {
-    chairItem = InventoryItem(id: 'Chair#123', type: 'Chair');
+    chairItem = InventoryItem(
+      id: 'Chair#123',
+      name: 'The Great Chair',
+      type: 'Chair',
+    );
     await firestore
         .collection('items')
         .doc(chairItem.id)
@@ -88,14 +93,29 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(
-          find.descendant(of: find.byType(Row), matching: find.text(itemId)),
+          find.descendant(
+            of: find.byType(EventHistoryModal),
+            matching: find.textContaining(itemId),
+          ),
           findsOneWidget,
         );
 
-        // expect(find.text(itemName), findsOneWidget);
-        // expect(find.text(itemDescription), findsOneWidget);
-        // expect(find.text(itemType), findsOneWidget);
-        // expect(find.text(itemStorageLocation), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byType(EventHistoryModal),
+            matching: find.textContaining(itemName),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text(itemDescription), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byType(EventHistoryModal),
+            matching: find.byIcon(itemTypes[itemType]!),
+          ),
+          findsOneWidget,
+        );
+        expect(find.textContaining(itemStorageLocation), findsOneWidget);
       },
     );
 
