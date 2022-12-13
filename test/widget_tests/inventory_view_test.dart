@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -122,8 +120,12 @@ void main() {
     testWidgets(
       'Displays an error if no ID provided',
       (WidgetTester tester) async {
-        await pumpPage(HomePage(), tester,
-            userRole: UserRole.admin, firestore: firestore);
+        await pumpPage(
+          HomePage(),
+          tester,
+          userRole: UserRole.admin,
+          firestore: firestore,
+        );
 
         final fab = find.byIcon(Icons.add);
         await tester.tap(fab);
@@ -131,11 +133,39 @@ void main() {
 
         expect(find.text('You must set an ID'), findsNothing);
 
+        await tester.enterTextByLabel('Name', 'foo');
+
         final addButton = find.text('Save');
         await tester.tap(addButton);
         await tester.pumpAndSettle();
 
         expect(find.text('You must set an ID'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Displays an error if no name provided',
+      (WidgetTester tester) async {
+        await pumpPage(
+          HomePage(),
+          tester,
+          userRole: UserRole.admin,
+          firestore: firestore,
+        );
+
+        final fab = find.byIcon(Icons.add);
+        await tester.tap(fab);
+        await tester.pumpAndSettle();
+
+        expect(find.text('You must set a name'), findsNothing);
+
+        await tester.enterTextByLabel('ID', 'foo');
+
+        final addButton = find.text('Save');
+        await tester.tap(addButton);
+        await tester.pumpAndSettle();
+
+        expect(find.text('You must set a name'), findsOneWidget);
       },
     );
   });

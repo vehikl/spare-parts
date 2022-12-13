@@ -144,12 +144,6 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                   _newDescription = newValue;
                 });
               },
-              validator: (text) {
-                if (text == null || text.isEmpty) {
-                  return 'You must set a name';
-                }
-                return null;
-              },
             ),
           ],
         ),
