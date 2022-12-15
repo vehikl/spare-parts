@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
 
@@ -47,6 +47,30 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('You must set a name'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Fills all the inputs when editing an item',
+      (WidgetTester tester) async {
+        final item = InventoryItem(
+          id: '#145',
+          name: 'Desk 3000',
+          type: 'Desk',
+          storageLocation: 'Waterloo',
+          description: 'Lorem ipsum',
+        );
+        await pumpPage(
+          InventoryItemForm(formState: InventoryFormState.edit, item: item),
+          tester,
+          userRole: UserRole.admin,
+        );
+
+        expect(find.text(item.id), findsOneWidget);
+        expect(find.text(item.name), findsOneWidget);
+        expect(find.text(item.type), findsOneWidget);
+        expect(find.text(item.storageLocation!), findsOneWidget);
+        expect(find.text(item.description!), findsOneWidget);
       },
     );
   });
