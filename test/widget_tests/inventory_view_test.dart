@@ -11,6 +11,7 @@ import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/event_history_modal.dart';
 import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
+import 'package:spare_parts/widgets/inventory_item_form.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
 import '../helpers/mocks/mocks.dart';
@@ -196,27 +197,11 @@ void main() {
         await tester.tap(editButton);
         await tester.pumpAndSettle();
 
-        final idInput = find.ancestor(
-          of: find.text('ID'),
-          matching: find.byType(TextFormField),
-        );
-        final idInputText = find.descendant(
-          of: idInput,
-          matching: find.text(oldItemId),
-        );
-        expect(idInputText, findsOneWidget);
-        await tester.enterText(idInput, newItemId);
+        await tester.enterTextByLabel('ID', newItemId);
+        await tester.enterTextByLabel('Name', 'foo');
+        await tester.selectDropdownOption('Item Type', 'Laptop');
 
-        final typeInput = find.byType(DropdownButton<String>);
-        await tester.tap(typeInput);
-        await tester.pumpAndSettle();
-
-        final laptopOption = find.text('Laptop').last;
-        await tester.tap(laptopOption);
-        await tester.pumpAndSettle();
-
-        final saveButton = find.text('Save');
-        await tester.tap(saveButton);
+        await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
 
         expect(find.text(newItemId), findsOneWidget);
@@ -257,6 +242,7 @@ void main() {
         await tester.tap(saveButton);
         await tester.pumpAndSettle();
 
+        expect(find.byType(InventoryItemForm), findsNothing);
         expect(find.text(oldItemId), findsOneWidget);
         final itemTypeIcon = find.descendant(
           of: find.byType(InventoryListItem),

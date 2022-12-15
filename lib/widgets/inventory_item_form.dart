@@ -32,6 +32,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
     if (item != null) {
       _newId = item.id;
       _newType = item.type;
+      _newName = item.name;
     }
     super.initState();
   }
@@ -89,7 +90,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
               },
             ),
             TextFormField(
-              initialValue: '',
+              initialValue: _newName,
               decoration: const InputDecoration(label: Text('Name')),
               onChanged: (String newValue) {
                 setState(() {
