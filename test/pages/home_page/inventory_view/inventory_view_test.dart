@@ -14,9 +14,9 @@ import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
-import '../helpers/mocks/mocks.dart';
-import '../helpers/test_helpers.dart';
-import '../helpers/tester_extension.dart';
+import '../../../helpers/mocks/mocks.dart';
+import '../../../helpers/test_helpers.dart';
+import '../../../helpers/tester_extension.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
@@ -51,125 +51,71 @@ void main() {
     },
   );
 
-  group('Adding an item', () {
-    testWidgets(
-      'Adds new item to inventory list',
-      (WidgetTester tester) async {
-        const itemId = '21DSAdd4';
-        const itemName = 'Table #3';
-        const itemType = 'Desk';
-        const itemStorageLocation = 'Waterloo';
-        const itemDescription = 'This item used to be stored somewhere else';
+  testWidgets(
+    'Adds new item to inventory list',
+    (WidgetTester tester) async {
+      const itemId = '21DSAdd4';
+      const itemName = 'Table #3';
+      const itemType = 'Desk';
+      const itemStorageLocation = 'Waterloo';
+      const itemDescription = 'Lorem ipsum';
 
-        await pumpPage(
-          HomePage(),
-          tester,
-          userRole: UserRole.admin,
-          firestore: firestore,
-        );
+      await pumpPage(
+        HomePage(),
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+      );
 
-        final fab = find.byIcon(Icons.add);
+      final fab = find.byIcon(Icons.add);
 
-        await tester.tap(fab);
-        await tester.pumpAndSettle();
+      await tester.tap(fab);
+      await tester.pumpAndSettle();
 
-        await tester.enterTextByLabel('ID', itemId);
-        await tester.enterTextByLabel('Name', itemName);
-        await tester.enterTextByLabel('Description', itemDescription);
-        await tester.selectDropdownOption('Item Type', itemType);
-        await tester.selectDropdownOption(
-          'Storage Location',
-          itemStorageLocation,
-        );
+      await tester.enterTextByLabel('ID', itemId);
+      await tester.enterTextByLabel('Name', itemName);
+      await tester.enterTextByLabel('Description', itemDescription);
+      await tester.selectDropdownOption('Item Type', itemType);
+      await tester.selectDropdownOption(
+        'Storage Location',
+        itemStorageLocation,
+      );
 
-        await tester.tap(find.text('Save'));
-        await tester.pumpAndSettle();
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
 
-        final newItemListItem = find.text(itemId);
-        expect(newItemListItem, findsOneWidget);
+      final newItemListItem = find.text(itemId);
+      expect(newItemListItem, findsOneWidget);
 
-        await tester.tap(newItemListItem);
-        await tester.pumpAndSettle();
+      await tester.tap(newItemListItem);
+      await tester.pumpAndSettle();
 
-        expect(
-          find.descendant(
-            of: find.byType(EventHistoryModal),
-            matching: find.textContaining(itemId),
-          ),
-          findsOneWidget,
-        );
+      expect(
+        find.descendant(
+          of: find.byType(EventHistoryModal),
+          matching: find.textContaining(itemId),
+        ),
+        findsOneWidget,
+      );
 
-        expect(
-          find.descendant(
-            of: find.byType(EventHistoryModal),
-            matching: find.textContaining(itemName),
-          ),
-          findsOneWidget,
-        );
-        expect(find.text(itemDescription), findsOneWidget);
-        expect(
-          find.descendant(
-            of: find.byType(EventHistoryModal),
-            matching: find.byIcon(itemTypes[itemType]!),
-          ),
-          findsOneWidget,
-        );
-        expect(find.textContaining(itemStorageLocation), findsOneWidget);
-      },
-    );
-
-    testWidgets(
-      'Displays an error if no ID provided',
-      (WidgetTester tester) async {
-        await pumpPage(
-          HomePage(),
-          tester,
-          userRole: UserRole.admin,
-          firestore: firestore,
-        );
-
-        final fab = find.byIcon(Icons.add);
-        await tester.tap(fab);
-        await tester.pumpAndSettle();
-
-        expect(find.text('You must set an ID'), findsNothing);
-
-        await tester.enterTextByLabel('Name', 'foo');
-
-        final addButton = find.text('Save');
-        await tester.tap(addButton);
-        await tester.pumpAndSettle();
-
-        expect(find.text('You must set an ID'), findsOneWidget);
-      },
-    );
-
-    testWidgets(
-      'Displays an error if no name provided',
-      (WidgetTester tester) async {
-        await pumpPage(
-          HomePage(),
-          tester,
-          userRole: UserRole.admin,
-          firestore: firestore,
-        );
-
-        final fab = find.byIcon(Icons.add);
-        await tester.tap(fab);
-        await tester.pumpAndSettle();
-
-        expect(find.text('You must set a name'), findsNothing);
-
-        await tester.enterTextByLabel('ID', 'foo');
-
-        final addButton = find.text('Save');
-        await tester.tap(addButton);
-        await tester.pumpAndSettle();
-
-        expect(find.text('You must set a name'), findsOneWidget);
-      },
-    );
-  });
+      expect(
+        find.descendant(
+          of: find.byType(EventHistoryModal),
+          matching: find.textContaining(itemName),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(itemDescription), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(EventHistoryModal),
+          matching: find.byIcon(itemTypes[itemType]!),
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining(itemStorageLocation), findsOneWidget);
+    },
+  );
 
   group('Editing an item', () {
     testWidgets(
@@ -178,8 +124,12 @@ void main() {
         final oldItemId = chairItem.id;
         const newItemId = 'Chair#321';
 
-        await pumpPage(Scaffold(body: InventoryView()), tester,
-            userRole: UserRole.admin, firestore: firestore);
+        await pumpPage(
+          Scaffold(body: InventoryView()),
+          tester,
+          userRole: UserRole.admin,
+          firestore: firestore,
+        );
 
         final chairListItem = find.ancestor(
           of: find.text(oldItemId),
@@ -219,8 +169,12 @@ void main() {
       (WidgetTester tester) async {
         final oldItemId = chairItem.id;
 
-        await pumpPage(Scaffold(body: InventoryView()), tester,
-            userRole: UserRole.admin, firestore: firestore);
+        await pumpPage(
+          Scaffold(body: InventoryView()),
+          tester,
+          userRole: UserRole.admin,
+          firestore: firestore,
+        );
 
         final chairListItem = find.ancestor(
           of: find.text(oldItemId),
@@ -256,8 +210,12 @@ void main() {
   testWidgets(
     'Deletes an item from the list',
     (WidgetTester tester) async {
-      await pumpPage(Scaffold(body: InventoryView()), tester,
-          userRole: UserRole.admin, firestore: firestore);
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+      );
 
       final chairListItem = find.ancestor(
         of: find.text(chairItem.id),
