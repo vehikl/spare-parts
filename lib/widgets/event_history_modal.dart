@@ -25,16 +25,28 @@ class EventHistoryModal extends StatelessWidget {
           Center(
             child: Text('Interaction History', style: TextStyle(fontSize: 20)),
           ),
-          Row(children: [
-            Icon(itemTypes[item.type]),
-            Text('${item.name} [${item.id}]'),
-          ]),
-          if (item.storageLocation != null)
-            Text('Usually stored at ${item.storageLocation}')
-          else
-            Text('No usual storage location'),
-          if (item.description != null)
-            Flexible(child: Text(item.description!)),
+          Card(
+            child: ListTile(
+              leading: Icon(itemTypes[item.type]),
+              title: Text(item.name),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('ID: ${item.id}'),
+                  Row(
+                    children: [
+                      Icon(Icons.domain_rounded),
+                      Text(item.storageLocation != null
+                          ? item.storageLocation!
+                          : 'N/A'),
+                    ],
+                  ),
+                  if (item.description != null) Text(item.description!),
+                ],
+              ),
+              isThreeLine: true,
+            ),
+          ),
           StreamBuilder<List<Event>>(
             stream: firestoreService.getEventsStream(item.id),
             builder: (context, snapshot) {
