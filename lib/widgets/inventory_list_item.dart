@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
@@ -22,12 +23,9 @@ class InventoryListItem extends StatelessWidget {
   final List<ItemAction> actions;
 
   void showHistoryModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      builder: (_) => EventHistoryModal(item: item),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => EventHistoryModal(item: item)),
     );
   }
 
@@ -39,32 +37,41 @@ class InventoryListItem extends StatelessWidget {
     final allowedActions =
         allActions.where((action) => action.allowedRoles.contains(userRole));
 
-    return ListTile(
-      leading: Icon(itemTypes[item.type]),
-      title: Text(item.id),
-      subtitle: !showBorrower || item.borrower?.name == null
-          ? null
-          : Text(item.borrower!.name!),
-      onTap:
-          userRole == UserRole.admin ? () => showHistoryModal(context) : null,
-      trailing: PopupMenuButton<ItemAction>(
-        child: Padding(
-          padding: EdgeInsets.all(10.0),
-          child: Icon(Icons.more_vert),
-        ),
-        itemBuilder: (context) => allowedActions.map((action) {
-          return PopupMenuItem(
-            value: action,
-            child: Row(
-              children: [
-                Icon(action.icon),
-                SizedBox(width: 4),
-                Text(action.name),
-              ],
+    timeDilation = 5;
+
+    return Hero(
+      tag: 'item_list_tile_${item.id}',
+      child: Material(
+        color: Colors.transparent,
+        child: ListTile(
+          leading: Icon(itemTypes[item.type]),
+          title: Text(item.name),
+          subtitle: !showBorrower || item.borrower?.name == null
+              ? null
+              : Text(item.borrower!.name!),
+          onTap: userRole == UserRole.admin
+              ? () => showHistoryModal(context)
+              : null,
+          trailing: PopupMenuButton<ItemAction>(
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Icon(Icons.more_vert),
             ),
-          );
-        }).toList(),
-        onSelected: (itemAction) => itemAction.handle(context, item),
+            itemBuilder: (context) => allowedActions.map((action) {
+              return PopupMenuItem(
+                value: action,
+                child: Row(
+                  children: [
+                    Icon(action.icon),
+                    SizedBox(width: 4),
+                    Text(action.name),
+                  ],
+                ),
+              );
+            }).toList(),
+            onSelected: (itemAction) => itemAction.handle(context, item),
+          ),
+        ),
       ),
     );
   }
