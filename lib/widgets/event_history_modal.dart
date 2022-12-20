@@ -22,30 +22,55 @@ class EventHistoryModal extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Text('Interaction History', style: TextStyle(fontSize: 20)),
-          ),
           Card(
-            child: ListTile(
-              leading: Icon(itemTypes[item.type]),
-              title: Text(item.name),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('ID: ${item.id}'),
-                  Row(
-                    children: [
-                      Icon(Icons.domain_rounded),
-                      Text(item.storageLocation != null
-                          ? item.storageLocation!
-                          : 'N/A'),
-                    ],
-                  ),
-                  if (item.description != null) Text(item.description!),
-                ],
-              ),
-              isThreeLine: true,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
             ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListTile(
+                trailing: Icon(itemTypes[item.type]),
+                title: Text(item.name, style: TextStyle(fontSize: 18)),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.tag_rounded),
+                        Text(item.id),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.domain_rounded),
+                        Text(item.storageLocation != null
+                            ? item.storageLocation!
+                            : 'N/A'),
+                      ],
+                    ),
+                    if (item.description != null)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 10),
+                          Text(
+                            'Description:',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(item.description!),
+                        ],
+                      ),
+                  ],
+                ),
+                isThreeLine: true,
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Center(
+            child: Text('Interaction History', style: TextStyle(fontSize: 18)),
           ),
           StreamBuilder<List<Event>>(
             stream: firestoreService.getEventsStream(item.id),
@@ -70,6 +95,9 @@ class EventHistoryModal extends StatelessWidget {
                   shrinkWrap: true,
                   children: events
                       .map((event) => ListTile(
+                            visualDensity: VisualDensity(
+                              vertical: VisualDensity.minimumDensity,
+                            ),
                             title: Text(event.issuerName),
                             subtitle: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

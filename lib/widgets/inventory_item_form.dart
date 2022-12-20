@@ -138,7 +138,9 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
             ),
             TextFormField(
               initialValue: _newDescription,
-              decoration: const InputDecoration(label: Text('Description')),
+              decoration: const InputDecoration(labelText: 'Description'),
+              minLines: 1,
+              maxLines: 3,
               onChanged: (String newValue) {
                 setState(() {
                   _newDescription = newValue;
