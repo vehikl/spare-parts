@@ -7,9 +7,9 @@ import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
+import 'package:spare_parts/pages/item_page.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/widgets/event_history_modal.dart';
 import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
@@ -44,10 +44,13 @@ void main() {
   testWidgets(
     'Displays a list of inventory items',
     (WidgetTester tester) async {
-      await pumpPage(Scaffold(body: InventoryView()), tester,
-          firestore: firestore);
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        firestore: firestore,
+      );
 
-      expect(find.text(chairItem.id), findsOneWidget);
+      expect(find.text(chairItem.name), findsOneWidget);
     },
   );
 
@@ -84,23 +87,16 @@ void main() {
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 
-      final newItemListItem = find.text(itemId);
+      final newItemListItem = find.text(itemName);
       expect(newItemListItem, findsOneWidget);
 
       await tester.tap(newItemListItem);
       await tester.pumpAndSettle();
 
+      expect(find.textContaining(itemId), findsOneWidget);
       expect(
         find.descendant(
-          of: find.byType(EventHistoryModal),
-          matching: find.textContaining(itemId),
-        ),
-        findsOneWidget,
-      );
-
-      expect(
-        find.descendant(
-          of: find.byType(EventHistoryModal),
+          of: find.byType(Card),
           matching: find.textContaining(itemName),
         ),
         findsOneWidget,
@@ -108,7 +104,7 @@ void main() {
       expect(find.text(itemDescription), findsOneWidget);
       expect(
         find.descendant(
-          of: find.byType(EventHistoryModal),
+          of: find.byType(ItemPage),
           matching: find.byIcon(itemTypes[itemType]!),
         ),
         findsOneWidget,
@@ -121,8 +117,8 @@ void main() {
     testWidgets(
       'Edits an inventory item',
       (WidgetTester tester) async {
-        final oldItemId = chairItem.id;
-        const newItemId = 'Chair#321';
+        final oldItemName = chairItem.name;
+        const newItemName = 'Chair#321';
 
         await pumpPage(
           Scaffold(body: InventoryView()),
@@ -132,7 +128,7 @@ void main() {
         );
 
         final chairListItem = find.ancestor(
-          of: find.text(oldItemId),
+          of: find.text(oldItemName),
           matching: find.byType(ListTile),
         );
         final optionsButton = find.descendant(
@@ -147,15 +143,14 @@ void main() {
         await tester.tap(editButton);
         await tester.pumpAndSettle();
 
-        await tester.enterTextByLabel('ID', newItemId);
-        await tester.enterTextByLabel('Name', 'foo');
+        await tester.enterTextByLabel('Name', newItemName);
         await tester.selectDropdownOption('Item Type', 'Laptop');
 
         await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
 
-        expect(find.text(newItemId), findsOneWidget);
-        expect(find.text(oldItemId), findsNothing);
+        expect(find.text(newItemName), findsOneWidget);
+        expect(find.text(oldItemName), findsNothing);
         final newItemTypeIcon = find.descendant(
           of: find.byType(InventoryListItem),
           matching: find.byIcon(Icons.laptop),
@@ -167,7 +162,7 @@ void main() {
     testWidgets(
       'Saves the initial value of the item id if not updated',
       (WidgetTester tester) async {
-        final oldItemId = chairItem.id;
+        final oldItemName = chairItem.name;
 
         await pumpPage(
           Scaffold(body: InventoryView()),
@@ -177,7 +172,7 @@ void main() {
         );
 
         final chairListItem = find.ancestor(
-          of: find.text(oldItemId),
+          of: find.text(oldItemName),
           matching: find.byType(ListTile),
         );
         final optionsButton = find.descendant(
@@ -197,7 +192,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.byType(InventoryItemForm), findsNothing);
-        expect(find.text(oldItemId), findsOneWidget);
+        expect(find.text(oldItemName), findsOneWidget);
         final itemTypeIcon = find.descendant(
           of: find.byType(InventoryListItem),
           matching: find.byIcon(Icons.chair),
@@ -218,7 +213,7 @@ void main() {
       );
 
       final chairListItem = find.ancestor(
-        of: find.text(chairItem.id),
+        of: find.text(chairItem.name),
         matching: find.byType(ListTile),
       );
       final optionsButton = find.descendant(
@@ -233,7 +228,7 @@ void main() {
       await tester.tap(deleteButton);
       await tester.pumpAndSettle();
 
-      expect(find.text(chairItem.id), findsNothing);
+      expect(find.text(chairItem.name), findsNothing);
     },
   );
 
@@ -255,7 +250,7 @@ void main() {
       );
 
       final chairListItem = find.ancestor(
-        of: find.text(chairItem.id),
+        of: find.text(chairItem.name),
         matching: find.byType(ListTile),
       );
       final optionsButton = find.descendant(
@@ -270,7 +265,7 @@ void main() {
       await tester.tap(borrowButton);
       await tester.pumpAndSettle();
 
-      expect(find.text(chairItem.id), findsNothing);
+      expect(find.text(chairItem.name), findsNothing);
       expect(find.text('Item has been successfully borrowed'), findsOneWidget);
     },
   );
@@ -298,7 +293,7 @@ void main() {
         );
 
         var chairListItem = find.ancestor(
-          of: find.text(chairItem.id),
+          of: find.text(chairItem.name),
           matching: find.byType(ListTile),
         );
         final optionsButton = find.descendant(
@@ -321,7 +316,7 @@ void main() {
         await tester.pumpAndSettle();
 
         chairListItem = find.ancestor(
-          of: find.text(chairItem.id),
+          of: find.text(chairItem.name),
           matching: find.byType(ListTile),
         );
 
@@ -554,9 +549,9 @@ void main() {
             firestore: firestore,
           );
 
-          expect(find.text(chairItem.id), findsOneWidget);
-          expect(find.text(deskItem.id), findsOneWidget);
-          expect(find.text(monitorItem.id), findsOneWidget);
+          expect(find.text(chairItem.name), findsOneWidget);
+          expect(find.text(deskItem.name), findsOneWidget);
+          expect(find.text(monitorItem.name), findsOneWidget);
 
           await tester.tap(find.text('Item Types'));
           await tester.pumpAndSettle();
@@ -567,9 +562,9 @@ void main() {
           await tester.tap(find.text('Select'));
           await tester.pumpAndSettle();
 
-          expect(find.text(chairItem.id), findsOneWidget);
-          expect(find.text(deskItem.id), findsOneWidget);
-          expect(find.text(monitorItem.id), findsNothing);
+          expect(find.text(chairItem.name), findsOneWidget);
+          expect(find.text(deskItem.name), findsOneWidget);
+          expect(find.text(monitorItem.name), findsNothing);
         },
       );
     });
@@ -681,15 +676,15 @@ void main() {
           );
 
           // admins see all items by default
-          expect(find.text(chairItem.id), findsOneWidget);
-          expect(find.text(borrowedItem.id), findsOneWidget);
+          expect(find.text(chairItem.name), findsOneWidget);
+          expect(find.text(borrowedItem.name), findsOneWidget);
 
           final filterBorrowedItemsCheckbox = find.text('Only available items');
           await tester.tap(filterBorrowedItemsCheckbox);
           await tester.pumpAndSettle();
 
-          expect(find.text(chairItem.id), findsOneWidget);
-          expect(find.text(borrowedItem.id), findsNothing);
+          expect(find.text(chairItem.name), findsOneWidget);
+          expect(find.text(borrowedItem.name), findsNothing);
         },
       );
     });

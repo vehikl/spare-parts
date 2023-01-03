@@ -8,10 +8,10 @@ import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 
-class EventHistoryModal extends StatelessWidget {
+class ItemPage extends StatelessWidget {
   final InventoryItem item;
 
-  const EventHistoryModal({super.key, required this.item});
+  const ItemPage({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -30,49 +30,41 @@ class EventHistoryModal extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Hero(
-                  tag: 'item_list_tile_${item.id}',
-                  child: Material(
-                    color: Colors.transparent,
-                    child: ListTile(
-                      leading: Icon(itemTypes[item.type]),
-                      title: Text(item.name, style: TextStyle(fontSize: 18)),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                child: ListTile(
+                  leading: Icon(itemTypes[item.type]),
+                  title: Text(item.name, style: TextStyle(fontSize: 18)),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              Icon(Icons.tag_rounded),
-                              Text(item.id),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Icon(Icons.domain_rounded),
-                              Text(item.storageLocation != null
-                                  ? item.storageLocation!
-                                  : 'N/A'),
-                            ],
-                          ),
-                          if (item.description != null)
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 10),
-                                Text(
-                                  'Description:',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(item.description!),
-                              ],
-                            ),
+                          Icon(Icons.tag_rounded),
+                          Text(item.id),
                         ],
                       ),
-                      isThreeLine: true,
-                    ),
+                      Row(
+                        children: [
+                          Icon(Icons.domain_rounded),
+                          Text(item.storageLocation != null
+                              ? item.storageLocation!
+                              : 'N/A'),
+                        ],
+                      ),
+                      if (item.description != null)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 10),
+                            Text(
+                              'Description:',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(item.description!),
+                          ],
+                        ),
+                    ],
                   ),
+                  isThreeLine: true,
                 ),
               ),
             ),
