@@ -124,7 +124,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
             DropdownButtonFormField<String>(
               value: _newStorageLocation,
               decoration: InputDecoration(label: Text('Storage Location')),
-              items: ['Waterloo'].map<DropdownMenuItem<String>>((String value) {
+              items: ['Waterloo', 'London'].map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),

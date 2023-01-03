@@ -37,8 +37,6 @@ class InventoryListItem extends StatelessWidget {
     final allowedActions =
         allActions.where((action) => action.allowedRoles.contains(userRole));
 
-    timeDilation = 5;
-
     return Hero(
       tag: 'item_list_tile_${item.id}',
       child: Material(

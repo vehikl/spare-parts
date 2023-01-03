@@ -78,8 +78,10 @@ class EventHistoryModal extends StatelessWidget {
             ),
             SizedBox(height: 20),
             Center(
-              child:
-                  Text('Interaction History', style: TextStyle(fontSize: 18)),
+              child: Text(
+                'Interaction History',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
             StreamBuilder<List<Event>>(
               stream: firestoreService.getEventsStream(item.id),
