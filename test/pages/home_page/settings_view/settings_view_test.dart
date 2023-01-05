@@ -6,9 +6,9 @@ import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
-import '../helpers/mocks/mock_firebase_auth.dart';
-import '../helpers/test_helpers.dart';
-import '../integration_tests/integration_test.dart';
+import '../../../helpers/mocks/mock_firebase_auth.dart';
+import '../../../helpers/test_helpers.dart';
+import '../../../integration_tests/integration_test.dart';
 
 void main() {
   group('Set admins button', () {

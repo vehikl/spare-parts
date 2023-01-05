@@ -7,8 +7,8 @@ import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
 import 'package:spare_parts/services/firestore_service.mocks.dart';
-import '../helpers/mocks/mocks.dart';
-import '../helpers/test_helpers.dart';
+import '../../helpers/mocks/mocks.dart';
+import '../../helpers/test_helpers.dart';
 
 class MockUser extends Mock implements User {
   @override

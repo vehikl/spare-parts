@@ -20,15 +20,20 @@ class InventoryItemForm extends StatefulWidget {
 
 class _InventoryItemFormState extends State<InventoryItemForm> {
   final _formKey = GlobalKey<FormState>();
-  String dropdownValue = itemTypes.keys.first;
-  String idValue = '';
+  String _newId = '';
+  String _newName = '';
+  String? _newDescription;
+  String _newType = itemTypes.keys.first;
+  String? _newStorageLocation;
 
   @override
   void initState() {
     final item = widget.item;
     if (item != null) {
-      idValue = item.id;
-      dropdownValue = item.type;
+      _newId = item.id;
+      _newType = item.type;
+      _newName = item.name;
+      _newDescription = item.description;
     }
     super.initState();
   }
@@ -38,11 +43,16 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
 
     if (_formKey.currentState!.validate()) {
       try {
+        final item = InventoryItem(
+          id: _newId,
+          type: _newType,
+          name: _newName,
+          description: _newDescription,
+          storageLocation: _newStorageLocation,
+        );
         if (widget.formState == InventoryFormState.add) {
-          final item = InventoryItem(id: idValue, type: dropdownValue);
           await firestoreService.addItem(item);
         } else {
-          final item = InventoryItem(id: idValue, type: dropdownValue);
           await firestoreService.updateItem(widget.item?.id, item);
         }
         Navigator.of(context).pop();
@@ -65,8 +75,39 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DropdownButton<String>(
-              value: dropdownValue,
+            TextFormField(
+              initialValue: widget.item?.id,
+              decoration: const InputDecoration(label: Text('ID')),
+              onChanged: (String newValue) {
+                setState(() {
+                  _newId = newValue;
+                });
+              },
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'You must set an ID';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              initialValue: _newName,
+              decoration: const InputDecoration(label: Text('Name')),
+              onChanged: (String newValue) {
+                setState(() {
+                  _newName = newValue;
+                });
+              },
+              validator: (text) {
+                if (text == null || text.isEmpty) {
+                  return 'You must set a name';
+                }
+                return null;
+              },
+            ),
+            DropdownButtonFormField<String>(
+              value: _newType,
+              decoration: InputDecoration(label: Text('Item Type')),
               items:
                   itemTypes.keys.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
@@ -76,25 +117,34 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
               }).toList(),
               onChanged: (String? newValue) {
                 setState(() {
-                  dropdownValue = newValue!;
+                  _newType = newValue!;
+                });
+              },
+            ),
+            DropdownButtonFormField<String>(
+              value: _newStorageLocation,
+              decoration: InputDecoration(label: Text('Storage Location')),
+              items: ['Waterloo', 'London'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _newStorageLocation = newValue!;
                 });
               },
             ),
             TextFormField(
-              initialValue: widget.item?.id,
-              decoration: const InputDecoration(
-                label: Text('ID'),
-              ),
+              initialValue: _newDescription,
+              decoration: const InputDecoration(labelText: 'Description'),
+              minLines: 1,
+              maxLines: 3,
               onChanged: (String newValue) {
                 setState(() {
-                  idValue = newValue;
+                  _newDescription = newValue;
                 });
-              },
-              validator: (text) {
-                if (text == null || text.isEmpty) {
-                  return 'You must set an ID';
-                }
-                return null;
               },
             ),
           ],

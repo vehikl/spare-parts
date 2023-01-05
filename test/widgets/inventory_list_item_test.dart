@@ -109,7 +109,7 @@ void main() {
       );
 
       final invetoryItemElement = find.ancestor(
-        of: find.text(testItem.id),
+        of: find.text(testItem.name),
         matching: find.byType(ListTile),
       );
 
