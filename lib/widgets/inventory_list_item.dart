@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
@@ -21,13 +22,6 @@ class InventoryListItem extends StatelessWidget {
   final InventoryItem item;
   final List<ItemAction> actions;
 
-  void showHistoryModal(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => ItemPage(item: item)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final userRole = context.read<UserRole>();
@@ -36,33 +30,44 @@ class InventoryListItem extends StatelessWidget {
     final allowedActions =
         allActions.where((action) => action.allowedRoles.contains(userRole));
 
-    return ListTile(
-      leading: Icon(itemTypes[item.type]),
-      title: Text(item.name),
-      subtitle: !showBorrower || item.borrower?.name == null
-          ? null
-          : Text(item.borrower!.name!),
-      onTap:
-          userRole == UserRole.admin ? () => showHistoryModal(context) : null,
-      trailing: PopupMenuButton<ItemAction>(
-        child: Padding(
-          padding: EdgeInsets.all(10.0),
-          child: Icon(Icons.more_vert),
-        ),
-        itemBuilder: (context) => allowedActions.map((action) {
-          return PopupMenuItem(
-            value: action,
-            child: Row(
-              children: [
-                Icon(action.icon),
-                SizedBox(width: 4),
-                Text(action.name),
-              ],
+    return OpenContainer<bool>(
+      transitionType: ContainerTransitionType.fade,
+      openBuilder: (BuildContext context, VoidCallback _) {
+        return ItemPage(item: item);
+      },
+      tappable: false,
+      closedShape: const RoundedRectangleBorder(),
+      closedElevation: 0.0,
+      transitionDuration: Duration(milliseconds: 500),
+      closedBuilder: (BuildContext _, VoidCallback openContainer) {
+        return ListTile(
+          leading: Icon(itemTypes[item.type]),
+          title: Text(item.name),
+          subtitle: !showBorrower || item.borrower?.name == null
+              ? null
+              : Text(item.borrower!.name!),
+          onTap: userRole == UserRole.admin ? openContainer : null,
+          trailing: PopupMenuButton<ItemAction>(
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Icon(Icons.more_vert),
             ),
-          );
-        }).toList(),
-        onSelected: (itemAction) => itemAction.handle(context, item),
-      ),
+            itemBuilder: (context) => allowedActions.map((action) {
+              return PopupMenuItem(
+                value: action,
+                child: Row(
+                  children: [
+                    Icon(action.icon),
+                    SizedBox(width: 4),
+                    Text(action.name),
+                  ],
+                ),
+              );
+            }).toList(),
+            onSelected: (itemAction) => itemAction.handle(context, item),
+          ),
+        );
+      },
     );
   }
 }
