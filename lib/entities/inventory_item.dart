@@ -8,15 +8,17 @@ class InventoryItem {
   String? storageLocation;
   String type;
   CustomUser? borrower;
+  bool isPrivate;
 
-  InventoryItem({
-    required this.id,
-    required this.type,
-    String? name,
-    this.description,
-    this.storageLocation,
-    this.borrower,
-  }) : name = name ?? id;
+  InventoryItem(
+      {required this.id,
+      required this.type,
+      String? name,
+      this.description,
+      this.storageLocation,
+      this.borrower,
+      this.isPrivate = false})
+      : name = name ?? id;
 
   static InventoryItem fromFirestore(
     QueryDocumentSnapshot<Map<String, dynamic>> doc,
@@ -30,6 +32,7 @@ class InventoryItem {
       borrower: doc.data()['borrower'] == null
           ? null
           : CustomUser.fromFirestore(doc.data()['borrower']),
+      isPrivate: doc.data()['isPrivate'],
     );
   }
 
@@ -41,6 +44,7 @@ class InventoryItem {
       'storageLocation': storageLocation,
       'borrower': borrower?.toFirestore(),
       'borrowerId': borrower?.uid,
+      'isPrivate': isPrivate,
     };
   }
 }
