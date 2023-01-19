@@ -32,7 +32,7 @@ class InventoryItem {
       borrower: doc.data()['borrower'] == null
           ? null
           : CustomUser.fromFirestore(doc.data()['borrower']),
-      isPrivate: doc.data()['isPrivate'],
+      isPrivate: doc.data()['isPrivate'] ?? false,
     );
   }
 

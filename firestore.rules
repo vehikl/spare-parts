@@ -7,16 +7,21 @@ service cloud.firestore {
     }
 
     match /items/{item} {
+      allow read: if isAdmin() || isPublic();
       allow update: if isVehikalian();
       allow create: if isVehikalian() && isAdmin();
     }
 
     function isAdmin() {
-      return request.auth.token.role == 'admin';
+      return debug(request.auth.token.role) == 'admin';
     }
 
     function isVehikalian() {
       return request.auth.token.email.matches('.*@vehikl[.]com$');
+    }
+
+    function isPublic() {
+      return debug(resource.data.isPrivate) == false
     }
   }
 }

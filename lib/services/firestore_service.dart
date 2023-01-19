@@ -50,6 +50,7 @@ class FirestoreService {
     String? whereBorrowerIs,
     List<String>? whereBorrowerIn,
     List<String>? whereTypeIn,
+    bool excludePrivates = false,
   }) {
     Query<Object?>? query;
 
@@ -70,6 +71,10 @@ class FirestoreService {
 
     if (whereTypeIn != null) {
       query = (query ?? itemsCollection).where('type', whereIn: whereTypeIn);
+    }
+
+    if (excludePrivates) {
+      query = (query ?? itemsCollection).where('isPrivate', isEqualTo: false);
     }
 
     return (query ?? itemsCollection)
