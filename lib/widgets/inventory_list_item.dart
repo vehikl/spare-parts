@@ -41,7 +41,22 @@ class InventoryListItem extends StatelessWidget {
       transitionDuration: Duration(milliseconds: 500),
       closedBuilder: (BuildContext _, VoidCallback openContainer) {
         return ListTile(
-          leading: Icon(itemTypes[item.type]),
+          leading: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Icon(itemTypes[item.type]),
+              if (item.isPrivate)
+                Positioned(
+                  bottom: -3,
+                  right: -5,
+                  child: Icon(
+                    Icons.visibility_off,
+                    size: 13,
+                    color: Colors.black,
+                  ),
+                ),
+            ],
+          ),
           title: Text(item.name),
           subtitle: !showBorrower || item.borrower?.name == null
               ? null
