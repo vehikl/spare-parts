@@ -59,22 +59,18 @@ void main() {
       'Includes private items for admins',
       (WidgetTester tester) async {
         final privateItem = InventoryItem(
-        id: 'Chair#123',
-        name: 'The Great Chair',
-        type: 'Chair',
-        isPrivate: true,
-      );
-      await firestore
-          .collection('items')
-          .doc(privateItem.id)
-          .set(privateItem.toFirestore());
-
-        await pumpPage(
-          Scaffold(body: InventoryView()),
-          tester,
-          firestore: firestore,
-          userRole: UserRole.admin
+          id: 'Chair#123',
+          name: 'The Great Chair',
+          type: 'Chair',
+          isPrivate: true,
         );
+        await firestore
+            .collection('items')
+            .doc(privateItem.id)
+            .set(privateItem.toFirestore());
+
+        await pumpPage(Scaffold(body: InventoryView()), tester,
+            firestore: firestore, userRole: UserRole.admin);
 
         expect(find.text(privateItem.name), findsOneWidget);
       },
@@ -84,28 +80,23 @@ void main() {
       'Excludes private items for users',
       (WidgetTester tester) async {
         final privateItem = InventoryItem(
-        id: 'Chair#123',
-        name: 'The Great Chair',
-        type: 'Chair',
-        isPrivate: true,
-      );
-      await firestore
-          .collection('items')
-          .doc(privateItem.id)
-          .set(privateItem.toFirestore());
-
-        await pumpPage(
-          Scaffold(body: InventoryView()),
-          tester,
-          firestore: firestore,
-          userRole: UserRole.user
+          id: 'Chair#123',
+          name: 'The Great Chair',
+          type: 'Chair',
+          isPrivate: true,
         );
+        await firestore
+            .collection('items')
+            .doc(privateItem.id)
+            .set(privateItem.toFirestore());
+
+        await pumpPage(Scaffold(body: InventoryView()), tester,
+            firestore: firestore, userRole: UserRole.user);
 
         expect(find.text(privateItem.name), findsNothing);
       },
     );
   });
-
 
   testWidgets(
     'Adds new item to inventory list',
@@ -115,6 +106,7 @@ void main() {
       const itemType = 'Desk';
       const itemStorageLocation = 'Waterloo';
       const itemDescription = 'Lorem ipsum';
+      const isPrivate = true;
 
       await pumpPage(
         HomePage(),
@@ -136,6 +128,10 @@ void main() {
         'Storage Location',
         itemStorageLocation,
       );
+      if (isPrivate) {
+        await tester
+            .tap(find.widgetWithText(SwitchListTile, 'Only visible to admins'));
+      }
 
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
@@ -163,6 +159,7 @@ void main() {
         findsOneWidget,
       );
       expect(find.textContaining(itemStorageLocation), findsOneWidget);
+      expect(find.byIcon(Icons.visibility_off), findsOneWidget);
     },
   );
 
