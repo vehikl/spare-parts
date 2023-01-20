@@ -25,6 +25,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
   String? _newDescription;
   String _newType = itemTypes.keys.first;
   String? _newStorageLocation;
+  bool _newIsPrivate = false;
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
       _newType = item.type;
       _newName = item.name;
       _newDescription = item.description;
+      _newIsPrivate = item.isPrivate;
     }
     super.initState();
   }
@@ -49,6 +51,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
           name: _newName,
           description: _newDescription,
           storageLocation: _newStorageLocation,
+          isPrivate: _newIsPrivate,
         );
         if (widget.formState == InventoryFormState.add) {
           await firestoreService.addItem(item);
@@ -147,6 +150,15 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                 });
               },
             ),
+            SwitchListTile(
+                title: const Text('Only visible to admins'),
+                value: _newIsPrivate,
+                onChanged: (value) {
+                  setState(() {
+                    _newIsPrivate = value;
+                  });
+                },
+            )
           ],
         ),
       ),

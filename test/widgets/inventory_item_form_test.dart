@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/utilities/constants.dart';
@@ -59,6 +60,7 @@ void main() {
           type: 'Desk',
           storageLocation: 'Waterloo',
           description: 'Lorem ipsum',
+          isPrivate: true,
         );
         await pumpPage(
           InventoryItemForm(formState: InventoryFormState.edit, item: item),
@@ -71,6 +73,11 @@ void main() {
         expect(find.text(item.type), findsOneWidget);
         expect(find.text(item.storageLocation!), findsOneWidget);
         expect(find.text(item.description!), findsOneWidget);
+        final isPrivateSwitch =
+            find.widgetWithText(SwitchListTile, 'Only visible to admins');
+        final isPrivateSwitchValue =
+            tester.widget<SwitchListTile>(isPrivateSwitch).value;
+        expect(item.isPrivate, isPrivateSwitchValue);
       },
     );
   });

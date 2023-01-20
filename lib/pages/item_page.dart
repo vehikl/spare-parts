@@ -7,6 +7,7 @@ import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
+import 'package:spare_parts/widgets/item_icon.dart';
 
 class ItemPage extends StatelessWidget {
   final InventoryItem item;
@@ -31,7 +32,7 @@ class ItemPage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
-                  leading: Icon(itemTypes[item.type]),
+                  leading: ItemIcon(item: item),
                   title: Text(item.name, style: TextStyle(fontSize: 18)),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

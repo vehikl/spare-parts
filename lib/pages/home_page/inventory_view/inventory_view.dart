@@ -107,6 +107,7 @@ class _InventoryViewState extends State<InventoryView> {
                   _selectedItemTypes.isEmpty ? null : _selectedItemTypes,
               whereBorrowerIn:
                   _selectedBorrowers.isEmpty ? null : _selectedBorrowers,
+              excludePrivates: !isAdmin,
             ),
             builder: (context, snapshot) {
               if (snapshot.hasError) {

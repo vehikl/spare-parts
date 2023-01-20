@@ -5,12 +5,15 @@ import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/pages/item_page.dart';
+import 'package:spare_parts/widgets/item_icon.dart';
 
 /// Represents an inventory item with actions
 /// "edit" and "delete" actions are always available to the admin
 /// optional actions can be supplied through the [actions] property
 class InventoryListItem extends StatelessWidget {
   final bool showBorrower;
+  final InventoryItem item;
+  final List<ItemAction> actions;
 
   const InventoryListItem({
     Key? key,
@@ -18,9 +21,6 @@ class InventoryListItem extends StatelessWidget {
     this.actions = const [],
     this.showBorrower = false,
   }) : super(key: key);
-
-  final InventoryItem item;
-  final List<ItemAction> actions;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class InventoryListItem extends StatelessWidget {
       transitionDuration: Duration(milliseconds: 500),
       closedBuilder: (BuildContext _, VoidCallback openContainer) {
         return ListTile(
-          leading: Icon(itemTypes[item.type]),
+          leading: ItemIcon(item: item),
           title: Text(item.name),
           subtitle: !showBorrower || item.borrower?.name == null
               ? null
