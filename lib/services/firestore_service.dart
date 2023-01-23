@@ -13,9 +13,30 @@ class FirestoreService {
   }
 
   CollectionReference get itemsCollection => _firestore.collection('items');
+  CollectionReference get borrowingRulesCollection =>
+      _firestore.collection('borrowingRules');
 
   DocumentReference getItemDocumentReference(String? itemId) {
     return itemsCollection.doc(itemId);
+  }
+
+  Future<dynamic> getBorrowingRuleForItemItemType(String itemType) async {
+    final borrowingRuleDocs = await borrowingRulesCollection
+        .where('type', isEqualTo: itemType)
+        .get();
+
+    if (borrowingRuleDocs.docs.isEmpty) return null;
+
+    return borrowingRuleDocs.docs.first.data();
+  }
+
+  Future<dynamic> getBorrowingCount(String itemType, String uid) async {
+    final items = await itemsCollection
+        .where('type', isEqualTo: itemType)
+        .where('borrowerId', isEqualTo: uid)
+        .get();
+
+    return items.docs.length;
   }
 
   deleteItem(String? itemId) async {

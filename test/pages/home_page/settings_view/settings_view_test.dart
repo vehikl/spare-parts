@@ -7,8 +7,8 @@ import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 import '../../../helpers/mocks/mock_firebase_auth.dart';
+import '../../../helpers/mocks/mock_user.dart';
 import '../../../helpers/test_helpers.dart';
-import '../../../integration_tests/integration_test.dart';
 
 void main() {
   group('Set admins button', () {

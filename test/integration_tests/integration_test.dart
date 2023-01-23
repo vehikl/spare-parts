@@ -1,5 +1,4 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -9,12 +8,6 @@ import 'package:spare_parts/utilities/constants.dart';
 
 import '../helpers/mocks/mocks.dart';
 import '../helpers/test_helpers.dart';
-
-class MockUser extends Mock implements User {
-  @override
-  String get uid =>
-      super.noSuchMethod(Invocation.getter(#uid), returnValue: '');
-}
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
