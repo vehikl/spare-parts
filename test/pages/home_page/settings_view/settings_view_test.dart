@@ -141,13 +141,8 @@ void main() {
 
         expect(find.text('Borrowing Rules'), findsOneWidget);
         for (var rule in borrowingRules) {
-          expect(
-            find.descendant(
-              of: find.byType(ListTile),
-              matching: find.text(rule.type),
-            ),
-            findsOneWidget,
-          );
+          expect(find.text(rule.type), findsOneWidget);
+          expect(find.text(rule.maxBorrowingCount.toString()), findsOneWidget);
         }
       },
     );

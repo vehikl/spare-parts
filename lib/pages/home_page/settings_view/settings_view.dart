@@ -42,14 +42,43 @@ class SettingsView extends StatelessWidget {
                   );
                 }
 
-                return ListView(
-                  shrinkWrap: true,
-                  children: rules
-                      .map((rule) => ListTile(
-                            title: Text(rule.type),
-                            subtitle:
-                                Text(rule.maxBorrowingCount.toString()),
-                          ))
+                return DataTable(
+                  columns: [
+                    DataColumn(
+                      label: Text(
+                        'Type',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        'Max Count',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      numeric: true,
+                    ),
+                    DataColumn(
+                      label: Text(
+                        'Actions',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      numeric: true,
+                    ),
+                  ],
+                  rows: rules
+                      .map(
+                        (rule) => DataRow(cells: [
+                          DataCell(Text(rule.type)),
+                          DataCell(Text(rule.maxBorrowingCount.toString())),
+                          DataCell(IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.delete,
+                              color: Theme.of(context).errorColor,
+                            ),
+                          )),
+                        ]),
+                      )
                       .toList(),
                 );
               },
