@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:spare_parts/business_logic/item_action.dart';
+import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
@@ -143,10 +144,13 @@ void main() {
       await firestore.collection('items').add(availableItem.toFirestore());
       borrowedItem.id = itemDocReference.id;
 
-      await firestore.collection('borrowingRules').add({
-        'type': 'Chair',
-        'maxBorrowingCount': 1,
-      });
+      final borrowingRule = BorrowingRule(
+        type: borrowedItem.type,
+        maxBorrowingCount: 1,
+      );
+      await firestore
+          .collection('borrowingRules')
+          .add(borrowingRule.toFirestore());
 
       await pumpPage(
         Scaffold(

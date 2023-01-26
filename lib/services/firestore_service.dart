@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mockito/annotations.dart';
+import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
@@ -20,18 +21,22 @@ class FirestoreService {
     return itemsCollection.doc(itemId);
   }
 
-  Stream<List<Map<String, dynamic>>> borrowingRulesStream() {
-    return borrowingRulesCollection.snapshots().map((e) =>
-        e.docs.map((doc) => doc.data() as Map<String, dynamic>).toList());
+  Stream<List<BorrowingRule>> borrowingRulesStream() {
+    return borrowingRulesCollection.snapshots().map((e) => e.docs
+        .map((doc) => BorrowingRule.fromFirestore(
+            doc as QueryDocumentSnapshot<Map<String, dynamic>>))
+        .toList());
   }
 
-  Future<dynamic> getBorrowingRuleForItemItemType(String itemType) async {
+  Future<BorrowingRule?> getBorrowingRuleForItemItemType(
+      String itemType) async {
     final borrowingRuleDocs =
         await borrowingRulesCollection.where('type', isEqualTo: itemType).get();
 
     if (borrowingRuleDocs.docs.isEmpty) return null;
 
-    return borrowingRuleDocs.docs.first.data();
+    return BorrowingRule.fromFirestore(borrowingRuleDocs.docs.first
+        as QueryDocumentSnapshot<Map<String, dynamic>>);
   }
 
   Future<dynamic> getBorrowingCount(String itemType, String uid) async {

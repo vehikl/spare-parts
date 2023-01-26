@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/pages/home_page/settings_view/set_admins_button.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
@@ -22,7 +23,7 @@ class SettingsView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Borrowing Rules'),
-            StreamBuilder<List<Map<String, dynamic>>>(
+            StreamBuilder<List<BorrowingRule>>(
               stream: firestoreService.borrowingRulesStream(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -44,10 +45,10 @@ class SettingsView extends StatelessWidget {
                 return ListView(
                   shrinkWrap: true,
                   children: rules
-                      .map((item) => ListTile(
-                            title: Text(item['type']),
+                      .map((rule) => ListTile(
+                            title: Text(rule.type),
                             subtitle:
-                                Text(item['maxBorrowingCount'].toString()),
+                                Text(rule.maxBorrowingCount.toString()),
                           ))
                       .toList(),
                 );

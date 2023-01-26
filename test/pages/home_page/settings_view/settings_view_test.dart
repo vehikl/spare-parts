@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:spare_parts/dtos/user_dto.dart';
+import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
@@ -124,15 +125,13 @@ void main() {
     testWidgets(
       'Displays the list of borrowing rules',
       (WidgetTester tester) async {
-        await firestore.collection('borrowingRules').add({
-          'type': 'Chair',
-          'maxBorrowingCount': 1,
-        });
-
-        await firestore.collection('borrowingRules').add({
-          'type': 'Desk',
-          'maxBorrowingCount': 2,
-        });
+        final borrowingRules = [
+          BorrowingRule(type: 'Chair', maxBorrowingCount: 1),
+          BorrowingRule(type: 'Desk', maxBorrowingCount: 2),
+        ];
+        for (final rule in borrowingRules) {
+          await firestore.collection('borrowingRules').add(rule.toFirestore());
+        }
 
         await pumpPage(
           Scaffold(body: SettingsView()),
@@ -141,20 +140,15 @@ void main() {
         );
 
         expect(find.text('Borrowing Rules'), findsOneWidget);
-        expect(
-          find.descendant(
-            of: find.byType(ListTile),
-            matching: find.text('Chair'),
-          ),
-          findsOneWidget,
-        );
-        expect(
-          find.descendant(
-            of: find.byType(ListTile),
-            matching: find.text('Desk'),
-          ),
-          findsOneWidget,
-        );
+        for (var rule in borrowingRules) {
+          expect(
+            find.descendant(
+              of: find.byType(ListTile),
+              matching: find.text(rule.type),
+            ),
+            findsOneWidget,
+          );
+        }
       },
     );
   });

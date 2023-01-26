@@ -149,7 +149,7 @@ class BorrowItemAction extends ItemAction {
           final borrowingCount =
               await firestoreService.getBorrowingCount(item.type, auth.currentUser!.uid);
 
-          if (borrowingCount >= borrowingRule['maxBorrowCount']) {
+          if (borrowingCount >= borrowingRule.maxBorrowingCount) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
