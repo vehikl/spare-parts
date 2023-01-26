@@ -1,3 +1,4 @@
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -11,6 +12,8 @@ import '../../../helpers/mocks/mock_user.dart';
 import '../../../helpers/test_helpers.dart';
 
 void main() {
+  final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
+
   group('Set admins button', () {
     MockCallableService mockCallableService = MockCallableService();
     final user1 = UserDto(id: 'first', name: 'First', role: UserRole.user);
@@ -113,6 +116,45 @@ void main() {
 
         expect(find.text('Something went wrong while modifying admins'),
             findsOneWidget);
+      },
+    );
+  });
+
+  group('Borrowing rules setting', () {
+    testWidgets(
+      'Displays the list of borrowing rules',
+      (WidgetTester tester) async {
+        await firestore.collection('borrowingRules').add({
+          'type': 'Chair',
+          'maxBorrowingCount': 1,
+        });
+
+        await firestore.collection('borrowingRules').add({
+          'type': 'Desk',
+          'maxBorrowingCount': 2,
+        });
+
+        await pumpPage(
+          Scaffold(body: SettingsView()),
+          tester,
+          firestore: firestore,
+        );
+
+        expect(find.text('Borrowing Rules'), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byType(ListTile),
+            matching: find.text('Chair'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byType(ListTile),
+            matching: find.text('Desk'),
+          ),
+          findsOneWidget,
+        );
       },
     );
   });

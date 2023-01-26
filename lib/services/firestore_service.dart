@@ -20,10 +20,14 @@ class FirestoreService {
     return itemsCollection.doc(itemId);
   }
 
+  Stream<List<Map<String, dynamic>>> borrowingRulesStream() {
+    return borrowingRulesCollection.snapshots().map((e) =>
+        e.docs.map((doc) => doc.data() as Map<String, dynamic>).toList());
+  }
+
   Future<dynamic> getBorrowingRuleForItemItemType(String itemType) async {
-    final borrowingRuleDocs = await borrowingRulesCollection
-        .where('type', isEqualTo: itemType)
-        .get();
+    final borrowingRuleDocs =
+        await borrowingRulesCollection.where('type', isEqualTo: itemType).get();
 
     if (borrowingRuleDocs.docs.isEmpty) return null;
 
