@@ -38,12 +38,6 @@ class SettingsView extends StatelessWidget {
 
                 final rules = snapshot.data!;
 
-                if (rules.isEmpty) {
-                  return EmptyListState(
-                    message: "No borrowing rules configured yet...",
-                  );
-                }
-
                 return Column(
                   children: [
                     ElevatedButton(
@@ -55,99 +49,105 @@ class SettingsView extends StatelessWidget {
                       },
                       child: Text('Add Rule'),
                     ),
-                    DataTable(
-                      columns: [
-                        DataColumn(
-                          label: Text(
-                            'Type',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'Max Count',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          numeric: true,
-                        ),
-                      ],
-                      rows: rules
-                          .map(
-                            (rule) => DataRow(
-                              cells: [
-                                DataCell(
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.edit),
-                                        onPressed: () async {
-                                          final selectedTypes =
-                                              await showDialog<List<String>?>(
-                                            context: context,
-                                            builder: (context) =>
-                                                ValueSelectionDialog(
-                                              isSingleSelection: true,
-                                              title: 'Select user',
-                                              values: itemTypes.keys.toList(),
-                                              selectedValues: itemTypes.keys
-                                                  .where((type) =>
-                                                      type == rule.type)
-                                                  .toList(),
-                                              labelBuilder: (type) => type,
-                                            ),
-                                          );
-
-                                          if (selectedTypes != null) {
-                                            rule.type = selectedTypes.first;
-                                            await firestoreService
-                                                .updateBorrowingRule(rule);
-                                          }
-                                        },
-                                      ),
-                                      Text(rule.type),
-                                    ],
-                                  ),
-                                ),
-                                DataCell(
-                                  Row(
-                                    children: [
-                                      if (rule.maxBorrowingCount == 1)
-                                        IconButton(
-                                          onPressed: () async {
-                                            await firestoreService
-                                                .deleteBorrowingRule(rule);
-                                          },
-                                          icon: Icon(
-                                            Icons.delete,
-                                            color: Theme.of(context).errorColor,
-                                          ),
-                                        )
-                                      else
-                                        IconButton(
-                                          onPressed: () async {
-                                            rule.maxBorrowingCount--;
-                                            await firestoreService
-                                                .updateBorrowingRule(rule);
-                                          },
-                                          icon: Icon(Icons.remove),
-                                        ),
-                                      Text(rule.maxBorrowingCount.toString()),
-                                      IconButton(
-                                        onPressed: () async {
-                                          rule.maxBorrowingCount++;
-                                          await firestoreService
-                                              .updateBorrowingRule(rule);
-                                        },
-                                        icon: Icon(Icons.add),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                    if (rules.isEmpty)
+                      EmptyListState(
+                        message: "No borrowing rules configured yet...",
+                      )
+                    else
+                      DataTable(
+                        columns: [
+                          DataColumn(
+                            label: Text(
+                              'Type',
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                          )
-                          .toList(),
-                    ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Max Count',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            numeric: true,
+                          ),
+                        ],
+                        rows: rules
+                            .map(
+                              (rule) => DataRow(
+                                cells: [
+                                  DataCell(
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(Icons.edit),
+                                          onPressed: () async {
+                                            final selectedTypes =
+                                                await showDialog<List<String>?>(
+                                              context: context,
+                                              builder: (context) =>
+                                                  ValueSelectionDialog(
+                                                isSingleSelection: true,
+                                                title: 'Select user',
+                                                values: itemTypes.keys.toList(),
+                                                selectedValues: itemTypes.keys
+                                                    .where((type) =>
+                                                        type == rule.type)
+                                                    .toList(),
+                                                labelBuilder: (type) => type,
+                                              ),
+                                            );
+
+                                            if (selectedTypes != null) {
+                                              rule.type = selectedTypes.first;
+                                              await firestoreService
+                                                  .updateBorrowingRule(rule);
+                                            }
+                                          },
+                                        ),
+                                        Text(rule.type),
+                                      ],
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Row(
+                                      children: [
+                                        if (rule.maxBorrowingCount == 1)
+                                          IconButton(
+                                            onPressed: () async {
+                                              await firestoreService
+                                                  .deleteBorrowingRule(rule);
+                                            },
+                                            icon: Icon(
+                                              Icons.delete,
+                                              color:
+                                                  Theme.of(context).errorColor,
+                                            ),
+                                          )
+                                        else
+                                          IconButton(
+                                            onPressed: () async {
+                                              rule.maxBorrowingCount--;
+                                              await firestoreService
+                                                  .updateBorrowingRule(rule);
+                                            },
+                                            icon: Icon(Icons.remove),
+                                          ),
+                                        Text(rule.maxBorrowingCount.toString()),
+                                        IconButton(
+                                          onPressed: () async {
+                                            rule.maxBorrowingCount++;
+                                            await firestoreService
+                                                .updateBorrowingRule(rule);
+                                          },
+                                          icon: Icon(Icons.add),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                            .toList(),
+                      ),
                   ],
                 );
               },

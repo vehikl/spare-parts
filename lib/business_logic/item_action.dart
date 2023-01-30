@@ -146,14 +146,15 @@ class BorrowItemAction extends ItemAction {
             await firestoreService.getBorrowingRuleForItemItemType(item.type);
 
         if (borrowingRule != null) {
-          final borrowingCount =
-              await firestoreService.getBorrowingCount(item.type, auth.currentUser!.uid);
+          final borrowingCount = await firestoreService.getBorrowingCount(
+              item.type, auth.currentUser!.uid);
 
           if (borrowingCount >= borrowingRule.maxBorrowingCount) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
                     'You have reached the maximum borrowing count for this item'),
+                backgroundColor: Theme.of(context).errorColor,
               ),
             );
             return false;
