@@ -5,6 +5,7 @@ import 'package:spare_parts/pages/home_page/settings_view/set_admins_button.dart
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
+import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/title_text.dart';
 
 import '../../../services/firestore_service.dart';
@@ -74,7 +75,39 @@ class SettingsView extends StatelessWidget {
                           .map(
                             (rule) => DataRow(
                               cells: [
-                                DataCell(Text(rule.type)),
+                                DataCell(
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(Icons.edit),
+                                        onPressed: () async {
+                                          final selectedTypes =
+                                              await showDialog<List<String>?>(
+                                            context: context,
+                                            builder: (context) =>
+                                                ValueSelectionDialog(
+                                              isSingleSelection: true,
+                                              title: 'Select user',
+                                              values: itemTypes.keys.toList(),
+                                              selectedValues: itemTypes.keys
+                                                  .where((type) =>
+                                                      type == rule.type)
+                                                  .toList(),
+                                              labelBuilder: (type) => type,
+                                            ),
+                                          );
+
+                                          if (selectedTypes != null) {
+                                            rule.type = selectedTypes.first;
+                                            await firestoreService
+                                                .updateBorrowingRule(rule);
+                                          }
+                                        },
+                                      ),
+                                      Text(rule.type),
+                                    ],
+                                  ),
+                                ),
                                 DataCell(
                                   Row(
                                     children: [

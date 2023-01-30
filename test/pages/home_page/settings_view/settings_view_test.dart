@@ -274,5 +274,35 @@ void main() {
         expect(find.text(borrowingRules.first.type), findsNothing);
       },
     );
+
+    testWidgets(
+      'Can edit the borrowing rule type',
+      (WidgetTester tester) async {
+        final borrowingRules = [
+          BorrowingRule(type: 'Desk', maxBorrowingCount: 1),
+          BorrowingRule(type: 'Chair', maxBorrowingCount: 3),
+        ];
+        for (final rule in borrowingRules) {
+          await firestore.collection('borrowingRules').add(rule.toFirestore());
+        }
+
+        await pumpPage(
+          Scaffold(body: SettingsView()),
+          tester,
+          firestore: firestore,
+        );
+
+        await tester.tap(find.byIcon(Icons.edit).first);
+        await tester.pumpAndSettle();
+
+        const newType = 'Monitor';
+        await tester.tap(find.text(newType));
+        await tester.tap(find.text('Select'));
+        await tester.pumpAndSettle();
+
+        expect(find.text(borrowingRules.first.type), findsNothing);
+        expect(find.text(newType), findsOneWidget);
+      },
+    );
   });
 }
