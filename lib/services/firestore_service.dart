@@ -49,6 +49,10 @@ class FirestoreService {
     await borrowingRulesCollection.add(borrowingRule.toFirestore());
   }
 
+  Future<void> deleteBorrowingRule(BorrowingRule borrowingRule) async {
+    await borrowingRulesCollection.doc(borrowingRule.id).delete();
+  }
+
   Future<dynamic> getBorrowingCount(String itemType, String uid) async {
     final items = await itemsCollection
         .where('type', isEqualTo: itemType)

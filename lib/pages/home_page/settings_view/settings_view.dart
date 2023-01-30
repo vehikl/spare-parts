@@ -78,16 +78,26 @@ class SettingsView extends StatelessWidget {
                                 DataCell(
                                   Row(
                                     children: [
-                                      IconButton(
-                                        onPressed: rule.maxBorrowingCount == 1
-                                            ? null
-                                            : () async {
-                                                rule.maxBorrowingCount--;
-                                                await firestoreService
-                                                    .updateBorrowingRule(rule);
-                                              },
-                                        icon: Icon(Icons.remove),
-                                      ),
+                                      if (rule.maxBorrowingCount == 1)
+                                        IconButton(
+                                          onPressed: () async {
+                                            await firestoreService
+                                                .deleteBorrowingRule(rule);
+                                          },
+                                          icon: Icon(
+                                            Icons.delete,
+                                            color: Theme.of(context).errorColor,
+                                          ),
+                                        )
+                                      else
+                                        IconButton(
+                                          onPressed: () async {
+                                            rule.maxBorrowingCount--;
+                                            await firestoreService
+                                                .updateBorrowingRule(rule);
+                                          },
+                                          icon: Icon(Icons.remove),
+                                        ),
                                       Text(rule.maxBorrowingCount.toString()),
                                       IconButton(
                                         onPressed: () async {

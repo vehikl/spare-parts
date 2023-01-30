@@ -204,10 +204,10 @@ void main() {
     );
 
     testWidgets(
-      'Can not decrease the borrowing limit below 1',
+      'Shows a delete button if the borrowing limit is 1',
       (WidgetTester tester) async {
         final borrowingRules = [
-          BorrowingRule(type: 'Desk', maxBorrowingCount: 1),
+          BorrowingRule(type: 'Desk', maxBorrowingCount: 2),
           BorrowingRule(type: 'Chair', maxBorrowingCount: 3),
         ];
         for (final rule in borrowingRules) {
@@ -220,12 +220,14 @@ void main() {
           firestore: firestore,
         );
 
-        final borrowingCount = borrowingRules.first.maxBorrowingCount;
-        expect(find.text(borrowingCount.toString()), findsOneWidget);
+        expect(find.byIcon(Icons.remove), findsNWidgets(2));
+        expect(find.byIcon(Icons.delete), findsNothing);
+
         await tester.tap(find.byIcon(Icons.remove).first);
         await tester.pumpAndSettle();
 
-        expect(find.text((borrowingCount).toString()), findsOneWidget);
+        expect(find.byIcon(Icons.remove), findsOneWidget);
+        expect(find.byIcon(Icons.delete), findsOneWidget);
       },
     );
 
@@ -246,6 +248,30 @@ void main() {
 
         expect(find.text(itemTypes.keys.first), findsOneWidget);
         expect(find.text('1'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Can delete a borrowing rule',
+      (WidgetTester tester) async {
+        final borrowingRules = [
+          BorrowingRule(type: 'Desk', maxBorrowingCount: 1),
+          BorrowingRule(type: 'Chair', maxBorrowingCount: 3),
+        ];
+        for (final rule in borrowingRules) {
+          await firestore.collection('borrowingRules').add(rule.toFirestore());
+        }
+
+        await pumpPage(
+          Scaffold(body: SettingsView()),
+          tester,
+          firestore: firestore,
+        );
+
+        await tester.tap(find.byIcon(Icons.delete));
+        await tester.pumpAndSettle();
+
+        expect(find.text(borrowingRules.first.type), findsNothing);
       },
     );
   });
