@@ -58,34 +58,37 @@ class SettingsView extends StatelessWidget {
                       numeric: true,
                     ),
                     DataColumn(label: Text('')),
-                    DataColumn(label: Text('')),
                   ],
                   rows: rules
                       .map(
-                        (rule) => DataRow(cells: [
-                          DataCell(Text(rule.type)),
-                          DataCell(Text(rule.maxBorrowingCount.toString())),
-                          DataCell(
-                            IconButton(
-                              onPressed: () async {
-                                rule.maxBorrowingCount++;
-                                await firestoreService
-                                    .updateBorrowingRule(rule);
-                              },
-                              icon: Icon(Icons.add),
+                        (rule) => DataRow(
+                          cells: [
+                            DataCell(Text(rule.type)),
+                            DataCell(Text(rule.maxBorrowingCount.toString())),
+                            DataCell(
+                              Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () async {
+                                      rule.maxBorrowingCount++;
+                                      await firestoreService
+                                          .updateBorrowingRule(rule);
+                                    },
+                                    icon: Icon(Icons.add),
+                                  ),
+                                  IconButton(
+                                    onPressed: () async {
+                                      rule.maxBorrowingCount--;
+                                      await firestoreService
+                                          .updateBorrowingRule(rule);
+                                    },
+                                    icon: Icon(Icons.remove),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          DataCell(
-                            IconButton(
-                              onPressed: () async {
-                                rule.maxBorrowingCount--;
-                                await firestoreService
-                                    .updateBorrowingRule(rule);
-                              },
-                              icon: Icon(Icons.remove),
-                            ),
-                          ),
-                        ]),
+                          ],
+                        ),
                       )
                       .toList(),
                 );
