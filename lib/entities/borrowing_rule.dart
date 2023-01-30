@@ -14,7 +14,7 @@ class BorrowingRule {
   static BorrowingRule fromFirestore(
       QueryDocumentSnapshot<Map<String, dynamic>> doc) {
     return BorrowingRule(
-      id: doc.data()['id'],
+      id: doc.id,
       type: doc.data()['type'],
       maxBorrowingCount: doc.data()['maxBorrowingCount'],
     );

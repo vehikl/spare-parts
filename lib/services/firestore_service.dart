@@ -39,6 +39,12 @@ class FirestoreService {
         as QueryDocumentSnapshot<Map<String, dynamic>>);
   }
 
+  Future<void> updateBorrowingRule(BorrowingRule borrowingRule) async {
+    await borrowingRulesCollection.doc(borrowingRule.id).update(
+      borrowingRule.toFirestore(),
+    );
+  }
+
   Future<dynamic> getBorrowingCount(String itemType, String uid) async {
     final items = await itemsCollection
         .where('type', isEqualTo: itemType)

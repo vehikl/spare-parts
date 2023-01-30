@@ -146,5 +146,31 @@ void main() {
         }
       },
     );
+
+    testWidgets(
+      'Can increase the borrowing limit',
+      (WidgetTester tester) async {
+        final borrowingRules = [
+          BorrowingRule(type: 'Desk', maxBorrowingCount: 2),
+          BorrowingRule(type: 'Chair', maxBorrowingCount: 1),
+        ];
+        for (final rule in borrowingRules) {
+          await firestore.collection('borrowingRules').add(rule.toFirestore());
+        }
+
+        await pumpPage(
+          Scaffold(body: SettingsView()),
+          tester,
+          firestore: firestore,
+        );
+
+        final borrowingCount = borrowingRules.first.maxBorrowingCount;
+        expect(find.text(borrowingCount.toString()), findsOneWidget);
+        await tester.tap(find.byIcon(Icons.add).first);
+        await tester.pumpAndSettle();
+
+        expect(find.text((borrowingCount + 1).toString()), findsOneWidget);
+      },
+    );
   });
 }

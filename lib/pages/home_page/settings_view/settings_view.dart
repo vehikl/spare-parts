@@ -59,7 +59,7 @@ class SettingsView extends StatelessWidget {
                     ),
                     DataColumn(
                       label: Text(
-                        'Actions',
+                        '',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       numeric: true,
@@ -71,9 +71,12 @@ class SettingsView extends StatelessWidget {
                           DataCell(Text(rule.type)),
                           DataCell(Text(rule.maxBorrowingCount.toString())),
                           DataCell(IconButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              rule.maxBorrowingCount++;
+                              await firestoreService.updateBorrowingRule(rule);
+                            },
                             icon: Icon(
-                              Icons.delete,
+                              Icons.add,
                               color: Theme.of(context).errorColor,
                             ),
                           )),
