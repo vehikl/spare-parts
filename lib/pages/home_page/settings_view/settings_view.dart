@@ -69,7 +69,6 @@ class SettingsView extends StatelessWidget {
                           ),
                           numeric: true,
                         ),
-                        DataColumn(label: Text('')),
                       ],
                       rows: rules
                           .map(
@@ -77,18 +76,8 @@ class SettingsView extends StatelessWidget {
                               cells: [
                                 DataCell(Text(rule.type)),
                                 DataCell(
-                                    Text(rule.maxBorrowingCount.toString())),
-                                DataCell(
                                   Row(
                                     children: [
-                                      IconButton(
-                                        onPressed: () async {
-                                          rule.maxBorrowingCount++;
-                                          await firestoreService
-                                              .updateBorrowingRule(rule);
-                                        },
-                                        icon: Icon(Icons.add),
-                                      ),
                                       IconButton(
                                         onPressed: rule.maxBorrowingCount == 1
                                             ? null
@@ -98,6 +87,15 @@ class SettingsView extends StatelessWidget {
                                                     .updateBorrowingRule(rule);
                                               },
                                         icon: Icon(Icons.remove),
+                                      ),
+                                      Text(rule.maxBorrowingCount.toString()),
+                                      IconButton(
+                                        onPressed: () async {
+                                          rule.maxBorrowingCount++;
+                                          await firestoreService
+                                              .updateBorrowingRule(rule);
+                                        },
+                                        icon: Icon(Icons.add),
                                       ),
                                     ],
                                   ),
