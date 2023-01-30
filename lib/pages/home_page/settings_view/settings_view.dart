@@ -57,29 +57,34 @@ class SettingsView extends StatelessWidget {
                       ),
                       numeric: true,
                     ),
-                    DataColumn(
-                      label: Text(
-                        '',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      numeric: true,
-                    ),
+                    DataColumn(label: Text('')),
+                    DataColumn(label: Text('')),
                   ],
                   rows: rules
                       .map(
                         (rule) => DataRow(cells: [
                           DataCell(Text(rule.type)),
                           DataCell(Text(rule.maxBorrowingCount.toString())),
-                          DataCell(IconButton(
-                            onPressed: () async {
-                              rule.maxBorrowingCount++;
-                              await firestoreService.updateBorrowingRule(rule);
-                            },
-                            icon: Icon(
-                              Icons.add,
-                              color: Theme.of(context).errorColor,
+                          DataCell(
+                            IconButton(
+                              onPressed: () async {
+                                rule.maxBorrowingCount++;
+                                await firestoreService
+                                    .updateBorrowingRule(rule);
+                              },
+                              icon: Icon(Icons.add),
                             ),
-                          )),
+                          ),
+                          DataCell(
+                            IconButton(
+                              onPressed: () async {
+                                rule.maxBorrowingCount--;
+                                await firestoreService
+                                    .updateBorrowingRule(rule);
+                              },
+                              icon: Icon(Icons.remove),
+                            ),
+                          ),
                         ]),
                       )
                       .toList(),
