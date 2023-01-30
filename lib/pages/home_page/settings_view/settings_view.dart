@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/pages/home_page/settings_view/set_admins_button.dart';
+import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 import 'package:spare_parts/widgets/title_text.dart';
@@ -42,55 +43,71 @@ class SettingsView extends StatelessWidget {
                   );
                 }
 
-                return DataTable(
-                  columns: [
-                    DataColumn(
-                      label: Text(
-                        'Type',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                return Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        await firestoreService.addBorrowingRule(BorrowingRule(
+                          type: itemTypes.keys.first,
+                          maxBorrowingCount: 1,
+                        ));
+                      },
+                      child: Text('Add Rule'),
                     ),
-                    DataColumn(
-                      label: Text(
-                        'Max Count',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      numeric: true,
-                    ),
-                    DataColumn(label: Text('')),
-                  ],
-                  rows: rules
-                      .map(
-                        (rule) => DataRow(
-                          cells: [
-                            DataCell(Text(rule.type)),
-                            DataCell(Text(rule.maxBorrowingCount.toString())),
-                            DataCell(
-                              Row(
-                                children: [
-                                  IconButton(
-                                    onPressed: () async {
-                                      rule.maxBorrowingCount++;
-                                      await firestoreService
-                                          .updateBorrowingRule(rule);
-                                    },
-                                    icon: Icon(Icons.add),
-                                  ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      rule.maxBorrowingCount--;
-                                      await firestoreService
-                                          .updateBorrowingRule(rule);
-                                    },
-                                    icon: Icon(Icons.remove),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                    DataTable(
+                      columns: [
+                        DataColumn(
+                          label: Text(
+                            'Type',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
-                      )
-                      .toList(),
+                        DataColumn(
+                          label: Text(
+                            'Max Count',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          numeric: true,
+                        ),
+                        DataColumn(label: Text('')),
+                      ],
+                      rows: rules
+                          .map(
+                            (rule) => DataRow(
+                              cells: [
+                                DataCell(Text(rule.type)),
+                                DataCell(
+                                    Text(rule.maxBorrowingCount.toString())),
+                                DataCell(
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () async {
+                                          rule.maxBorrowingCount++;
+                                          await firestoreService
+                                              .updateBorrowingRule(rule);
+                                        },
+                                        icon: Icon(Icons.add),
+                                      ),
+                                      IconButton(
+                                        onPressed: rule.maxBorrowingCount == 1
+                                            ? null
+                                            : () async {
+                                                rule.maxBorrowingCount--;
+                                                await firestoreService
+                                                    .updateBorrowingRule(rule);
+                                              },
+                                        icon: Icon(Icons.remove),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ],
                 );
               },
             ),

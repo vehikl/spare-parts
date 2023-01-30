@@ -202,5 +202,51 @@ void main() {
         expect(find.text((borrowingCount - 1).toString()), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'Can not decrease the borrowing limit below 1',
+      (WidgetTester tester) async {
+        final borrowingRules = [
+          BorrowingRule(type: 'Desk', maxBorrowingCount: 1),
+          BorrowingRule(type: 'Chair', maxBorrowingCount: 3),
+        ];
+        for (final rule in borrowingRules) {
+          await firestore.collection('borrowingRules').add(rule.toFirestore());
+        }
+
+        await pumpPage(
+          Scaffold(body: SettingsView()),
+          tester,
+          firestore: firestore,
+        );
+
+        final borrowingCount = borrowingRules.first.maxBorrowingCount;
+        expect(find.text(borrowingCount.toString()), findsOneWidget);
+        await tester.tap(find.byIcon(Icons.remove).first);
+        await tester.pumpAndSettle();
+
+        expect(find.text((borrowingCount).toString()), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Can create a new borrowing rule',
+      (WidgetTester tester) async {
+        final rule = BorrowingRule(type: 'Chair', maxBorrowingCount: 3);
+        await firestore.collection('borrowingRules').add(rule.toFirestore());
+
+        await pumpPage(
+          Scaffold(body: SettingsView()),
+          tester,
+          firestore: firestore,
+        );
+
+        await tester.tap(find.text('Add Rule'));
+        await tester.pumpAndSettle();
+
+        expect(find.text(itemTypes.keys.first), findsOneWidget);
+        expect(find.text('1'), findsOneWidget);
+      },
+    );
   });
 }
