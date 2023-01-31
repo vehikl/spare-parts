@@ -16,6 +16,39 @@ part 'new_rule_button.dart';
 class BorrowingRulesSetting extends StatelessWidget {
   const BorrowingRulesSetting({super.key});
 
+  DataRow _buildRuleRow(BorrowingRule rule, List<BorrowingRule> rules) {
+    return DataRow(
+      cells: [
+        DataCell(
+          ItemTypeEditButton(
+            rule: rule,
+            existingRules: rules,
+          ),
+        ),
+        DataCell(
+          Row(
+            children: [
+              Flexible(child: Text(rule.type)),
+            ],
+          ),
+        ),
+        DataCell(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (rule.maxBorrowingCount == 1)
+                DeleteButton(rule: rule)
+              else
+                DecreaseButton(rule: rule),
+              Text(rule.maxBorrowingCount.toString()),
+              IncreaseButton(rule: rule),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final firestoreService = context.watch<FirestoreService>();
@@ -37,18 +70,12 @@ class BorrowingRulesSetting extends StatelessWidget {
 
             final rules =
                 snapshot.data!.where((rule) => rule.createdAt != null).toList();
-            rules.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
+            rules.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 
             return Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (rules.isNotEmpty) ...[
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: NewRuleButton(rules: rules),
-                  ),
-                  SizedBox(height: 10),
-                ],
                 if (rules.isEmpty) ...[
                   EmptyListState(
                     message: "No borrowing rules configured yet...",
@@ -59,7 +86,7 @@ class BorrowingRulesSetting extends StatelessWidget {
                   SizedBox(
                     height: 300,
                     child: Theme(
-                      data: ThemeData(
+                      data: Theme.of(context).copyWith(
                         scrollbarTheme: ScrollbarThemeData(
                           thumbVisibility: MaterialStatePropertyAll(true),
                         ),
@@ -71,40 +98,14 @@ class BorrowingRulesSetting extends StatelessWidget {
                           headingTextStyle:
                               TextStyle(fontWeight: FontWeight.bold),
                           columns: [
+                            DataColumn(
+                              label: NewRuleButton(rules: rules, isIcon: true),
+                            ),
                             DataColumn(label: Text('Type')),
                             DataColumn(label: Text('Max Count'), numeric: true),
                           ],
                           rows: rules
-                              .map(
-                                (rule) => DataRow(
-                                  cells: [
-                                    DataCell(
-                                      Row(
-                                        children: [
-                                          ItemTypeEditButton(
-                                            rule: rule,
-                                            existingRules: rules,
-                                          ),
-                                          Flexible(child: Text(rule.type)),
-                                        ],
-                                      ),
-                                    ),
-                                    DataCell(
-                                      Row(
-                                        children: [
-                                          if (rule.maxBorrowingCount == 1)
-                                            DeleteButton(rule: rule)
-                                          else
-                                            DecreaseButton(rule: rule),
-                                          Text(rule.maxBorrowingCount
-                                              .toString()),
-                                          IncreaseButton(rule: rule),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
+                              .map((rule) => _buildRuleRow(rule, rules))
                               .toList(),
                         ),
                       ),
