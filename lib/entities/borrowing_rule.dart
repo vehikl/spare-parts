@@ -4,11 +4,13 @@ class BorrowingRule {
   String? id;
   String type;
   int maxBorrowingCount;
+  DateTime? createdAt;
 
   BorrowingRule({
     this.id,
     required this.type,
     required this.maxBorrowingCount,
+    this.createdAt,
   });
 
   static BorrowingRule fromFirestore(
@@ -17,6 +19,7 @@ class BorrowingRule {
       id: doc.id,
       type: doc.data()['type'],
       maxBorrowingCount: doc.data()['maxBorrowingCount'],
+      createdAt: doc.data()['createdAt']?.toDate(),
     );
   }
 
@@ -25,6 +28,7 @@ class BorrowingRule {
       'id': id,
       'type': type,
       'maxBorrowingCount': maxBorrowingCount,
+      'createdAt': createdAt ?? FieldValue.serverTimestamp(),
     };
   }
 }

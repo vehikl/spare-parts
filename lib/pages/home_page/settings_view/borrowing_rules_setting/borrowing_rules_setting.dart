@@ -34,7 +34,9 @@ class BorrowingRulesSetting extends StatelessWidget {
               return Center(child: CircularProgressIndicator());
             }
 
-            final rules = snapshot.data!;
+            final rules =
+                snapshot.data!.where((rule) => rule.createdAt != null).toList();
+            rules.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
 
             return Column(
               children: [
