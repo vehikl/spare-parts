@@ -40,8 +40,11 @@ class BorrowingRulesSetting extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () async {
+                    final ruleTypes = rules.map((rule) => rule.type);
+                    final firstAvailableType = itemTypes.keys
+                        .firstWhere((type) => !ruleTypes.contains(type));
                     await firestoreService.addBorrowingRule(BorrowingRule(
-                      type: itemTypes.keys.first,
+                      type: firstAvailableType,
                       maxBorrowingCount: 1,
                     ));
                   },

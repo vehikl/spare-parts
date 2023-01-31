@@ -253,6 +253,30 @@ void main() {
     );
 
     testWidgets(
+      'Picks the first unoccupied item type when creating a new borrowing rule',
+      (WidgetTester tester) async {
+        const firstN = 5;
+        for (final type in itemTypes.keys.take(firstN)) {
+          await firestore.collection('borrowingRules').add(BorrowingRule(
+                type: type,
+                maxBorrowingCount: 1,
+              ).toFirestore());
+        }
+
+        await pumpPage(
+          Scaffold(body: SettingsView()),
+          tester,
+          firestore: firestore,
+        );
+
+        await tester.tap(find.text('Add Rule'));
+        await tester.pumpAndSettle();
+
+        expect(find.text(itemTypes.keys.elementAt(firstN)), findsOneWidget);
+      },
+    );
+
+    testWidgets(
       'Can delete a borrowing rule',
       (WidgetTester tester) async {
         final borrowingRules = [
