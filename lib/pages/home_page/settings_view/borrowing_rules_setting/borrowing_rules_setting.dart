@@ -42,15 +42,20 @@ class BorrowingRulesSetting extends StatelessWidget {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: NewRuleButton(rules: rules),
-                ),
-                if (rules.isEmpty)
+                if (rules.isNotEmpty) ...[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: NewRuleButton(rules: rules),
+                  ),
+                  SizedBox(height: 10),
+                ],
+                if (rules.isEmpty) ...[
                   EmptyListState(
                     message: "No borrowing rules configured yet...",
-                  )
-                else
+                  ),
+                  SizedBox(height: 10),
+                  NewRuleButton(rules: rules),
+                ] else
                   SizedBox(
                     height: 300,
                     child: Theme(

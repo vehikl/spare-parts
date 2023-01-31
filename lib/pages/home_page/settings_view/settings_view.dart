@@ -11,6 +11,7 @@ class SettingsView extends StatelessWidget {
     return CustomLayoutBuilder(builder: (context, layout) {
       return Padding(
         padding: EdgeInsets.symmetric(
+          vertical: 10,
           horizontal: layout == LayoutType.mobile
               ? 10
               : MediaQuery.of(context).size.width / 4,
@@ -18,7 +19,9 @@ class SettingsView extends StatelessWidget {
         child: Column(
           children: [
             SetAdminsButton(),
+            Divider(),
             BorrowingRulesSetting(),
+            Divider(),
           ],
         ),
       );
