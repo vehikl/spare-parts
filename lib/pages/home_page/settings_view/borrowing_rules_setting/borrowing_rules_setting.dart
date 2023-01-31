@@ -11,6 +11,7 @@ import 'package:spare_parts/widgets/title_text.dart';
 part 'decrease_button.dart';
 part 'delete_button.dart';
 part 'increase_button.dart';
+part 'new_rule_button.dart';
 
 class BorrowingRulesSetting extends StatelessWidget {
   const BorrowingRulesSetting({super.key});
@@ -42,18 +43,7 @@ class BorrowingRulesSetting extends StatelessWidget {
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final ruleTypes = rules.map((rule) => rule.type);
-                      final firstAvailableType = itemTypes.keys
-                          .firstWhere((type) => !ruleTypes.contains(type));
-                      await firestoreService.addBorrowingRule(BorrowingRule(
-                        type: firstAvailableType,
-                        maxBorrowingCount: 1,
-                      ));
-                    },
-                    child: Text('Add Rule'),
-                  ),
+                  child: NewRuleButton(rules: rules),
                 ),
                 if (rules.isEmpty)
                   EmptyListState(
@@ -61,20 +51,10 @@ class BorrowingRulesSetting extends StatelessWidget {
                   )
                 else
                   DataTable(
+                    headingTextStyle: TextStyle(fontWeight: FontWeight.bold),
                     columns: [
-                      DataColumn(
-                        label: Text(
-                          'Type',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      DataColumn(
-                        label: Text(
-                          'Max Count',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        numeric: true,
-                      ),
+                      DataColumn(label: Text('Type')),
+                      DataColumn(label: Text('Max Count'), numeric: true),
                     ],
                     rows: rules
                         .map(
