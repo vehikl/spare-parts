@@ -7,6 +7,7 @@ import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 
 import '../../../helpers/mocks/mock_firebase_auth.dart';
 import '../../../helpers/mocks/mock_user.dart';
@@ -302,6 +303,39 @@ void main() {
 
         expect(find.text(borrowingRules.first.type), findsNothing);
         expect(find.text(newType), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Can not set the borrowing rule type to an existing type',
+      (WidgetTester tester) async {
+        final borrowingRules = [
+          BorrowingRule(type: 'Desk', maxBorrowingCount: 1),
+          BorrowingRule(type: 'Chair', maxBorrowingCount: 3),
+        ];
+        for (final rule in borrowingRules) {
+          await firestore.collection('borrowingRules').add(rule.toFirestore());
+        }
+
+        await pumpPage(
+          Scaffold(body: SettingsView()),
+          tester,
+          firestore: firestore,
+        );
+
+        await tester.tap(find.byIcon(Icons.edit).first);
+        await tester.pumpAndSettle();
+
+        final existingType = borrowingRules.last.type;
+        final existingTypeOption = find.descendant(
+          of: find.byType(ValueSelectionDialog),
+          matching: find.text(existingType),
+        );
+        await tester.tap(existingTypeOption);
+        await tester.tap(find.text('Select'));
+        await tester.pumpAndSettle();
+
+        expect(find.text(existingType), findsOneWidget);
       },
     );
   });

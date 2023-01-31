@@ -75,7 +75,10 @@ class BorrowingRulesSetting extends StatelessWidget {
                               DataCell(
                                 Row(
                                   children: [
-                                    ItemTypeEditButton(rule: rule),
+                                    ItemTypeEditButton(
+                                      rule: rule,
+                                      existingRules: rules,
+                                    ),
                                     Text(rule.type),
                                   ],
                                 ),

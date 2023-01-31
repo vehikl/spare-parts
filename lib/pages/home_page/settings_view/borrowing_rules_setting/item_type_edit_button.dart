@@ -6,9 +6,14 @@ import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 
 class ItemTypeEditButton extends StatelessWidget {
+  final List<BorrowingRule> existingRules;
   final BorrowingRule rule;
 
-  const ItemTypeEditButton({super.key, required this.rule});
+  const ItemTypeEditButton({
+    super.key,
+    required this.rule,
+    required this.existingRules,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +31,10 @@ class ItemTypeEditButton extends StatelessWidget {
             selectedValues:
                 itemTypes.keys.where((type) => type == rule.type).toList(),
             labelBuilder: (type) => type,
+            disabledValues: existingRules
+                .where((otherRule) => otherRule != rule)
+                .map((rule) => rule.type)
+                .toList(),
           ),
         );
 
