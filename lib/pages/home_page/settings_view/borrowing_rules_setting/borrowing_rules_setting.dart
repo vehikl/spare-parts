@@ -40,6 +40,7 @@ class BorrowingRulesSetting extends StatelessWidget {
             rules.sort((a, b) => a.createdAt!.compareTo(b.createdAt!));
 
             return Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
@@ -50,43 +51,59 @@ class BorrowingRulesSetting extends StatelessWidget {
                     message: "No borrowing rules configured yet...",
                   )
                 else
-                  DataTable(
-                    headingTextStyle: TextStyle(fontWeight: FontWeight.bold),
-                    columns: [
-                      DataColumn(label: Text('Type')),
-                      DataColumn(label: Text('Max Count'), numeric: true),
-                    ],
-                    rows: rules
-                        .map(
-                          (rule) => DataRow(
-                            cells: [
-                              DataCell(
-                                Row(
-                                  children: [
-                                    ItemTypeEditButton(
-                                      rule: rule,
-                                      existingRules: rules,
+                  SizedBox(
+                    height: 300,
+                    child: Theme(
+                      data: ThemeData(
+                        scrollbarTheme: ScrollbarThemeData(
+                          thumbVisibility: MaterialStatePropertyAll(true),
+                        ),
+                      ),
+                      child: SingleChildScrollView(
+                        child: DataTable(
+                          dataRowColor:
+                              MaterialStatePropertyAll(Colors.grey[100]),
+                          headingTextStyle:
+                              TextStyle(fontWeight: FontWeight.bold),
+                          columns: [
+                            DataColumn(label: Text('Type')),
+                            DataColumn(label: Text('Max Count'), numeric: true),
+                          ],
+                          rows: rules
+                              .map(
+                                (rule) => DataRow(
+                                  cells: [
+                                    DataCell(
+                                      Row(
+                                        children: [
+                                          ItemTypeEditButton(
+                                            rule: rule,
+                                            existingRules: rules,
+                                          ),
+                                          Flexible(child: Text(rule.type)),
+                                        ],
+                                      ),
                                     ),
-                                    Flexible(child: Text(rule.type)),
+                                    DataCell(
+                                      Row(
+                                        children: [
+                                          if (rule.maxBorrowingCount == 1)
+                                            DeleteButton(rule: rule)
+                                          else
+                                            DecreaseButton(rule: rule),
+                                          Text(rule.maxBorrowingCount
+                                              .toString()),
+                                          IncreaseButton(rule: rule),
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
-                              ),
-                              DataCell(
-                                Row(
-                                  children: [
-                                    if (rule.maxBorrowingCount == 1)
-                                      DeleteButton(rule: rule)
-                                    else
-                                      DecreaseButton(rule: rule),
-                                    Text(rule.maxBorrowingCount.toString()),
-                                    IncreaseButton(rule: rule),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                        .toList(),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ),
                   ),
               ],
             );
