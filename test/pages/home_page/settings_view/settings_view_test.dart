@@ -16,7 +16,7 @@ import '../../../helpers/test_helpers.dart';
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
 
-  group('Set admins button', () {
+  group('Set Admins button', () {
     MockCallableService mockCallableService = MockCallableService();
     final user1 = UserDto(id: 'first', name: 'First', role: UserRole.user);
     final user2 = UserDto(id: 'second', name: 'Second', role: UserRole.admin);
@@ -43,7 +43,7 @@ void main() {
             auth: mockFirebaseAuth,
           );
 
-          await tester.tap(find.text('Set admins'));
+          await tester.tap(find.text('Set Admins'));
           await tester.pump();
 
           expect(find.text(user1.name), findsNothing);
@@ -60,7 +60,7 @@ void main() {
             callableService: mockCallableService,
           );
 
-          await tester.tap(find.text('Set admins'));
+          await tester.tap(find.text('Set Admins'));
           await tester.pump();
           final user1Finder = find.ancestor(
             of: find.text(user1.name),
@@ -87,7 +87,7 @@ void main() {
           callableService: mockCallableService,
         );
 
-        await tester.tap(find.text('Set admins'));
+        await tester.tap(find.text('Set Admins'));
         await tester.pump();
 
         await tester.tap(find.text(user1.name));
@@ -109,7 +109,7 @@ void main() {
           callableService: mockCallableService,
         );
 
-        await tester.tap(find.text('Set admins'));
+        await tester.tap(find.text('Set Admins'));
         await tester.pump();
 
         await tester.tap(find.text(user1.name));

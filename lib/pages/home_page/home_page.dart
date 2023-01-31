@@ -18,6 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedBottomNavItemIndex = 0;
+  String _pageTitle = 'Spare Parts';
   final PageController pageController = PageController();
 
   void _handleSignOut() {
@@ -31,7 +32,7 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(
         builder: (context) => Scaffold(
           appBar: AppBar(
-            title: const Text('Inventory'),
+            title: const Text('Settings'),
             actions: [
               TextButton.icon(
                 label: Text('Logout'),
@@ -56,6 +57,16 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _selectedBottomNavItemIndex = index;
+      switch (index) {
+        case 1:
+          _pageTitle = 'Borrowed Items';
+          break;
+        case 2:
+          _pageTitle = 'Settings';
+          break;
+        default:
+          _pageTitle = 'Spare Parts';
+      }
     });
   }
 
@@ -77,7 +88,7 @@ class _HomePageState extends State<HomePage> {
               : null,
           appBar: AppBar(
             centerTitle: true,
-            title: const Text('Spare Parts'),
+            title: Text(_pageTitle),
             actions: [
               if (layout == LayoutType.desktop && isAdmin)
                 TextButton.icon(

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/pages/home_page/settings_view/borrowing_rules_setting/item_type_edit_button.dart';
+import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
-
-import '../../../../services/firestore_service.dart';
+import 'package:spare_parts/widgets/title_text.dart';
 
 part 'decrease_button.dart';
 part 'delete_button.dart';
@@ -22,7 +22,7 @@ class BorrowingRulesSetting extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Borrowing Rules'),
+        TitleText('Borrowing Rules'),
         StreamBuilder<List<BorrowingRule>>(
           stream: firestoreService.borrowingRulesStream(),
           builder: (context, snapshot) {
@@ -40,17 +40,20 @@ class BorrowingRulesSetting extends StatelessWidget {
 
             return Column(
               children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    final ruleTypes = rules.map((rule) => rule.type);
-                    final firstAvailableType = itemTypes.keys
-                        .firstWhere((type) => !ruleTypes.contains(type));
-                    await firestoreService.addBorrowingRule(BorrowingRule(
-                      type: firstAvailableType,
-                      maxBorrowingCount: 1,
-                    ));
-                  },
-                  child: Text('Add Rule'),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final ruleTypes = rules.map((rule) => rule.type);
+                      final firstAvailableType = itemTypes.keys
+                          .firstWhere((type) => !ruleTypes.contains(type));
+                      await firestoreService.addBorrowingRule(BorrowingRule(
+                        type: firstAvailableType,
+                        maxBorrowingCount: 1,
+                      ));
+                    },
+                    child: Text('Add Rule'),
+                  ),
                 ),
                 if (rules.isEmpty)
                   EmptyListState(
@@ -84,7 +87,7 @@ class BorrowingRulesSetting extends StatelessWidget {
                                       rule: rule,
                                       existingRules: rules,
                                     ),
-                                    Text(rule.type),
+                                    Flexible(child: Text(rule.type)),
                                   ],
                                 ),
                               ),

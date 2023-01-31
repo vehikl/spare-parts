@@ -25,7 +25,6 @@ class BorrowingRule {
 
   Map<String, dynamic> toFirestore() {
     return {
-      'id': id,
       'type': type,
       'maxBorrowingCount': maxBorrowingCount,
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),

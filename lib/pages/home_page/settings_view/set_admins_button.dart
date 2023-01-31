@@ -5,6 +5,7 @@ import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
+import 'package:spare_parts/widgets/title_text.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
 
 class SetAdminsButton extends StatefulWidget {
@@ -72,9 +73,14 @@ class _SetAdminsButtonState extends State<SetAdminsButton> {
   Widget build(BuildContext context) {
     if (_loading) return CircularProgressIndicator();
 
-    return ElevatedButton(
-      onPressed: () => _handleSetAdmins(context),
-      child: Text('Set admins'),
+    return Column(
+      children: [
+        TitleText('Manage Administrators'),
+        ElevatedButton(
+          onPressed: () => _handleSetAdmins(context),
+          child: Text('Set Admins'),
+        ),
+      ],
     );
   }
 }
