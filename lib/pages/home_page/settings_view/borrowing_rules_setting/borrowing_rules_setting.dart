@@ -4,6 +4,8 @@ import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/pages/home_page/settings_view/borrowing_rules_setting/item_type_edit_button.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/widgets/buttons/async_elevated_button.dart';
+import 'package:spare_parts/widgets/buttons/async_icon_button.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 import 'package:spare_parts/widgets/title_text.dart';
@@ -81,7 +83,10 @@ class BorrowingRulesSetting extends StatelessWidget {
                     message: "No borrowing rules configured yet...",
                   ),
                   SizedBox(height: 10),
-                  NewRuleButton(rules: rules),
+                  Align(
+                    alignment: Alignment.center,
+                    child: NewRuleButton(rules: rules),
+                  ),
                 ] else
                   SizedBox(
                     height: 300,

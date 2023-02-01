@@ -8,12 +8,11 @@ class DecreaseButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final firestoreService = context.watch<FirestoreService>();
 
-    return IconButton(
+    return AsyncIconButton(
       onPressed: () async {
-        rule.maxBorrowingCount--;
-        await firestoreService.updateBorrowingRule(rule);
+        await firestoreService.updateBorrowingRule(rule.copy..decrease());
       },
-      icon: Icon(Icons.remove),
+      icon: Icons.remove,
     );
   }
 }

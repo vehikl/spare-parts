@@ -130,9 +130,6 @@ void main() {
     testWidgets(
       'Displays the list of borrowing rules',
       (WidgetTester tester) async {
-        // tester.binding.window.physicalSizeTestValue = Size(350, 42);
-        // addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
-
         final borrowingRules = [
           BorrowingRule(type: 'Chair', maxBorrowingCount: 1),
           BorrowingRule(type: 'Desk', maxBorrowingCount: 2),
@@ -247,7 +244,7 @@ void main() {
           firestore: firestore,
         );
 
-        await tester.tap(find.text('Add Rule'));
+        await tester.tap(find.byIcon(Icons.add_box));
         await tester.pumpAndSettle();
 
         expect(find.text(itemTypes.keys.first), findsOneWidget);
@@ -272,7 +269,7 @@ void main() {
           firestore: firestore,
         );
 
-        await tester.tap(find.text('Add Rule'));
+        await tester.tap(find.byIcon(Icons.add_box));
         await tester.pumpAndSettle();
 
         expect(find.text(itemTypes.keys.elementAt(firstN)), findsOneWidget);

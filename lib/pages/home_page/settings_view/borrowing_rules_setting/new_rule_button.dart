@@ -1,6 +1,6 @@
 part of 'borrowing_rules_setting.dart';
 
-class NewRuleButton extends StatelessWidget {
+class NewRuleButton extends StatefulWidget {
   final List<BorrowingRule> rules;
   final bool isIcon;
 
@@ -10,8 +10,13 @@ class NewRuleButton extends StatelessWidget {
     this.isIcon = false,
   }) : super(key: key);
 
-  void _handlePress(FirestoreService firestoreService) async {
-    final ruleTypes = rules.map((rule) => rule.type);
+  @override
+  State<NewRuleButton> createState() => _NewRuleButtonState();
+}
+
+class _NewRuleButtonState extends State<NewRuleButton> {
+  Future<void> _handlePress(FirestoreService firestoreService) async {
+    final ruleTypes = widget.rules.map((rule) => rule.type);
     final firstAvailableType =
         itemTypes.keys.firstWhere((type) => !ruleTypes.contains(type));
     await firestoreService.addBorrowingRule(BorrowingRule(
@@ -23,17 +28,17 @@ class NewRuleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final firestoreService = context.watch<FirestoreService>();
-    if (isIcon) {
-      return IconButton(
+    if (widget.isIcon) {
+      return AsyncIconButton(
         onPressed: () => _handlePress(firestoreService),
-        icon: Icon(Icons.add),
+        icon: Icons.add_box,
         color: Theme.of(context).colorScheme.primary,
       );
     }
 
-    return ElevatedButton(
+    return AsyncElevatedButton(
       onPressed: () => _handlePress(firestoreService),
-      child: Text('Add Rule'),
+      text: 'Add Rule',
     );
   }
 }

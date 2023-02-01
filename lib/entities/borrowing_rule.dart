@@ -13,6 +13,21 @@ class BorrowingRule {
     this.createdAt,
   });
 
+  BorrowingRule get copy => BorrowingRule(
+        id: id,
+        type: type,
+        maxBorrowingCount: maxBorrowingCount,
+        createdAt: createdAt,
+      );
+
+  void increase() {
+    maxBorrowingCount++;
+  }
+
+  void decrease() {
+    maxBorrowingCount--;
+  }
+
   static BorrowingRule fromFirestore(
       QueryDocumentSnapshot<Map<String, dynamic>> doc) {
     return BorrowingRule(
