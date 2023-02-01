@@ -155,13 +155,10 @@ void main() {
     testWidgets(
       'Can increase the borrowing limit',
       (WidgetTester tester) async {
-        final borrowingRules = [
-          BorrowingRule(type: 'Desk', maxBorrowingCount: 2),
-          BorrowingRule(type: 'Chair', maxBorrowingCount: 1),
-        ];
-        for (final rule in borrowingRules) {
-          await firestore.collection('borrowingRules').add(rule.toFirestore());
-        }
+        final borrowingRule = BorrowingRule(type: 'Desk', maxBorrowingCount: 2);
+        await firestore
+            .collection('borrowingRules')
+            .add(borrowingRule.toFirestore());
 
         await pumpPage(
           Scaffold(body: SettingsView()),
@@ -169,7 +166,7 @@ void main() {
           firestore: firestore,
         );
 
-        final borrowingCount = borrowingRules.first.maxBorrowingCount;
+        final borrowingCount = borrowingRule.maxBorrowingCount;
         expect(find.text(borrowingCount.toString()), findsOneWidget);
         await tester.tap(find.byIcon(Icons.add).first);
         await tester.pumpAndSettle();
@@ -181,13 +178,10 @@ void main() {
     testWidgets(
       'Can decrease the borrowing limit',
       (WidgetTester tester) async {
-        final borrowingRules = [
-          BorrowingRule(type: 'Desk', maxBorrowingCount: 2),
-          BorrowingRule(type: 'Chair', maxBorrowingCount: 3),
-        ];
-        for (final rule in borrowingRules) {
-          await firestore.collection('borrowingRules').add(rule.toFirestore());
-        }
+        final borrowingRule = BorrowingRule(type: 'Desk', maxBorrowingCount: 2);
+        await firestore
+            .collection('borrowingRules')
+            .add(borrowingRule.toFirestore());
 
         await pumpPage(
           Scaffold(body: SettingsView()),
@@ -195,7 +189,7 @@ void main() {
           firestore: firestore,
         );
 
-        final borrowingCount = borrowingRules.first.maxBorrowingCount;
+        final borrowingCount = borrowingRule.maxBorrowingCount;
         expect(find.text(borrowingCount.toString()), findsOneWidget);
         await tester.tap(find.byIcon(Icons.remove).first);
         await tester.pumpAndSettle();
@@ -207,13 +201,10 @@ void main() {
     testWidgets(
       'Shows a delete button if the borrowing limit is 1',
       (WidgetTester tester) async {
-        final borrowingRules = [
-          BorrowingRule(type: 'Desk', maxBorrowingCount: 2),
-          BorrowingRule(type: 'Chair', maxBorrowingCount: 3),
-        ];
-        for (final rule in borrowingRules) {
-          await firestore.collection('borrowingRules').add(rule.toFirestore());
-        }
+        final borrowingRule = BorrowingRule(type: 'Desk', maxBorrowingCount: 2);
+        await firestore
+            .collection('borrowingRules')
+            .add(borrowingRule.toFirestore());
 
         await pumpPage(
           Scaffold(body: SettingsView()),
@@ -221,13 +212,13 @@ void main() {
           firestore: firestore,
         );
 
-        expect(find.byIcon(Icons.remove), findsNWidgets(2));
+        expect(find.byIcon(Icons.remove), findsOneWidget);
         expect(find.byIcon(Icons.delete), findsNothing);
 
-        await tester.tap(find.byIcon(Icons.remove).first);
+        await tester.tap(find.byIcon(Icons.remove));
         await tester.pumpAndSettle();
 
-        expect(find.byIcon(Icons.remove), findsOneWidget);
+        expect(find.byIcon(Icons.remove), findsNothing);
         expect(find.byIcon(Icons.delete), findsOneWidget);
       },
     );
@@ -303,13 +294,9 @@ void main() {
     testWidgets(
       'Can edit the borrowing rule type',
       (WidgetTester tester) async {
-        final borrowingRules = [
-          BorrowingRule(type: 'Desk', maxBorrowingCount: 1),
-          BorrowingRule(type: 'Chair', maxBorrowingCount: 3),
-        ];
-        for (final rule in borrowingRules) {
-          await firestore.collection('borrowingRules').add(rule.toFirestore());
-        }
+        final borrowingRule =
+          BorrowingRule(type: 'Desk', maxBorrowingCount: 1);
+          await firestore.collection('borrowingRules').add(borrowingRule.toFirestore());
 
         await pumpPage(
           Scaffold(body: SettingsView()),
@@ -325,7 +312,7 @@ void main() {
         await tester.tap(find.text('Select'));
         await tester.pumpAndSettle();
 
-        expect(find.text(borrowingRules.first.type), findsNothing);
+        expect(find.text(borrowingRule.type), findsNothing);
         expect(find.text(newType), findsOneWidget);
       },
     );
@@ -333,13 +320,12 @@ void main() {
     testWidgets(
       'Can not set the borrowing rule type to an existing type',
       (WidgetTester tester) async {
-        final borrowingRules = [
-          BorrowingRule(type: 'Desk', maxBorrowingCount: 1),
-          BorrowingRule(type: 'Chair', maxBorrowingCount: 3),
-        ];
-        for (final rule in borrowingRules) {
-          await firestore.collection('borrowingRules').add(rule.toFirestore());
-        }
+          final firstBorrowingRule = BorrowingRule(type: 'Desk', maxBorrowingCount: 1);
+          final secondBorrowingRule = BorrowingRule(type: 'Chair', maxBorrowingCount: 3);
+
+          // add in reverse order
+          await firestore.collection('borrowingRules').add(secondBorrowingRule.toFirestore());
+          await firestore.collection('borrowingRules').add(firstBorrowingRule.toFirestore());
 
         await pumpPage(
           Scaffold(body: SettingsView()),
@@ -350,7 +336,7 @@ void main() {
         await tester.tap(find.byIcon(Icons.edit).first);
         await tester.pumpAndSettle();
 
-        final existingType = borrowingRules.last.type;
+        final existingType = secondBorrowingRule.type;
         final existingTypeOption = find.descendant(
           of: find.byType(ValueSelectionDialog),
           matching: find.text(existingType),
