@@ -130,6 +130,9 @@ void main() {
     testWidgets(
       'Displays the list of borrowing rules',
       (WidgetTester tester) async {
+        // tester.binding.window.physicalSizeTestValue = Size(350, 42);
+        // addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+
         final borrowingRules = [
           BorrowingRule(type: 'Chair', maxBorrowingCount: 1),
           BorrowingRule(type: 'Desk', maxBorrowingCount: 2),
