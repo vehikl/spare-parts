@@ -4,6 +4,7 @@ import 'package:spare_parts/utilities/constants.dart';
 class ValueSelectionDialog extends StatefulWidget {
   final List<String> selectedValues;
   final List<String> values;
+  final List<String> disabledValues;
   final String title;
   final bool isSingleSelection;
   final Widget Function(String value)? leadingBuilder;
@@ -17,6 +18,7 @@ class ValueSelectionDialog extends StatefulWidget {
     this.isSingleSelection = false,
     this.leadingBuilder,
     this.labelBuilder,
+    this.disabledValues = const [],
   });
 
   @override
@@ -62,6 +64,7 @@ class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
                           selected: _newSelectedValues.contains(value),
                           selectedTileColor: kVehiklMaterialColor,
                           selectedColor: Colors.white,
+                          enabled: !widget.disabledValues.contains(value),
                           onTap: () {
                             setState(() {
                               if (_newSelectedValues.contains(value)) {

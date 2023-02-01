@@ -142,6 +142,30 @@ class BorrowItemAction extends ItemAction {
         final user = auth.currentUser;
         if (user == null) return false;
 
+        final borrowingRule =
+            await firestoreService.getBorrowingRuleForItemItemType(item.type);
+
+        if (borrowingRule != null) {
+          final borrowingCount = await firestoreService.getBorrowingCount(
+              item.type, auth.currentUser!.uid);
+
+          if (borrowingCount >= borrowingRule.maxBorrowingCount) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                    'You have reached the maximum borrowing count for this item'),
+                backgroundColor: Theme.of(context).errorColor,
+              ),
+            );
+            return false;
+          }
+        }
+
+        await firestoreService.borrowItem(
+          item,
+          CustomUser.fromUser(user),
+        );
+
         final event = Event(
           issuerId: user.uid,
           issuerName: user.displayName ?? 'anonymous',
@@ -149,10 +173,6 @@ class BorrowItemAction extends ItemAction {
           createdAt: DateTime.now(),
         );
         await firestoreService.addEvent(item.id, event);
-        await firestoreService.borrowItem(
-          item,
-          CustomUser.fromUser(user),
-        );
 
         return true;
       },

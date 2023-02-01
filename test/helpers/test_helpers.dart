@@ -50,3 +50,14 @@ Future<void> pumpPage(
   await tester.idle();
   await tester.pump();
 }
+
+Future<void> deleteAllData(FirebaseFirestore firestore) async {
+  final collections = ['borrowingRules', 'items'];
+
+  for (var collection in collections) {
+    final items = await firestore.collection(collection).get();
+    for (final doc in items.docs) {
+      await doc.reference.delete();
+    }
+  }
+}

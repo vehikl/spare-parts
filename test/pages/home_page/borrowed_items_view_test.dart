@@ -43,10 +43,7 @@ void main() {
   });
 
   tearDown(() async {
-    final items = await firestore.collection('items').get();
-    for (final doc in items.docs) {
-      await doc.reference.delete();
-    }
+    deleteAllData(firestore);
   });
 
   testWidgets(
