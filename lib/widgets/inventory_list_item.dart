@@ -39,6 +39,7 @@ class InventoryListItem extends StatelessWidget {
       closedShape: const RoundedRectangleBorder(),
       closedElevation: 0.0,
       transitionDuration: Duration(milliseconds: 500),
+      closedColor: Theme.of(context).colorScheme.background,
       closedBuilder: (BuildContext _, VoidCallback openContainer) {
         return ListTile(
           leading: ItemIcon(item: item),

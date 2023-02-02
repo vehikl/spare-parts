@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/material-theme/color_schemes.g.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/signin_page.dart';
 import 'package:spare_parts/services/callable_service.dart';
@@ -50,9 +51,14 @@ class _MyAppState extends State<MyApp> {
         title: 'Spare Parts',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: kVehiklMaterialColor,
+          colorScheme: lightColorScheme,
+          buttonTheme: ButtonThemeData(
+            alignedDropdown: true,
           ),
+        ),
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          colorScheme: darkColorScheme,
           buttonTheme: ButtonThemeData(
             alignedDropdown: true,
           ),
