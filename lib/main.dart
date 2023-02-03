@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         title: 'Spare Parts',
         theme: buildTheme(lightColorScheme),
-        // darkTheme: buildTheme(darkColorScheme),
+        darkTheme: buildTheme(darkColorScheme),
         home: StreamBuilder<User?>(
           stream: _authStream,
           builder: (context, snapshot) {

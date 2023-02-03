@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:spare_parts/utilities/constants.dart';
 
 class ValueSelectionDialog extends StatefulWidget {
   final List<String> selectedValues;
@@ -62,8 +61,10 @@ class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
                               ? null
                               : widget.leadingBuilder!(value),
                           selected: _newSelectedValues.contains(value),
-                          selectedTileColor: kVehiklMaterialColor,
-                          selectedColor: Colors.white,
+                          selectedTileColor:
+                              Theme.of(context).colorScheme.primary,
+                          selectedColor:
+                              Theme.of(context).colorScheme.onPrimary,
                           enabled: !widget.disabledValues.contains(value),
                           onTap: () {
                             setState(() {
