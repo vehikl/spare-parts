@@ -79,7 +79,7 @@ void main() {
       await tester.tap(releaseButton);
       await tester.pumpAndSettle();
 
-      final inventoryViewButton = find.byIcon(Icons.home);
+      final inventoryViewButton = find.byIcon(Icons.home_outlined);
       await tester.tap(inventoryViewButton);
       await tester.pumpAndSettle();
 
