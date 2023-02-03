@@ -67,3 +67,19 @@ const darkColorScheme = ColorScheme(
   outlineVariant: Color(0xFF52443D),
   scrim: Color(0xFF000000),
 );
+
+ThemeData buildTheme(ColorScheme colorScheme) {
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: colorScheme,
+    buttonTheme: ButtonThemeData(
+      alignedDropdown: true,
+    ),
+    dataTableTheme: DataTableThemeData(
+      headingTextStyle: TextStyle(
+        color: colorScheme.onSurface,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  );
+}

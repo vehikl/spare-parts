@@ -95,13 +95,11 @@ class _HomePageState extends State<HomePage> {
                   label: Text('Settings'),
                   onPressed: _handleSettings,
                   icon: Icon(Icons.settings),
-                  style: TextButton.styleFrom(foregroundColor: Colors.white),
                 ),
               TextButton.icon(
                 label: Text('Logout'),
                 onPressed: _handleSignOut,
                 icon: const Icon(Icons.logout),
-                style: TextButton.styleFrom(foregroundColor: Colors.white),
               ),
             ],
           ),
@@ -144,21 +142,23 @@ class _HomePageState extends State<HomePage> {
               : BottomNavigationBar(
                   items: [
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.home),
+                      icon: Icon(Icons.home_outlined),
+                      activeIcon: Icon(Icons.home),
                       label: 'Inventory',
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.backpack_outlined),
+                      activeIcon: Icon(Icons.backpack),
                       label: 'Borrowed Items',
                     ),
                     if (isAdmin)
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.settings),
+                        icon: Icon(Icons.settings_outlined),
+                        activeIcon: Icon(Icons.settings),
                         label: 'Settings',
                       ),
                   ],
                   currentIndex: _selectedBottomNavItemIndex,
-                  selectedItemColor: Colors.amber[800],
                   onTap: _onBottomNavItemTapped,
                 ),
         );

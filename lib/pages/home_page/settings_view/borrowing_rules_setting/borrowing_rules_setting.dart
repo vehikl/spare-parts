@@ -98,8 +98,6 @@ class BorrowingRulesSetting extends StatelessWidget {
                       ),
                       child: SingleChildScrollView(
                         child: DataTable(
-                          headingTextStyle:
-                              TextStyle(fontWeight: FontWeight.bold),
                           columns: [
                             DataColumn(
                               label: NewRuleButton(rules: rules, isIcon: true),
