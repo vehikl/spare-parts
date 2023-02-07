@@ -9,7 +9,7 @@ class ErrorContainer extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
-        color: Colors.red,
+        color: Theme.of(context).colorScheme.error,
       ),
       padding: const EdgeInsets.all(16),
       child: Text(error),

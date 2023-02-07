@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 Color kVehiklOrange = Color(0xFFDD5F13);
+Color kVehiklOrange2 = const Color(0xFFED6819);
 
 Map<int, Color> colorCodes = {
   50: Color.fromRGBO(221, 95, 19, .1),
