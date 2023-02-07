@@ -25,6 +25,8 @@ dependencies:
   build_runner: ^2.3.2
   animations: ^2.0.7
   dynamic_color: ^1.6.0
+  bluetooth_print: ^4.3.0
+  google_sign_in: ^5.4.4
 
 dev_dependencies:
   flutter_test:

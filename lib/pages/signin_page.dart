@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SignInPage extends StatefulWidget {
   final String? error;
@@ -14,20 +16,48 @@ class _SignInPageState extends State<SignInPage> {
   String? _error;
 
   handleSignIn(BuildContext context) async {
-    GoogleAuthProvider googleProvider = GoogleAuthProvider();
     String? signInError;
 
     try {
-      await FirebaseAuth.instance.signInWithPopup(googleProvider);
+      if (kIsWeb) {
+        await _signInOnWeb();
+      } else {
+        await _signInOnMobile();
+      }
     } on FirebaseAuthException catch (e) {
+      print(e.toString());
       signInError = e.message;
     } catch (e) {
-      signInError = 'Authentication error';
+      print(e.toString());
+      signInError = 'Authentication error: $e';
     }
 
     setState(() {
       _error = signInError;
     });
+  }
+
+  Future<void> _signInOnWeb() async {
+    GoogleAuthProvider googleProvider = GoogleAuthProvider();
+    await FirebaseAuth.instance.signInWithPopup(googleProvider);
+  }
+
+  Future<void> _signInOnMobile() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) {
+      throw Exception('Failed to sign in with Google');
+    }
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   @override
