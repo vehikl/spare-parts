@@ -134,7 +134,11 @@ class _InventoryViewState extends State<InventoryView> {
                     .map((item) => InventoryListItem(
                           item: item,
                           showBorrower: true,
-                          actions: [BorrowItemAction(), AssignItemAction()],
+                          actions: [
+                            BorrowItemAction(),
+                            AssignItemAction(),
+                            PrintAction()
+                          ],
                         ))
                     .toList(),
               );

@@ -13,9 +13,10 @@ import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
+import 'package:spare_parts/widgets/print_dialog.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
 
-enum ItemActionType { delete, edit, borrow, release, assign }
+enum ItemActionType { delete, edit, borrow, release, assign, print }
 
 abstract class ItemAction {
   ItemActionType get actionType;
@@ -237,6 +238,24 @@ class EditItemAction extends ItemAction {
         );
       },
     );
+  }
+
+  @override
+  List<UserRole> get allowedRoles => [UserRole.admin];
+}
+
+class PrintAction extends ItemAction {
+  @override
+  ItemActionType get actionType => ItemActionType.print;
+
+  @override
+  IconData get icon => Icons.print;
+
+  @override
+  handle(BuildContext context, InventoryItem item) {
+    showDialog(
+        context: context,
+        builder: (context) => PrintDialog());
   }
 
   @override
