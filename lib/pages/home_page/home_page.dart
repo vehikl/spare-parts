@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
@@ -48,6 +50,27 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _handleScan() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          appBar: AppBar(title: const Text('Mobile Scanner')),
+          body: MobileScanner(
+            fit: BoxFit.contain,
+            onDetect: (capture) {
+              final List<Barcode> barcodes = capture.barcodes;
+
+              for (final barcode in barcodes) {
+                debugPrint('Barcode found! ${barcode.rawValue}');
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   void _onBottomNavItemTapped(int index) {
     pageController.animateToPage(
       index,
@@ -90,6 +113,13 @@ class _HomePageState extends State<HomePage> {
             centerTitle: true,
             title: Text(_pageTitle),
             actions: [
+              if (defaultTargetPlatform == TargetPlatform.iOS ||
+                  defaultTargetPlatform == TargetPlatform.android)
+                IconButton(
+                  icon: const Icon(Icons.qr_code_scanner),
+                  onPressed: _handleScan,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               if (layout == LayoutType.desktop && isAdmin)
                 TextButton.icon(
                   label: Text('Settings'),
