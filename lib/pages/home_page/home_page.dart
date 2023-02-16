@@ -1,11 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
+import 'package:spare_parts/pages/item_page.dart';
+import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/add_inventory_item_button.dart';
 import 'package:spare_parts/widgets/custom_layout_builder.dart';
@@ -51,6 +55,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleScan() {
+    final firestore = context.read<FirestoreService>();
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -58,11 +64,31 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(title: const Text('Mobile Scanner')),
           body: MobileScanner(
             fit: BoxFit.contain,
-            onDetect: (capture) {
+            onDetect: (capture) async {
               final List<Barcode> barcodes = capture.barcodes;
 
-              for (final barcode in barcodes) {
-                debugPrint('Barcode found! ${barcode.rawValue}');
+              if (barcodes.isNotEmpty) {
+                final barcodeValue = barcodes.first.rawValue;
+                print("IDDD: $barcodeValue");
+
+                final itemRef = await firestore
+                    .getItemDocumentReference(barcodeValue)
+                    .get();
+                print("DATAAAAAA: ${itemRef.data()}");
+
+                if (itemRef.exists) {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ItemPage(
+                        item: InventoryItem.fromFirestore(
+                            itemRef as DocumentSnapshot<Map<String, dynamic>>),
+                      ),
+                    ),
+                  );
+                } else {
+                  Navigator.pop(context);
+                }
               }
             },
           ),
