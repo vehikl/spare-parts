@@ -13,11 +13,37 @@ class PrintDialog extends StatefulWidget {
 
 class _PrintDialogState extends State<PrintDialog> {
   BluetoothDevice? _device;
+  bool _connected = false;
 
   @override
   void initState() {
-    bluetoothPrint.startScan(timeout: Duration(seconds: 10));
+    WidgetsBinding.instance.addPostFrameCallback((_) => initBluetooth());
     super.initState();
+  }
+
+  Future<void> initBluetooth() async {
+    bluetoothPrint.startScan(timeout: Duration(seconds: 4));
+
+    bluetoothPrint.state.listen((state) {
+      print('******************* cur device status: $state');
+
+      switch (state) {
+        case BluetoothPrint.CONNECTED:
+          setState(() {
+            _connected = true;
+          });
+          break;
+        case BluetoothPrint.DISCONNECTED:
+          setState(() {
+            _connected = false;
+          });
+          break;
+        default:
+          break;
+      }
+    });
+
+    if (!mounted) return;
   }
 
   @override
@@ -28,35 +54,60 @@ class _PrintDialogState extends State<PrintDialog> {
         stream: bluetoothPrint.scanResults,
         builder: (c, snapshot) {
           if (snapshot.data == null) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
+            return Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.data!.isEmpty) {
-            return Center(
-              child: Text('No devices found'),
-            );
+            return Center(child: Text('No devices found'));
           }
 
           return Column(
-            children: snapshot.data!
-                .map((d) => ListTile(
-                      title: Text(d.name ?? ''),
-                      subtitle: d.address != null ? Text(d.address!) : null,
-                      onTap: () async {
-                        setState(() {
-                          _device = d;
-                        });
-                      },
-                      trailing: _device != null && _device?.address == d.address
-                          ? Icon(
-                              Icons.check,
-                              color: Colors.green,
-                            )
-                          : null,
-                    ))
-                .toList(),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: snapshot.data!
+                    .map((d) => ListTile(
+                          title: Text(d.name ?? ''),
+                          onTap: () async {
+                            setState(() {
+                              _device = d;
+                            });
+                          },
+                          trailing:
+                              _device != null && _device?.address == d.address
+                                  ? Icon(Icons.check, color: Colors.green)
+                                  : null,
+                        ))
+                    .toList(),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  await bluetoothPrint.connect(_device!);
+                },
+                child: Text('Connect'),
+              ),
+              ElevatedButton(
+                onPressed: _connected
+                    ? () async {
+                        Map<String, dynamic> config = {
+                          'width': 30,
+                          'height': 15,
+                        };
+                        List<LineText> list = [];
+                        list.add(LineText(
+                          type: LineText.TYPE_TEXT,
+                          x: 0,
+                          y: 0,
+                          content: 'A Title',
+                        ));
+
+                        await bluetoothPrint.printLabel(config, list);
+                      }
+                    : null,
+                child: Text('Print'),
+              ),
+            ],
           );
         },
       ),
