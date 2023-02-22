@@ -56,6 +56,7 @@ class _HomePageState extends State<HomePage> {
 
   void _handleScan() {
     final firestore = context.read<FirestoreService>();
+    final userRole = context.read<UserRole>();
 
     Navigator.push(
       context,
@@ -68,26 +69,40 @@ class _HomePageState extends State<HomePage> {
               final List<Barcode> barcodes = capture.barcodes;
 
               if (barcodes.isNotEmpty) {
-                final barcodeValue = barcodes.first.rawValue;
-                print("IDDD: $barcodeValue");
+                try {
+                  final barcodeValue = barcodes.first.rawValue;
+                  print("IDDD: $barcodeValue");
 
-                final itemRef = await firestore
-                    .getItemDocumentReference(barcodeValue)
-                    .get();
-                print("DATAAAAAA: ${itemRef.data()}");
+                  final itemRef = await firestore
+                      .getItemDocumentReference(barcodeValue)
+                      .get();
 
-                if (itemRef.exists) {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ItemPage(
-                        item: InventoryItem.fromFirestore(
-                            itemRef as DocumentSnapshot<Map<String, dynamic>>),
+                  if (itemRef.exists) {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Provider.value(
+                          value: userRole,
+                          child: ItemPage(
+                            item: InventoryItem.fromFirestore(itemRef
+                                as DocumentSnapshot<Map<String, dynamic>>),
+                          ),
+                        ),
                       ),
-                    ),
-                  );
-                } else {
+                    );
+                  } else {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Invalid QR Code: $barcodeValue'),
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                    ));
+                  }
+                } catch (e) {
                   Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('An error occured while scanning QR Code'),
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                  ));
                 }
               }
             },
