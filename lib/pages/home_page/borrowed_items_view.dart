@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
@@ -41,10 +40,7 @@ class BorrowedItemsView extends StatelessWidget {
             itemCount: items.length,
             itemBuilder: (context, index) {
               var item = items[index];
-              return InventoryListItem(
-                item: item,
-                actions: [ReleaseItemAction()],
-              );
+              return InventoryListItem(item: item);
             },
           );
         },

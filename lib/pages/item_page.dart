@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
-import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
+import 'package:spare_parts/widgets/item_actions_button.dart';
 import 'package:spare_parts/widgets/item_icon.dart';
 
 class ItemPage extends StatelessWidget {
@@ -18,17 +17,6 @@ class ItemPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final firestoreService = context.watch<FirestoreService>();
-    final userRole = context.read<UserRole>();
-
-    final allActions = [
-      EditItemAction(),
-      DeleteItemAction(),
-      BorrowItemAction(),
-      ReleaseItemAction(),
-      AssignItemAction()
-    ];
-    final allowedActions =
-        allActions.where((action) => action.allowedRoles.contains(userRole));
 
     return Scaffold(
       appBar: AppBar(title: Text(item.name)),
@@ -78,26 +66,7 @@ class ItemPage extends StatelessWidget {
                     ],
                   ),
                   isThreeLine: true,
-                  trailing: PopupMenuButton<ItemAction>(
-                    child: Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Icon(Icons.more_vert),
-                    ),
-                    itemBuilder: (context) => allowedActions.map((action) {
-                      return PopupMenuItem(
-                        value: action,
-                        child: Row(
-                          children: [
-                            Icon(action.icon),
-                            SizedBox(width: 4),
-                            Text(action.name),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    onSelected: (itemAction) =>
-                        itemAction.handle(context, item),
-                  ),
+                  trailing: ItemActionsButton(item: item),
                 ),
               ),
             ),

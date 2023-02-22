@@ -2,7 +2,6 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/event.dart';
@@ -154,10 +153,7 @@ void main() {
 
       await pumpPage(
         Scaffold(
-          body: InventoryListItem(
-            item: availableItem,
-            actions: [BorrowItemAction()],
-          ),
+          body: InventoryListItem(item: availableItem),
         ),
         tester,
         userRole: UserRole.user,
