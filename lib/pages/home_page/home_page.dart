@@ -58,6 +58,8 @@ class _HomePageState extends State<HomePage> {
     final firestore = context.read<FirestoreService>();
     final userRole = context.read<UserRole>();
 
+    var scanning = true;
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -66,10 +68,13 @@ class _HomePageState extends State<HomePage> {
           body: MobileScanner(
             fit: BoxFit.contain,
             onDetect: (capture) async {
+              if (!scanning) return;
+
               final List<Barcode> barcodes = capture.barcodes;
 
               if (barcodes.isNotEmpty) {
                 try {
+                  scanning = false;
                   final barcodeValue = barcodes.first.rawValue;
                   print("IDDD: $barcodeValue");
 
@@ -78,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                       .get();
 
                   if (itemRef.exists) {
-                    await Navigator.push(
+                    await Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) => Provider.value(
