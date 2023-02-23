@@ -49,24 +49,6 @@ void main() {
     },
   );
 
-  testWidgets('Displays a modal with item history for admin user',
-      (WidgetTester tester) async {
-    final testItem = InventoryItem(id: '#re4123', type: 'Chair');
-
-    await pumpPage(Scaffold(body: InventoryListItem(item: testItem)), tester,
-        userRole: UserRole.admin);
-
-    final invetoryItemElement = find.ancestor(
-      of: find.text('#re4123'),
-      matching: find.byType(ListTile),
-    );
-
-    await tester.tap(invetoryItemElement);
-    await tester.pumpAndSettle();
-
-    expect(find.textContaining('History'), findsOneWidget);
-  });
-
   testWidgets('Does not display a modal when a non-admin user clicks an item',
       (WidgetTester tester) async {
     final testItem = InventoryItem(id: '#re4123', type: 'Chair');

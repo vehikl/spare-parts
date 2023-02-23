@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/pages/item_page.dart';
+import 'package:spare_parts/utilities/constants.dart';
 
 import '../../helpers/test_helpers.dart';
 
@@ -13,17 +14,21 @@ void main() {
   testWidgets(
     'Displays the name of the item',
     (WidgetTester tester) async {
-      var testItemName = 'Test Item';
+      final testItem = InventoryItem(
+        id: 'foo',
+        type: 'Chair',
+        name: 'Test Item',
+      );
+
+      // Add the item to the firestore
+      await firestore
+          .collection('items')
+          .doc(testItem.id)
+          .set(testItem.toFirestore());
 
       await pumpPage(
         Scaffold(
-          body: ItemPage(
-            item: InventoryItem(
-              id: 'foo',
-              type: 'Chair',
-              name: testItemName,
-            ),
-          ),
+          body: ItemPage(itemId: testItem.id),
         ),
         tester,
         firestore: firestore,
@@ -32,10 +37,28 @@ void main() {
       expect(
         find.descendant(
           of: find.byType(Card),
-          matching: find.text(testItemName),
+          matching: find.text(testItem.name),
         ),
         findsOneWidget,
       );
     },
   );
+
+  testWidgets('Displays a modal with item history for admin user',
+      (WidgetTester tester) async {
+    final testItem = InventoryItem(id: '#re4123', type: 'Chair');
+    await firestore
+        .collection('items')
+        .doc(testItem.id)
+        .set(testItem.toFirestore());
+
+    await pumpPage(
+      Scaffold(body: ItemPage(itemId: testItem.id)),
+      tester,
+      userRole: UserRole.admin,
+      firestore: firestore,
+    );
+
+    expect(find.textContaining('History'), findsOneWidget);
+  });
 }

@@ -25,7 +25,8 @@ class InventoryListItem extends StatelessWidget {
     return OpenContainer<bool>(
       transitionType: ContainerTransitionType.fade,
       openBuilder: (BuildContext context, VoidCallback _) {
-        return Provider.value(value: userRole, child: ItemPage(item: item));
+        return Provider.value(
+            value: userRole, child: ItemPage(itemId: item.id));
       },
       tappable: false,
       closedShape: const RoundedRectangleBorder(),

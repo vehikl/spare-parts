@@ -89,8 +89,7 @@ class _HomePageState extends State<HomePage> {
                         builder: (context) => Provider.value(
                           value: userRole,
                           child: ItemPage(
-                            item: InventoryItem.fromFirestore(itemRef
-                                as DocumentSnapshot<Map<String, dynamic>>),
+                            itemId: itemRef.id,
                           ),
                         ),
                       ),
