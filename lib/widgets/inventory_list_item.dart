@@ -26,7 +26,9 @@ class InventoryListItem extends StatelessWidget {
       transitionType: ContainerTransitionType.fade,
       openBuilder: (BuildContext context, VoidCallback _) {
         return Provider.value(
-            value: userRole, child: ItemPage(itemId: item.id));
+          value: userRole,
+          child: ItemPage(itemId: item.id),
+        );
       },
       tappable: false,
       closedShape: const RoundedRectangleBorder(),
@@ -34,14 +36,17 @@ class InventoryListItem extends StatelessWidget {
       transitionDuration: Duration(milliseconds: 500),
       closedColor: Theme.of(context).colorScheme.background,
       closedBuilder: (BuildContext _, VoidCallback openContainer) {
-        return ListTile(
-          leading: ItemIcon(item: item),
-          title: Text(item.name),
-          subtitle: !showBorrower || item.borrower?.name == null
-              ? null
-              : Text(item.borrower!.name!),
-          onTap: userRole == UserRole.admin ? openContainer : null,
-          trailing: ItemActionsButton(item: item),
+        return Provider.value(
+          value: userRole,
+          child: ListTile(
+            leading: ItemIcon(item: item),
+            title: Text(item.name),
+            subtitle: !showBorrower || item.borrower?.name == null
+                ? null
+                : Text(item.borrower!.name!),
+            onTap: userRole == UserRole.admin ? openContainer : null,
+            trailing: ItemActionsButton(item: item),
+          ),
         );
       },
     );
