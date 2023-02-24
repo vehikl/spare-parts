@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -24,20 +23,20 @@ class _ItemPageState extends State<ItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: firestoreService.getItemDocumentReference(widget.itemId).get(),
-        builder: (context, snapshot) {
+    return StreamBuilder(
+        stream: firestoreService.getItemStream(widget.itemId),
+        builder: (context, AsyncSnapshot<InventoryItem> snapshot) {
           if (snapshot.hasError) {
             return ErrorContainer(error: snapshot.error.toString());
           }
-          if (!snapshot.hasData) {
+          
+          final item = snapshot.data;
+          if (item == null) {
             return Scaffold(
-                appBar: AppBar(title: Text('Loading...')),
-                body: Center(child: CircularProgressIndicator()));
+              appBar: AppBar(title: Text('Loading...')),
+              body: Center(child: CircularProgressIndicator()),
+            );
           }
-          final itemDocument =
-              snapshot.data as DocumentSnapshot<Map<String, dynamic>>;
-          final item = InventoryItem.fromFirestore(itemDocument);
 
           return Scaffold(
             appBar: AppBar(title: Text(item.name)),

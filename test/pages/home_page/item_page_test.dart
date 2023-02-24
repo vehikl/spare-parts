@@ -20,7 +20,6 @@ void main() {
         name: 'Test Item',
       );
 
-      // Add the item to the firestore
       await firestore
           .collection('items')
           .doc(testItem.id)
@@ -33,6 +32,53 @@ void main() {
         tester,
         firestore: firestore,
       );
+
+      expect(
+        find.descendant(
+          of: find.byType(Card),
+          matching: find.text(testItem.name),
+        ),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'Listens for DB changes',
+    (WidgetTester tester) async {
+      final testItem = InventoryItem(
+        id: 'foo',
+        type: 'Chair',
+        name: 'Test Item',
+      );
+
+      await firestore
+          .collection('items')
+          .doc(testItem.id)
+          .set(testItem.toFirestore());
+
+      await pumpPage(
+        Scaffold(body: ItemPage(itemId: testItem.id)),
+        tester,
+        firestore: firestore,
+      );
+
+      expect(
+        find.descendant(
+          of: find.byType(Card),
+          matching: find.text(testItem.name),
+        ),
+        findsOneWidget,
+      );
+
+      testItem.name = 'New Name';
+
+      await firestore
+          .collection('items')
+          .doc(testItem.id)
+          .set(testItem.toFirestore());
+
+      await tester.pumpAndSettle();
 
       expect(
         find.descendant(
