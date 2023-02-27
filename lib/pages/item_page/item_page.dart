@@ -92,7 +92,8 @@ class _ItemPageState extends State<ItemPage> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  if (userRole == UserRole.admin) ItemHistory(itemId: item.id)
+                  if (userRole == UserRole.admin)
+                    Expanded(child: ItemHistory(itemId: item.id))
                 ],
               ),
             ),

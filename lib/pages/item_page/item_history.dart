@@ -16,6 +16,8 @@ class ItemHistory extends StatelessWidget {
     final firestoreService = context.watch<FirestoreService>();
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(
           child: Text('Interaction History', style: TextStyle(fontSize: 18)),
@@ -38,30 +40,27 @@ class ItemHistory extends StatelessWidget {
                   message: "This item was not borrowed yet...");
             }
 
-            return Expanded(
-              child: ListView(
-                shrinkWrap: true,
-                children: events
-                    .map((event) => ListTile(
-                          visualDensity: VisualDensity(
-                            vertical: VisualDensity.minimumDensity,
-                          ),
-                          title: Text(event.issuerName),
-                          subtitle: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(event.type),
-                              Text(
-                                event.createdAt == null
-                                    ? 'N/A'
-                                    : DateFormat.yMMMd()
-                                        .format(event.createdAt!),
-                              )
-                            ],
-                          ),
-                        ))
-                    .toList(),
-              ),
+            return ListView(
+              shrinkWrap: true,
+              children: events
+                  .map((event) => ListTile(
+                        visualDensity: VisualDensity(
+                          vertical: VisualDensity.minimumDensity,
+                        ),
+                        title: Text(event.issuerName),
+                        subtitle: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(event.type),
+                            Text(
+                              event.createdAt == null
+                                  ? 'N/A'
+                                  : DateFormat.yMMMd().format(event.createdAt!),
+                            )
+                          ],
+                        ),
+                      ))
+                  .toList(),
             );
           },
         ),

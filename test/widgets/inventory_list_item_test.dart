@@ -67,47 +67,6 @@ void main() {
   });
 
   testWidgets(
-    'Displays events in the history modal',
-    (WidgetTester tester) async {
-      final testItem = InventoryItem(id: '#re4123', type: 'Chair');
-
-      final itemDocReference =
-          await firestore.collection('items').add(testItem.toFirestore());
-      testItem.id = itemDocReference.id;
-
-      final event = Event(
-          issuerId: 'foo',
-          issuerName: 'Jonny',
-          type: 'Borrow',
-          createdAt: DateTime.now());
-
-      await firestore
-          .collection('items')
-          .doc(itemDocReference.id)
-          .collection('events')
-          .add(event.toFirestore());
-
-      await pumpPage(
-        Scaffold(body: InventoryListItem(item: testItem)),
-        tester,
-        userRole: UserRole.admin,
-        firestore: firestore,
-      );
-
-      final invetoryItemElement = find.ancestor(
-        of: find.text(testItem.name),
-        matching: find.byType(ListTile),
-      );
-
-      await tester.tap(invetoryItemElement);
-      await tester.pumpAndSettle();
-
-      expect(find.text(event.issuerName), findsOneWidget);
-      expect(find.text(event.type), findsOneWidget);
-    },
-  );
-
-  testWidgets(
     'Borrowing an inventory item for users is restricted if a borrowing rule is broken',
     (WidgetTester tester) async {
       final currentUser = CustomUser(uid: 'foo');

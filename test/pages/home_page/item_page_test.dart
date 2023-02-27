@@ -1,6 +1,7 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
@@ -126,5 +127,41 @@ void main() {
 
       expect(find.textContaining('History'), findsOneWidget);
     });
+
+    testWidgets(
+      'Displays events in the history modal',
+      (WidgetTester tester) async {
+        final testItem = InventoryItem(id: '#re4123', type: 'Chair');
+        await firestore
+            .collection('items')
+            .doc(testItem.id)
+            .set(testItem.toFirestore());
+
+        final event = Event(
+          issuerId: 'foo',
+          issuerName: 'Jonny',
+          type: 'Borrow',
+          createdAt: DateTime.now(),
+        );
+
+        await firestore
+            .collection('items')
+            .doc(testItem.id)
+            .collection('events')
+            .add(event.toFirestore());
+
+        await pumpPage(
+          Scaffold(body: ItemPage(itemId: testItem.id)),
+          tester,
+          userRole: UserRole.admin,
+          firestore: firestore,
+        );
+
+        await tester.pumpAndSettle();
+
+        expect(find.text(event.issuerName), findsOneWidget);
+        expect(find.text(event.type), findsOneWidget);
+      },
+    );
   });
 }
