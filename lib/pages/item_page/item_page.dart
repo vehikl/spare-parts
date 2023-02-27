@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
+import 'package:spare_parts/pages/item_page/item_history.dart';
 import 'package:spare_parts/services/firestore_service.dart';
-import 'package:spare_parts/widgets/empty_list_state.dart';
+import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 import 'package:spare_parts/widgets/item_actions_button.dart';
 import 'package:spare_parts/widgets/item_icon.dart';
@@ -20,6 +19,7 @@ class ItemPage extends StatefulWidget {
 
 class _ItemPageState extends State<ItemPage> {
   FirestoreService get firestoreService => context.watch<FirestoreService>();
+  UserRole get userRole => context.watch<UserRole>();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class _ItemPageState extends State<ItemPage> {
           if (snapshot.hasError) {
             return ErrorContainer(error: snapshot.error.toString());
           }
-          
+
           final item = snapshot.data;
           if (item == null) {
             return Scaffold(
@@ -92,58 +92,7 @@ class _ItemPageState extends State<ItemPage> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  Center(
-                    child: Text(
-                      'Interaction History',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ),
-                  StreamBuilder<List<Event>>(
-                    stream: firestoreService.getEventsStream(item.id),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return ErrorContainer(error: snapshot.error.toString());
-                      }
-
-                      if (!snapshot.hasData) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-
-                      final events = snapshot.data!;
-
-                      if (events.isEmpty) {
-                        return EmptyListState(
-                            message: "This item was not borrowed yet...");
-                      }
-
-                      return Expanded(
-                        child: ListView(
-                          shrinkWrap: true,
-                          children: events
-                              .map((event) => ListTile(
-                                    visualDensity: VisualDensity(
-                                      vertical: VisualDensity.minimumDensity,
-                                    ),
-                                    title: Text(event.issuerName),
-                                    subtitle: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(event.type),
-                                        Text(
-                                          event.createdAt == null
-                                              ? 'N/A'
-                                              : DateFormat.yMMMd()
-                                                  .format(event.createdAt!),
-                                        )
-                                      ],
-                                    ),
-                                  ))
-                              .toList(),
-                        ),
-                      );
-                    },
-                  ),
+                  if (userRole == UserRole.admin) ItemHistory(itemId: item.id)
                 ],
               ),
             ),

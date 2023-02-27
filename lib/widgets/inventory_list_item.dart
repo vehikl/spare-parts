@@ -2,7 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
-import 'package:spare_parts/pages/item_page.dart';
+import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/item_actions_button.dart';
 import 'package:spare_parts/widgets/item_icon.dart';

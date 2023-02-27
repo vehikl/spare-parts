@@ -2,8 +2,7 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
-import 'package:spare_parts/pages/item_page.dart';
+import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 import '../../helpers/test_helpers.dart';
@@ -90,21 +89,42 @@ void main() {
     },
   );
 
-  testWidgets('Displays a modal with item history for admin user',
-      (WidgetTester tester) async {
-    final testItem = InventoryItem(id: '#re4123', type: 'Chair');
-    await firestore
-        .collection('items')
-        .doc(testItem.id)
-        .set(testItem.toFirestore());
+  group('item event history', () {
+    testWidgets(
+        'Does not display inventory item event history for non-admin user',
+        (WidgetTester tester) async {
+      final testItem = InventoryItem(id: '#re4123', type: 'Chair');
+      await firestore
+          .collection('items')
+          .doc(testItem.id)
+          .set(testItem.toFirestore());
 
-    await pumpPage(
-      Scaffold(body: ItemPage(itemId: testItem.id)),
-      tester,
-      userRole: UserRole.admin,
-      firestore: firestore,
-    );
+      await pumpPage(
+        Scaffold(body: ItemPage(itemId: testItem.id)),
+        tester,
+        userRole: UserRole.user,
+        firestore: firestore,
+      );
 
-    expect(find.textContaining('History'), findsOneWidget);
+      expect(find.textContaining('History'), findsNothing);
+    });
+
+    testWidgets('Displays inventory item event history for admin user',
+        (WidgetTester tester) async {
+      final testItem = InventoryItem(id: '#re4123', type: 'Chair');
+      await firestore
+          .collection('items')
+          .doc(testItem.id)
+          .set(testItem.toFirestore());
+
+      await pumpPage(
+        Scaffold(body: ItemPage(itemId: testItem.id)),
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+      );
+
+      expect(find.textContaining('History'), findsOneWidget);
+    });
   });
 }
