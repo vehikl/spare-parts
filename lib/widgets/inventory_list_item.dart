@@ -44,7 +44,7 @@ class InventoryListItem extends StatelessWidget {
             subtitle: !showBorrower || item.borrower?.name == null
                 ? null
                 : Text(item.borrower!.name!),
-            onTap: userRole == UserRole.admin ? openContainer : null,
+            onTap: openContainer,
             trailing: ItemActionsButton(item: item),
           ),
         );
