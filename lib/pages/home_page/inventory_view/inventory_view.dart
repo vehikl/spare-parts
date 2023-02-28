@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spare_parts/business_logic/item_action.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/available_items_filter.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/search_field.dart';
@@ -131,11 +130,8 @@ class _InventoryViewState extends State<InventoryView> {
 
               return ListView(
                 children: filteredItems
-                    .map((item) => InventoryListItem(
-                          item: item,
-                          showBorrower: true,
-                          actions: [BorrowItemAction(), AssignItemAction()],
-                        ))
+                    .map((item) =>
+                        InventoryListItem(item: item, showBorrower: true))
                     .toList(),
               );
             },

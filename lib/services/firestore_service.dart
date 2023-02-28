@@ -21,6 +21,14 @@ class FirestoreService {
     return itemsCollection.doc(itemId);
   }
 
+  Stream<InventoryItem> getItemStream(String? itemId) {
+    return getItemDocumentReference(itemId).snapshots().map(
+          (e) => InventoryItem.fromFirestore(
+            e as DocumentSnapshot<Map<String, dynamic>>,
+          ),
+        );
+  }
+
   Stream<List<BorrowingRule>> borrowingRulesStream() {
     return borrowingRulesCollection.snapshots().map((e) => e.docs
         .map((doc) => BorrowingRule.fromFirestore(
@@ -41,8 +49,8 @@ class FirestoreService {
 
   Future<void> updateBorrowingRule(BorrowingRule borrowingRule) async {
     await borrowingRulesCollection.doc(borrowingRule.id).update(
-      borrowingRule.toFirestore(),
-    );
+          borrowingRule.toFirestore(),
+        );
   }
 
   Future<void> addBorrowingRule(BorrowingRule borrowingRule) async {

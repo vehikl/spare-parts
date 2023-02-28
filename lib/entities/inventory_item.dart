@@ -21,18 +21,23 @@ class InventoryItem {
       : name = name ?? id;
 
   static InventoryItem fromFirestore(
-    QueryDocumentSnapshot<Map<String, dynamic>> doc,
+    DocumentSnapshot<Map<String, dynamic>> doc,
   ) {
+    final data = doc.data();
+    if (data == null) {
+      throw Exception('Inventory item document data is null');
+    }
+
     return InventoryItem(
       id: doc.id,
-      name: doc.data()['name'] ?? doc.id,
-      type: doc.data()['type'],
-      description: doc.data()['description'],
-      storageLocation: doc.data()['storageLocation'],
-      borrower: doc.data()['borrower'] == null
+      name: data['name'] ?? doc.id,
+      type: data['type'],
+      description: data['description'],
+      storageLocation: data['storageLocation'],
+      borrower: data['borrower'] == null
           ? null
-          : CustomUser.fromFirestore(doc.data()['borrower']),
-      isPrivate: doc.data()['isPrivate'] ?? false,
+          : CustomUser.fromFirestore(data['borrower']),
+      isPrivate: data['isPrivate'] ?? false,
     );
   }
 
