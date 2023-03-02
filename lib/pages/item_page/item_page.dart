@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/item_page/item_history.dart';
+import 'package:spare_parts/services/dymo_service.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/error_container.dart';
@@ -20,6 +21,12 @@ class ItemPage extends StatefulWidget {
 class _ItemPageState extends State<ItemPage> {
   FirestoreService get firestoreService => context.watch<FirestoreService>();
   UserRole get userRole => context.watch<UserRole>();
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +98,12 @@ class _ItemPageState extends State<ItemPage> {
                       ),
                     ),
                   ),
+                  Text(
+                      'Browser supported: ${checkEnvironment().isBrowserSupported}'),
+                  Text(
+                      'Framework installed: ${checkEnvironment().isFrameworkInstalled}'),
+                  Text(
+                      'Webservice present: ${checkEnvironment().isWebServicePresent}'),
                   SizedBox(height: 20),
                   if (userRole == UserRole.admin)
                     Expanded(child: ItemHistory(itemId: item.id))
