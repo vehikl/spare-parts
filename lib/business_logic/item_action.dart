@@ -253,7 +253,10 @@ class PrintAction extends ItemAction {
 
   @override
   handle(BuildContext context, InventoryItem item) {
-    showDialog(context: context, builder: (context) => PrintDialog());
+    showDialog(
+      context: context,
+      builder: (context) => PrintDialog(itemId: item.id),
+    );
   }
 
   @override
