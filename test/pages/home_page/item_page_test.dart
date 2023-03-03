@@ -11,84 +11,78 @@ import '../../helpers/test_helpers.dart';
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
 
-  testWidgets(
-    'Displays the name of the item',
-    (WidgetTester tester) async {
-      final testItem = InventoryItem(
-        id: 'foo',
-        type: 'Chair',
-        name: 'Test Item',
-      );
+  testWidgets('Displays the name of the item', (WidgetTester tester) async {
+    final testItem = InventoryItem(
+      id: 'foo',
+      type: 'Chair',
+      name: 'Test Item',
+    );
 
-      await firestore
-          .collection('items')
-          .doc(testItem.id)
-          .set(testItem.toFirestore());
+    await firestore
+        .collection('items')
+        .doc(testItem.id)
+        .set(testItem.toFirestore());
 
-      await pumpPage(
-        Scaffold(
-          body: ItemPage(itemId: testItem.id),
-        ),
-        tester,
-        firestore: firestore,
-      );
+    await pumpPage(
+      Scaffold(
+        body: ItemPage(itemId: testItem.id),
+      ),
+      tester,
+      firestore: firestore,
+    );
 
-      expect(
-        find.descendant(
-          of: find.byType(Card),
-          matching: find.text(testItem.name),
-        ),
-        findsOneWidget,
-      );
-    },
-  );
+    expect(
+      find.descendant(
+        of: find.byType(Card),
+        matching: find.text(testItem.name),
+      ),
+      findsOneWidget,
+    );
+  });
 
-  testWidgets(
-    'Listens for DB changes',
-    (WidgetTester tester) async {
-      final testItem = InventoryItem(
-        id: 'foo',
-        type: 'Chair',
-        name: 'Test Item',
-      );
+  testWidgets('Listens for DB changes', (WidgetTester tester) async {
+    final testItem = InventoryItem(
+      id: 'foo',
+      type: 'Chair',
+      name: 'Test Item',
+    );
 
-      await firestore
-          .collection('items')
-          .doc(testItem.id)
-          .set(testItem.toFirestore());
+    await firestore
+        .collection('items')
+        .doc(testItem.id)
+        .set(testItem.toFirestore());
 
-      await pumpPage(
-        Scaffold(body: ItemPage(itemId: testItem.id)),
-        tester,
-        firestore: firestore,
-      );
+    await pumpPage(
+      Scaffold(body: ItemPage(itemId: testItem.id)),
+      tester,
+      firestore: firestore,
+    );
 
-      expect(
-        find.descendant(
-          of: find.byType(Card),
-          matching: find.text(testItem.name),
-        ),
-        findsOneWidget,
-      );
+    expect(
+      find.descendant(
+        of: find.byType(Card),
+        matching: find.text(testItem.name),
+      ),
+      findsOneWidget,
+    );
 
-      testItem.name = 'New Name';
+    testItem.name = 'New Name';
 
-      await firestore
-          .collection('items')
-          .doc(testItem.id)
-          .set(testItem.toFirestore());
+    await firestore
+        .collection('items')
+        .doc(testItem.id)
+        .set(testItem.toFirestore());
 
-      await tester.pumpAndSettle();
+    await tester.pumpAndSettle();
 
-      expect(
-        find.descendant(
-          of: find.byType(Card),
-          matching: find.text(testItem.name),
-        ),
-        findsOneWidget,
-      );
-    },
-  );
+    expect(
+      find.descendant(
+        of: find.byType(Card),
+        matching: find.text(testItem.name),
+      ),
+      findsOneWidget,
+    );
+  });
 
   group('item event history', () {
     testWidgets(

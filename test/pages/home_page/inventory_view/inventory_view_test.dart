@@ -38,61 +38,55 @@ void main() {
     await deleteAllData(firestore);
   });
 
-  testWidgets(
-    'Displays a list of inventory items',
-    (WidgetTester tester) async {
-      await pumpPage(
-        Scaffold(body: InventoryView()),
-        tester,
-        firestore: firestore,
-      );
+  testWidgets('Displays a list of inventory items',
+      (WidgetTester tester) async {
+    await pumpPage(
+      Scaffold(body: InventoryView()),
+      tester,
+      firestore: firestore,
+    );
 
-      expect(find.text(chairItem.name), findsOneWidget);
-    },
-  );
+    expect(find.text(chairItem.name), findsOneWidget);
+  });
 
   group('With private items', () {
-    testWidgets(
-      'Includes private items for admins',
-      (WidgetTester tester) async {
-        final privateItem = InventoryItem(
-          id: 'Chair#123',
-          name: 'The Great Chair',
-          type: 'Chair',
-          isPrivate: true,
-        );
-        await firestore
-            .collection('items')
-            .doc(privateItem.id)
-            .set(privateItem.toFirestore());
+    testWidgets('Includes private items for admins',
+        (WidgetTester tester) async {
+      final privateItem = InventoryItem(
+        id: 'Chair#123',
+        name: 'The Great Chair',
+        type: 'Chair',
+        isPrivate: true,
+      );
+      await firestore
+          .collection('items')
+          .doc(privateItem.id)
+          .set(privateItem.toFirestore());
 
-        await pumpPage(Scaffold(body: InventoryView()), tester,
-            firestore: firestore, userRole: UserRole.admin);
+      await pumpPage(Scaffold(body: InventoryView()), tester,
+          firestore: firestore, userRole: UserRole.admin);
 
-        expect(find.text(privateItem.name), findsOneWidget);
-      },
-    );
+      expect(find.text(privateItem.name), findsOneWidget);
+    });
 
-    testWidgets(
-      'Excludes private items for users',
-      (WidgetTester tester) async {
-        final privateItem = InventoryItem(
-          id: 'Chair#123',
-          name: 'The Great Chair',
-          type: 'Chair',
-          isPrivate: true,
-        );
-        await firestore
-            .collection('items')
-            .doc(privateItem.id)
-            .set(privateItem.toFirestore());
+    testWidgets('Excludes private items for users',
+        (WidgetTester tester) async {
+      final privateItem = InventoryItem(
+        id: 'Chair#123',
+        name: 'The Great Chair',
+        type: 'Chair',
+        isPrivate: true,
+      );
+      await firestore
+          .collection('items')
+          .doc(privateItem.id)
+          .set(privateItem.toFirestore());
 
-        await pumpPage(Scaffold(body: InventoryView()), tester,
-            firestore: firestore, userRole: UserRole.user);
+      await pumpPage(Scaffold(body: InventoryView()), tester,
+          firestore: firestore, userRole: UserRole.user);
 
-        expect(find.text(privateItem.name), findsNothing);
-      },
-    );
+      expect(find.text(privateItem.name), findsNothing);
+    });
   });
 
   testWidgets(
