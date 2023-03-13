@@ -13,7 +13,7 @@ import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_item_form.dart';
-import 'package:spare_parts/widgets/print_dialog.dart';
+import 'package:spare_parts/widgets/print_dialog/print_dialog.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
 
 enum ItemActionType { delete, edit, borrow, release, assign, print }
