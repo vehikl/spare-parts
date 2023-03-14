@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
+import 'package:spare_parts/widgets/print_dialog/refreshable_title.dart';
+import 'package:spare_parts/widgets/title_text.dart';
 import '../../services/dymo_service.dart';
 
 class PrintDialogBody extends StatefulWidget {
@@ -20,6 +22,7 @@ class _PrintDialogBodyState extends State<PrintDialogBody> {
   bool? isBrowserSupported;
   bool? isFrameworkInstalled;
   bool? isWebServicePresent;
+  bool printersRefreshing = false;
   List<Printer> printers = [];
 
   @override
@@ -53,10 +56,19 @@ class _PrintDialogBodyState extends State<PrintDialogBody> {
   }
 
   void refreshPrinters() async {
-    await initAsync();
     setState(() {
-      printers = getPrinters();
+      printersRefreshing = true;
     });
+    try {
+      await initAsync();
+      setState(() {
+        printers = getPrinters();
+      });
+    } finally {
+      setState(() {
+        printersRefreshing = false;
+      });
+    }
   }
 
   @override
@@ -64,11 +76,7 @@ class _PrintDialogBodyState extends State<PrintDialogBody> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Environment Status'),
-        IconButton(
-          onPressed: refreshEnvironmentInfo,
-          icon: Icon(Icons.refresh),
-        ),
+        RefreshableTitle(onRefresh: refreshEnvironmentInfo),
         ListTile(
           leading: getStatusIcon(isBrowserSupported),
           title: Text('Browser Supported'),
@@ -81,10 +89,15 @@ class _PrintDialogBodyState extends State<PrintDialogBody> {
           leading: getStatusIcon(isWebServicePresent),
           title: Text('Web Service Present'),
         ),
-        Text('Connected Printers'),
-        IconButton(
-          onPressed: refreshEnvironmentInfo,
-          icon: Icon(Icons.refresh),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TitleText('Connected Printers'),
+            IconButton(
+              onPressed: refreshPrinters,
+              icon: Icon(Icons.refresh),
+            ),
+          ],
         ),
         if (printers.isEmpty)
           EmptyListState(message: 'No printers found')

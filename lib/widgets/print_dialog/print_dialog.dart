@@ -61,7 +61,12 @@ class _PrintDialogState extends State<PrintDialog> {
         future: initialization,
         builder: (context, snapshot) {
           return snapshot.connectionState == ConnectionState.waiting
-              ? Center(child: CircularProgressIndicator())
+              ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                  ],
+                )
               : PrintDialogBody(
                   selectedPrinter: selectedPrinter,
                   onPrinterSelected: (printer) => setState(() =>
