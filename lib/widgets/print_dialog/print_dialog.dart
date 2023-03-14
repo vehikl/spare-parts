@@ -13,6 +13,17 @@ class PrintDialog extends StatefulWidget {
 
 class _PrintDialogState extends State<PrintDialog> {
   Printer? selectedPrinter;
+  late Future<void> initialization;
+
+  @override
+  void initState() {
+    super.initState();
+    initialization = () async {
+      // await initAsync();
+      init();
+      await Future.delayed(const Duration(seconds: 2));
+    }();
+  }
 
   void printQRCode(String printerName) {
     final label = openLabelXml('''<?xml version="1.0" encoding="utf-8"?>
@@ -51,18 +62,15 @@ class _PrintDialogState extends State<PrintDialog> {
     return AlertDialog(
       title: const Text('Print Label'),
       content: FutureBuilder(
-        future: () async {
-          // await initAsync();
-          init();
-          await Future.delayed(const Duration(seconds: 2));
-        }(),
+        future: initialization,
         builder: (context, snapshot) {
           return snapshot.connectionState == ConnectionState.waiting
               ? Center(child: CircularProgressIndicator())
               : PrintDialogBody(
                   selectedPrinter: selectedPrinter,
-                  onPrinterSelected: (printer) =>
-                      setState(() => selectedPrinter = printer),
+                  onPrinterSelected: (printer) => setState(() =>
+                      selectedPrinter =
+                          selectedPrinter == printer ? null : printer),
                 );
         },
       ),
