@@ -55,7 +55,7 @@ class _PrintDialogBodyState extends State<PrintDialogBody> {
     }
   }
 
-  void refreshPrinters() async {
+  Future<void> refreshPrinters() async {
     setState(() {
       printersRefreshing = true;
     });
@@ -76,7 +76,10 @@ class _PrintDialogBodyState extends State<PrintDialogBody> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        RefreshableTitle(onRefresh: refreshEnvironmentInfo),
+        RefreshableTitle(
+          onRefresh: refreshEnvironmentInfo,
+          title: 'Environment Status',
+        ),
         ListTile(
           leading: getStatusIcon(isBrowserSupported),
           title: Text('Browser Supported'),
@@ -89,15 +92,9 @@ class _PrintDialogBodyState extends State<PrintDialogBody> {
           leading: getStatusIcon(isWebServicePresent),
           title: Text('Web Service Present'),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TitleText('Connected Printers'),
-            IconButton(
-              onPressed: refreshPrinters,
-              icon: Icon(Icons.refresh),
-            ),
-          ],
+        RefreshableTitle(
+          onRefresh: refreshPrinters,
+          title: 'Connected Printers',
         ),
         if (printers.isEmpty)
           EmptyListState(message: 'No printers found')

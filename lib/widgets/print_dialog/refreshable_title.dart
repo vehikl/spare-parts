@@ -3,8 +3,10 @@ import 'package:spare_parts/widgets/title_text.dart';
 
 class RefreshableTitle extends StatefulWidget {
   final Future Function() onRefresh;
+  final String title;
 
-  const RefreshableTitle({super.key, required this.onRefresh});
+  const RefreshableTitle(
+      {super.key, required this.onRefresh, required this.title});
 
   @override
   State<RefreshableTitle> createState() => _RefreshableTitleState();
@@ -31,7 +33,7 @@ class _RefreshableTitleState extends State<RefreshableTitle> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        TitleText('Environment Status'),
+        TitleText(widget.title),
         refreshing
             ? SizedBox.square(dimension: 20, child: CircularProgressIndicator())
             : IconButton(
