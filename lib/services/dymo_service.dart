@@ -7,12 +7,15 @@ import 'package:js/js.dart';
 external void init();
 // external void init(void Function(EnvironmentStatus status) callback);
 
-// Future<void> initAsync() async {
-//   var initInProgress = true;
-//   init(allowInterop((_) => initInProgress = false));
+Future<void> initAsync() async {
+  // TODO: figure out how to make this work
+  // var initInProgress = true;
+  // init(allowInterop((_) => initInProgress = false));
+  // await Future.doWhile(() => initInProgress);
 
-//   await Future.doWhile(() => initInProgress);
-// }
+  init();
+  await Future.delayed(const Duration(seconds: 2));
+}
 
 @JS('checkEnvironment')
 external EnvironmentStatus checkEnvironment();

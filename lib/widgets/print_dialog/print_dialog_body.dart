@@ -33,9 +33,7 @@ class _PrintDialogBodyState extends State<PrintDialogBody> {
   }
 
   Future<void> refreshEnvironmentInfo() async {
-    // await initAsync();
-    init();
-    await Future.delayed(const Duration(seconds: 2));
+    await initAsync();
     final status = checkEnvironment();
     setState(() {
       isBrowserSupported = status.isBrowserSupported;
@@ -55,8 +53,7 @@ class _PrintDialogBodyState extends State<PrintDialogBody> {
   }
 
   void refreshPrinters() async {
-    init();
-    await Future.delayed(const Duration(seconds: 2));
+    await initAsync();
     setState(() {
       printers = getPrinters();
     });

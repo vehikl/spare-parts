@@ -18,11 +18,7 @@ class _PrintDialogState extends State<PrintDialog> {
   @override
   void initState() {
     super.initState();
-    initialization = () async {
-      // await initAsync();
-      init();
-      await Future.delayed(const Duration(seconds: 2));
-    }();
+    initialization = initAsync();
   }
 
   void printQRCode(String printerName) {
