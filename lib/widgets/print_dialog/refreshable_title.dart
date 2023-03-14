@@ -32,10 +32,16 @@ class _RefreshableTitleState extends State<RefreshableTitle> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         TitleText(widget.title),
         refreshing
-            ? SizedBox.square(dimension: 20, child: CircularProgressIndicator())
+            ? Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: SizedBox.square(
+                  dimension: 20,
+                  child: CircularProgressIndicator(),
+                ))
             : IconButton(
                 onPressed: refresh,
                 icon: Icon(Icons.refresh),
