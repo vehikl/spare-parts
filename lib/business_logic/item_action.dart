@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/business_logic/borrowing_request_dialog.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
@@ -152,12 +153,9 @@ class BorrowItemAction extends ItemAction {
               item.type, auth.currentUser!.uid);
 
           if (borrowingCount >= borrowingRule.maxBorrowingCount) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                    'You have reached the maximum borrowing count for this item'),
-                backgroundColor: Theme.of(context).errorColor,
-              ),
+            showDialog(
+              context: context,
+              builder: (context) => BorrowingRequestDialog(),
             );
             return false;
           }
