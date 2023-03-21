@@ -22,7 +22,8 @@ class ItemActionsButton extends StatelessWidget {
         ReleaseItemAction(),
       EditItemAction(),
       DeleteItemAction(),
-      AssignItemAction()
+      AssignItemAction(),
+      PrintAction()
     ];
     final allowedActions =
         allActions.where((action) => action.allowedRoles.contains(userRole));

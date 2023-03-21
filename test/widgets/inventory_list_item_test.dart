@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/entities/custom_user.dart';
-import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
@@ -49,7 +48,7 @@ void main() {
     },
   );
 
-  testWidgets('Does not display a modal when a non-admin user clicks an item',
+  testWidgets('Does not navigate to the item page when a non-admin user clicks an item',
       (WidgetTester tester) async {
     final testItem = InventoryItem(id: '#re4123', type: 'Chair');
 
