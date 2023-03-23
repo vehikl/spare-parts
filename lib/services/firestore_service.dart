@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mockito/annotations.dart';
+import 'package:spare_parts/entities/borrowing_request.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/event.dart';
@@ -17,6 +18,9 @@ class FirestoreService {
   CollectionReference get borrowingRulesCollection =>
       _firestore.collection('borrowingRules');
 
+  CollectionReference get borrowingRequestsCollection =>
+      _firestore.collection('borrowingRequests');
+
   DocumentReference getItemDocumentReference(String? itemId) {
     return itemsCollection.doc(itemId);
   }
@@ -27,6 +31,10 @@ class FirestoreService {
             e as DocumentSnapshot<Map<String, dynamic>>,
           ),
         );
+  }
+
+  Future<void> addBorrowingRequest(BorrowingRequest borrowingRequest) async {
+    await borrowingRequestsCollection.add(borrowingRequest.toFirestore());
   }
 
   Stream<List<BorrowingRule>> borrowingRulesStream() {
