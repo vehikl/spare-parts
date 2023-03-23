@@ -48,7 +48,8 @@ void main() {
     },
   );
 
-  testWidgets('Does not navigate to the item page when a non-admin user clicks an item',
+  testWidgets(
+      'Does not navigate to the item page when a non-admin user clicks an item',
       (WidgetTester tester) async {
     final testItem = InventoryItem(id: '#re4123', type: 'Chair');
 
@@ -65,63 +66,71 @@ void main() {
     expect(find.text('History'), findsNothing);
   });
 
-  testWidgets(
-    'Borrowing an inventory item for users is restricted if a borrowing rule is broken',
-    (WidgetTester tester) async {
-      final currentUser = CustomUser(uid: 'foo');
-      final mockFirebaseAuth = MockFirebaseAuth();
-      final mockUser = MockUser();
-      when(mockUser.uid).thenReturn(currentUser.uid);
-      when(mockFirebaseAuth.currentUser).thenReturn(mockUser);
+  group('when borrowing', () {
+    group('if a borrowing rule is broken', () {
+      late MockFirebaseAuth mockFirebaseAuth;
+      late InventoryItem availableItem;
 
-      final borrowedItem =
-          InventoryItem(id: '#first', type: 'Chair', borrower: currentUser);
-      final availableItem = InventoryItem(id: '#second', type: 'Chair');
+      setUp(() async {
+        final currentUser = CustomUser(uid: 'foo');
+        mockFirebaseAuth = MockFirebaseAuth();
+        final mockUser = MockUser();
+        when(mockUser.uid).thenReturn(currentUser.uid);
+        when(mockFirebaseAuth.currentUser).thenReturn(mockUser);
 
-      final itemDocReference =
-          await firestore.collection('items').add(borrowedItem.toFirestore());
-      await firestore.collection('items').add(availableItem.toFirestore());
-      borrowedItem.id = itemDocReference.id;
+        final borrowedItem =
+            InventoryItem(id: '#first', type: 'Chair', borrower: currentUser);
+        availableItem = InventoryItem(id: '#second', type: 'Chair');
 
-      final borrowingRule = BorrowingRule(
-        type: borrowedItem.type,
-        maxBorrowingCount: 1,
+        final itemDocReference =
+            await firestore.collection('items').add(borrowedItem.toFirestore());
+        await firestore.collection('items').add(availableItem.toFirestore());
+        borrowedItem.id = itemDocReference.id;
+
+        final borrowingRule = BorrowingRule(
+          type: borrowedItem.type,
+          maxBorrowingCount: 1,
+        );
+        await firestore
+            .collection('borrowingRules')
+            .add(borrowingRule.toFirestore());
+      });
+
+      testWidgets(
+        'displays a dialog notifying the user about the restriction',
+        (WidgetTester tester) async {
+          await pumpPage(
+            Scaffold(body: InventoryListItem(item: availableItem)),
+            tester,
+            userRole: UserRole.user,
+            firestore: firestore,
+            auth: mockFirebaseAuth,
+          );
+
+          final availableChairListItem = find.ancestor(
+            of: find.text(availableItem.name),
+            matching: find.byType(ListTile),
+          );
+
+          final optionsButton = find.descendant(
+            of: availableChairListItem,
+            matching: find.byIcon(Icons.more_vert),
+          );
+
+          await tester.tap(optionsButton);
+          await tester.pumpAndSettle();
+
+          final borrowButton = find.text('Borrow');
+          await tester.tap(borrowButton);
+          await tester.pumpAndSettle();
+
+          expect(
+            find.text(
+                'You have reached the maximum borrowing count for this item'),
+            findsOneWidget,
+          );
+        },
       );
-      await firestore
-          .collection('borrowingRules')
-          .add(borrowingRule.toFirestore());
-
-      await pumpPage(
-        Scaffold(
-          body: InventoryListItem(item: availableItem),
-        ),
-        tester,
-        userRole: UserRole.user,
-        firestore: firestore,
-        auth: mockFirebaseAuth,
-      );
-
-      final availableChairListItem = find.ancestor(
-        of: find.text(availableItem.name),
-        matching: find.byType(ListTile),
-      );
-
-      final optionsButton = find.descendant(
-        of: availableChairListItem,
-        matching: find.byIcon(Icons.more_vert),
-      );
-
-      await tester.tap(optionsButton);
-      await tester.pumpAndSettle();
-
-      final borrowButton = find.text('Borrow');
-      await tester.tap(borrowButton);
-      await tester.pumpAndSettle();
-
-      expect(
-        find.text('You have reached the maximum borrowing count for this item'),
-        findsOneWidget,
-      );
-    },
-  );
+    });
+  });
 }

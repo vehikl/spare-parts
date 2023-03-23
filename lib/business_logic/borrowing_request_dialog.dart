@@ -3,6 +3,13 @@ import 'package:flutter/material.dart';
 class BorrowingRequestDialog extends StatelessWidget {
   const BorrowingRequestDialog({super.key});
 
+  submitBorrowingRequest(context) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+          'Your borrowing request was submitted successfully. You will be notified when a decision is made.'),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -15,7 +22,7 @@ class BorrowingRequestDialog extends StatelessWidget {
           child: Text('Cancel'),
         ),
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => submitBorrowingRequest(context),
           child: Text('Submit request'),
         ),
       ],
