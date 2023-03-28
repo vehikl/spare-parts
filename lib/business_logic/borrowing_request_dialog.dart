@@ -45,8 +45,16 @@ class _BorrowingRequestDialogState extends State<BorrowingRequestDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Borrowing request'),
-      content:
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text('You have reached the maximum borrowing count for this item'),
+          Text(
+            'You can submit a borrowing request for this item. We will notify you when the decision is made.',
+          ),
+        ],
+      ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
