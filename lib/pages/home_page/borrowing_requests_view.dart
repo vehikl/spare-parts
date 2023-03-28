@@ -39,7 +39,7 @@ class BorrowingRequestsView extends StatelessWidget {
             itemCount: items.length,
             itemBuilder: (context, index) {
               var item = items[index];
-              return Text(item.itemId);
+              return ListTile(title: Text(item.itemId));
             },
           );
         },
