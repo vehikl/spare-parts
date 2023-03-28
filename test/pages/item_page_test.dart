@@ -6,7 +6,7 @@ import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
-import '../../helpers/test_helpers.dart';
+import '../helpers/test_helpers.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();

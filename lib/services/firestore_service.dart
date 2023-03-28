@@ -167,4 +167,16 @@ class FirestoreService {
         .collection('events')
         .add(event.toFirestore());
   }
+
+  Stream<List<BorrowingRequest>> getBorrowingRequestsStream(
+      {String? whereIssuerIs}) {
+    return borrowingRequestsCollection
+        .where('issuerId', isEqualTo: whereIssuerIs)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((doc) => BorrowingRequest.fromFirestore(
+                doc as QueryDocumentSnapshot<Map<String, dynamic>>))
+            .toList());
+  }
 }
