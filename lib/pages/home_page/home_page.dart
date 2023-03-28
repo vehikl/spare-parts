@@ -227,6 +227,7 @@ class _HomePageState extends State<HomePage> {
           bottomNavigationBar: layout == LayoutType.desktop
               ? null
               : BottomNavigationBar(
+                  type: BottomNavigationBarType.fixed,
                   items: [
                     BottomNavigationBarItem(
                       icon: Icon(Icons.home_outlined),
