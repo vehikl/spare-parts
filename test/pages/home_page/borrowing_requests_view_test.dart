@@ -77,7 +77,7 @@ void main() {
         find.text(formatDate(currentUserserBorrowingRequest.createdAt!)),
         findsOneWidget,
       );
-      // expect(find.byIcon(itemTypes[chairItem.type]!), findsOneWidget);
+      expect(find.byIcon(itemTypes[chairItem.type]!), findsOneWidget);
     },
   );
 }
