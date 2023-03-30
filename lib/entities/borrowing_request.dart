@@ -34,7 +34,8 @@ class BorrowingRequest {
     return {
       'issuerId': issuerId,
       'itemId': itemId,
-      'createdAt': createdAt == null ? null : Timestamp.fromDate(createdAt!),
+      'createdAt':
+          createdAt == null ? Timestamp.now() : Timestamp.fromDate(createdAt!),
       'response': response == null ? null : response!.toFirestore(),
     };
   }
