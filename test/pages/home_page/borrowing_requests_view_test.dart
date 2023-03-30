@@ -22,10 +22,16 @@ void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
   final authMock = MockFirebaseAuth();
   final userMock = MockUser();
+
   const user = CustomUser(uid: 'qwe123', name: 'John Doe');
-  final chairItem =
-      InventoryItem(id: 'Chair#123', type: 'Chair', borrower: user);
+
+  final chairItem = InventoryItem(
+    id: 'Chair#123',
+    type: 'Chair',
+    borrower: user,
+  );
   final deskItem = InventoryItem(id: 'Desk#321', type: 'Desk');
+
   final currentUserserBorrowingRequest = BorrowingRequest(
     issuer: BorrowingRequestIssuer.fromCustomUser(user),
     item: BorrowingRequestItem.fromInventoryItem(chairItem),
@@ -75,10 +81,12 @@ void main() {
 
       expect(find.text(chairItem.id), findsOneWidget);
       expect(
-        find.text(formatDate(currentUserserBorrowingRequest.createdAt!)),
+        find.textContaining(
+            formatDate(currentUserserBorrowingRequest.createdAt!)),
         findsOneWidget,
       );
       expect(find.byIcon(itemTypes[chairItem.type]!), findsOneWidget);
+      expect(find.textContaining(user.name!), findsOneWidget);
     },
   );
 }

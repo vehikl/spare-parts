@@ -44,9 +44,8 @@ class BorrowingRequestsView extends StatelessWidget {
               return ListTile(
                 leading: Icon(itemTypes[borrowingRequest.item.type]!),
                 title: Text(borrowingRequest.item.id),
-                subtitle: borrowingRequest.createdAt != null
-                    ? Text(formatDate(borrowingRequest.createdAt!))
-                    : null,
+                subtitle: Text(
+                    '${borrowingRequest.issuer.name!} | ${formatDate(borrowingRequest.createdAt!)}'),
               );
             },
           );
