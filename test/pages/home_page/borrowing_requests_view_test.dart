@@ -22,18 +22,19 @@ void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
   final authMock = MockFirebaseAuth();
   final userMock = MockUser();
-  const user = CustomUser(uid: 'qwe123');
+  const user = CustomUser(uid: 'qwe123', name: 'John Doe');
   final chairItem =
       InventoryItem(id: 'Chair#123', type: 'Chair', borrower: user);
   final deskItem = InventoryItem(id: 'Desk#321', type: 'Desk');
   final currentUserserBorrowingRequest = BorrowingRequest(
-    issuerId: user.uid,
+    issuer: BorrowingRequestIssuer.fromCustomUser(user),
     item: BorrowingRequestItem.fromInventoryItem(chairItem),
     createdAt: DateTime.now(),
   );
   final otherUserBorrowingRequest = BorrowingRequest(
-      issuerId: 'anotherUserId',
-      item: BorrowingRequestItem.fromInventoryItem(deskItem));
+    issuer: BorrowingRequestIssuer(id: 'anotherUserId'),
+    item: BorrowingRequestItem.fromInventoryItem(deskItem),
+  );
 
   setUp(() async {
     await firestore

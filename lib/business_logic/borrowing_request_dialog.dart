@@ -24,7 +24,7 @@ class _BorrowingRequestDialogState extends State<BorrowingRequestDialog> {
     if (auth.currentUser?.uid == null) return;
 
     final borrowingRequest = BorrowingRequest(
-      issuerId: auth.currentUser!.uid,
+      issuer: BorrowingRequestIssuer.fromUser(auth.currentUser!),
       item: BorrowingRequestItem.fromInventoryItem(widget.item),
     );
     setState(() {

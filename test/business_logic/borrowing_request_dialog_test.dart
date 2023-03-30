@@ -67,7 +67,7 @@ void main() {
 
       final borrowingRequests = await firestore
           .collection('borrowingRequests')
-          .where('issuerId', isEqualTo: userId)
+          .where('issuer.id', isEqualTo: userId)
           .get();
 
       expect(borrowingRequests.docs, hasLength(1));

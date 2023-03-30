@@ -171,7 +171,7 @@ class FirestoreService {
   Stream<List<BorrowingRequest>> getBorrowingRequestsStream(
       {String? whereIssuerIs}) {
     return borrowingRequestsCollection
-        .where('issuerId', isEqualTo: whereIssuerIs)
+        .where('issuer.id', isEqualTo: whereIssuerIs)
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snap) => snap.docs
