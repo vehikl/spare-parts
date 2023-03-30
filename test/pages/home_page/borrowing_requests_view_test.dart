@@ -7,6 +7,7 @@ import 'package:spare_parts/entities/borrowing_request.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowing_requests_view.dart';
+import 'package:spare_parts/utilities/helpers.dart';
 import '../../helpers/mocks/mocks.dart';
 import '../../helpers/test_helpers.dart';
 
@@ -24,8 +25,11 @@ void main() {
   final chairItem =
       InventoryItem(id: 'Chair#123', type: 'Chair', borrower: user);
   final deskItem = InventoryItem(id: 'Desk#321', type: 'Desk');
-  final currentUserserBorrowingRequest =
-      BorrowingRequest(issuerId: user.uid, itemId: chairItem.id);
+  final currentUserserBorrowingRequest = BorrowingRequest(
+    issuerId: user.uid,
+    itemId: chairItem.id,
+    createdAt: DateTime.now(),
+  );
   final otherUserBorrowingRequest =
       BorrowingRequest(issuerId: 'anotherUserId', itemId: deskItem.id);
 
@@ -67,8 +71,10 @@ void main() {
       );
 
       expect(find.text(chairItem.id), findsOneWidget);
-      // expect(find.text(currentUserserBorrowingRequest.createdAt.toString()),
-      //     findsOneWidget);
+      expect(
+        find.text(formatDate(currentUserserBorrowingRequest.createdAt!)),
+        findsOneWidget,
+      );
     },
   );
 }

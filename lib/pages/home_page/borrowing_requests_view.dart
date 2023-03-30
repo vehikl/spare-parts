@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/borrowing_request.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 
@@ -39,7 +40,12 @@ class BorrowingRequestsView extends StatelessWidget {
             itemCount: items.length,
             itemBuilder: (context, index) {
               var item = items[index];
-              return ListTile(title: Text(item.itemId));
+              return ListTile(
+                title: Text(item.itemId),
+                subtitle: item.createdAt != null
+                    ? Text(formatDate(item.createdAt!))
+                    : null,
+              );
             },
           );
         },
