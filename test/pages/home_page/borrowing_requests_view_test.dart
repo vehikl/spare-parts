@@ -7,6 +7,7 @@ import 'package:spare_parts/entities/borrowing_request.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowing_requests_view.dart';
+import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import '../../helpers/mocks/mocks.dart';
 import '../../helpers/test_helpers.dart';
@@ -27,11 +28,12 @@ void main() {
   final deskItem = InventoryItem(id: 'Desk#321', type: 'Desk');
   final currentUserserBorrowingRequest = BorrowingRequest(
     issuerId: user.uid,
-    itemId: chairItem.id,
+    item: BorrowingRequestItem.fromInventoryItem(chairItem),
     createdAt: DateTime.now(),
   );
-  final otherUserBorrowingRequest =
-      BorrowingRequest(issuerId: 'anotherUserId', itemId: deskItem.id);
+  final otherUserBorrowingRequest = BorrowingRequest(
+      issuerId: 'anotherUserId',
+      item: BorrowingRequestItem.fromInventoryItem(deskItem));
 
   setUp(() async {
     await firestore
@@ -75,6 +77,7 @@ void main() {
         find.text(formatDate(currentUserserBorrowingRequest.createdAt!)),
         findsOneWidget,
       );
+      // expect(find.byIcon(itemTypes[chairItem.type]!), findsOneWidget);
     },
   );
 }

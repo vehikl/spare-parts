@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:spare_parts/business_logic/borrowing_request_dialog.dart';
+import 'package:spare_parts/entities/borrowing_request.dart';
+import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 import '../helpers/mocks/mock_firebase_auth.dart';
@@ -17,7 +19,7 @@ void main() {
     'when submitting a borrowing request shows a confirmation message and creates a db record',
     (WidgetTester tester) async {
       const userId = 'user123';
-      const itemId = 'item123';
+      final item = InventoryItem(id: 'foo', type: 'Desk');
 
       final userMock = MockUser();
 
@@ -31,7 +33,7 @@ void main() {
               child: Text('Launch'),
               onPressed: () => showDialog(
                 context: context,
-                builder: (_) => BorrowingRequestDialog(itemId: itemId),
+                builder: (_) => BorrowingRequestDialog(item: item),
               ),
             );
           }),
@@ -66,10 +68,14 @@ void main() {
       final borrowingRequests = await firestore
           .collection('borrowingRequests')
           .where('issuerId', isEqualTo: userId)
-          .where('itemId', isEqualTo: itemId)
           .get();
 
       expect(borrowingRequests.docs, hasLength(1));
+
+      final borrowingRequest = BorrowingRequest.fromFirestore(
+        borrowingRequests.docs.first,
+      );
+      expect(borrowingRequest.item.id, item.id);
     },
   );
 }

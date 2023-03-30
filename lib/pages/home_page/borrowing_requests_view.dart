@@ -29,21 +29,21 @@ class BorrowingRequestsView extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           }
 
-          final items = snapshot.data!;
+          final borrowingRequests = snapshot.data!;
 
-          if (items.isEmpty) {
+          if (borrowingRequests.isEmpty) {
             return EmptyListState(
                 message: "You haven't requested any items yet...");
           }
 
           return ListView.builder(
-            itemCount: items.length,
+            itemCount: borrowingRequests.length,
             itemBuilder: (context, index) {
-              var item = items[index];
+              var borrowingRequest = borrowingRequests[index];
               return ListTile(
-                title: Text(item.itemId),
-                subtitle: item.createdAt != null
-                    ? Text(formatDate(item.createdAt!))
+                title: Text(borrowingRequest.item.id),
+                subtitle: borrowingRequest.createdAt != null
+                    ? Text(formatDate(borrowingRequest.createdAt!))
                     : null,
               );
             },

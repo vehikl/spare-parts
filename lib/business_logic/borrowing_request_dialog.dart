@@ -2,12 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/borrowing_request.dart';
+import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 
 class BorrowingRequestDialog extends StatefulWidget {
-  final String itemId;
+  final InventoryItem item;
 
-  const BorrowingRequestDialog({super.key, required this.itemId});
+  const BorrowingRequestDialog({super.key, required this.item});
 
   @override
   State<BorrowingRequestDialog> createState() => _BorrowingRequestDialogState();
@@ -24,7 +25,7 @@ class _BorrowingRequestDialogState extends State<BorrowingRequestDialog> {
 
     final borrowingRequest = BorrowingRequest(
       issuerId: auth.currentUser!.uid,
-      itemId: widget.itemId,
+      item: BorrowingRequestItem.fromInventoryItem(widget.item),
     );
     setState(() {
       _isLoading = true;
