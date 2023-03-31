@@ -19,74 +19,92 @@ class MockUser extends Mock implements User {
 }
 
 void main() {
-  final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
-  final authMock = MockFirebaseAuth();
-  final userMock = MockUser();
+  group('Borrowing Request View', () {
+    final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
+    final authMock = MockFirebaseAuth();
+    final userMock = MockUser();
 
-  const user = CustomUser(uid: 'qwe123', name: 'John Doe');
+    const user = CustomUser(uid: 'qwe123', name: 'John Doe');
 
-  final chairItem = InventoryItem(
-    id: 'Chair#123',
-    type: 'Chair',
-    borrower: user,
-  );
-  final deskItem = InventoryItem(id: 'Desk#321', type: 'Desk');
+    final chairItem = InventoryItem(id: 'Chair#123', type: 'Chair');
+    final deskItem = InventoryItem(id: 'Desk#321', type: 'Desk');
 
-  final currentUserserBorrowingRequest = BorrowingRequest(
-    issuer: BorrowingRequestIssuer.fromCustomUser(user),
-    item: BorrowingRequestItem.fromInventoryItem(chairItem),
-    createdAt: DateTime.now(),
-  );
-  final otherUserBorrowingRequest = BorrowingRequest(
-    issuer: BorrowingRequestIssuer(id: 'anotherUserId'),
-    item: BorrowingRequestItem.fromInventoryItem(deskItem),
-  );
+    final chairBorrowingRequest = BorrowingRequest(
+      issuer: BorrowingRequestIssuer.fromCustomUser(user),
+      item: BorrowingRequestItem.fromInventoryItem(chairItem),
+      createdAt: DateTime.now(),
+    );
+    final otherIssuer =
+        BorrowingRequestIssuer(id: 'anotherUserId', name: 'Jane Doe');
+    final deskBorrowingRequest = BorrowingRequest(
+      issuer: otherIssuer,
+      item: BorrowingRequestItem.fromInventoryItem(deskItem),
+    );
 
-  setUp(() async {
-    await firestore
-        .collection('items')
-        .doc(chairItem.id)
-        .set(chairItem.toFirestore());
+    setUpAll(() async {
+      await firestore
+          .collection('items')
+          .doc(chairItem.id)
+          .set(chairItem.toFirestore());
 
-    await firestore
-        .collection('items')
-        .doc(deskItem.id)
-        .set(deskItem.toFirestore());
+      await firestore
+          .collection('items')
+          .doc(deskItem.id)
+          .set(deskItem.toFirestore());
 
-    await firestore
-        .collection('borrowingRequests')
-        .add(currentUserserBorrowingRequest.toFirestore());
+      await firestore
+          .collection('borrowingRequests')
+          .add(chairBorrowingRequest.toFirestore());
 
-    await firestore
-        .collection('borrowingRequests')
-        .add(otherUserBorrowingRequest.toFirestore());
+      await firestore
+          .collection('borrowingRequests')
+          .add(deskBorrowingRequest.toFirestore());
 
-    when(userMock.uid).thenReturn(user.uid);
-    when(authMock.currentUser).thenReturn(userMock);
+      when(userMock.uid).thenReturn(user.uid);
+      when(authMock.currentUser).thenReturn(userMock);
+    });
+
+    testWidgets(
+      'Displays the borrowing requests of the current user',
+      (WidgetTester tester) async {
+        await pumpPage(
+          Scaffold(body: BorrowingRequestsView()),
+          tester,
+          firestore: firestore,
+          auth: authMock,
+        );
+
+        expect(find.text(chairItem.id), findsOneWidget);
+        expect(
+          find.textContaining(formatDate(chairBorrowingRequest.createdAt!)),
+          findsOneWidget,
+        );
+        expect(find.byIcon(itemTypes[chairItem.type]!), findsOneWidget);
+
+        expect(find.text(deskItem.id), findsNothing);
+        expect(find.textContaining(user.name!), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'Displays all borrowing requests with issuer names for admin',
+      (WidgetTester tester) async {
+        await pumpPage(
+          Scaffold(body: BorrowingRequestsView()),
+          tester,
+          firestore: firestore,
+          auth: authMock,
+          userRole: UserRole.admin,
+        );
+
+        // final bq = await firestore.collection('borrowingRequests').get();
+        // final all = bq.docs.map((e) => BorrowingRequest.fromFirestore(e)).toList();
+
+        expect(find.text(chairItem.id), findsOneWidget);
+        expect(find.textContaining(user.name!), findsOneWidget);
+        expect(find.text(deskItem.id), findsOneWidget);
+        expect(find.textContaining(otherIssuer.name!), findsOneWidget);
+      },
+    );
   });
-
-  tearDown(() async {
-    deleteAllData(firestore);
-  });
-
-  testWidgets(
-    'Displays the borrowing requests of the current user',
-    (WidgetTester tester) async {
-      await pumpPage(
-        Scaffold(body: BorrowingRequestsView()),
-        tester,
-        firestore: firestore,
-        auth: authMock,
-      );
-
-      expect(find.text(chairItem.id), findsOneWidget);
-      expect(
-        find.textContaining(
-            formatDate(currentUserserBorrowingRequest.createdAt!)),
-        findsOneWidget,
-      );
-      expect(find.byIcon(itemTypes[chairItem.type]!), findsOneWidget);
-      expect(find.textContaining(user.name!), findsOneWidget);
-    },
-  );
 }

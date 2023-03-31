@@ -15,11 +15,12 @@ class BorrowingRequestsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final firestoreService = context.read<FirestoreService>();
     final auth = context.read<FirebaseAuth>();
+    final isAdmin = context.read<UserRole>() == UserRole.admin;
 
     return Center(
       child: StreamBuilder<List<BorrowingRequest>>(
         stream: firestoreService.getBorrowingRequestsStream(
-          whereIssuerIs: auth.currentUser?.uid,
+          whereIssuerIs: isAdmin ? null : auth.currentUser?.uid,
         ),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -44,8 +45,10 @@ class BorrowingRequestsView extends StatelessWidget {
               return ListTile(
                 leading: Icon(itemTypes[borrowingRequest.item.type]!),
                 title: Text(borrowingRequest.item.id),
-                subtitle: Text(
-                    '${borrowingRequest.issuer.name!} | ${formatDate(borrowingRequest.createdAt!)}'),
+                subtitle: isAdmin
+                    ? Text(
+                        '${borrowingRequest.issuer.name!} | ${formatDate(borrowingRequest.createdAt!)}')
+                    : Text(formatDate(borrowingRequest.createdAt!)),
               );
             },
           );

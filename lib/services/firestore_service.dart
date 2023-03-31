@@ -168,10 +168,19 @@ class FirestoreService {
         .add(event.toFirestore());
   }
 
-  Stream<List<BorrowingRequest>> getBorrowingRequestsStream(
-      {String? whereIssuerIs}) {
-    return borrowingRequestsCollection
-        .where('issuer.id', isEqualTo: whereIssuerIs)
+  Stream<List<BorrowingRequest>> getBorrowingRequestsStream({
+    String? whereIssuerIs,
+  }) {
+    Query<Object?>? query;
+
+    if (whereIssuerIs != null) {
+      query = borrowingRequestsCollection.where(
+        'issuer.id',
+        isEqualTo: whereIssuerIs,
+      );
+    }
+
+    return (query ?? borrowingRequestsCollection)
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snap) => snap.docs
