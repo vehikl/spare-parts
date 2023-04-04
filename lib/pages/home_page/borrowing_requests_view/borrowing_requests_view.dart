@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/borrowing_request.dart';
 import 'package:spare_parts/pages/home_page/borrowing_requests_view/borrowing_request_action_button.dart';
+import 'package:spare_parts/pages/home_page/borrowing_requests_view/borrowing_request_list_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
@@ -14,9 +15,9 @@ class BorrowingRequestsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestoreService = context.read<FirestoreService>();
-    final auth = context.read<FirebaseAuth>();
-    final isAdmin = context.read<UserRole>() == UserRole.admin;
+    final firestoreService = context.watch<FirestoreService>();
+    final auth = context.watch<FirebaseAuth>();
+    final isAdmin = context.watch<UserRole>() == UserRole.admin;
 
     return Center(
       child: StreamBuilder<List<BorrowingRequest>>(
@@ -42,15 +43,8 @@ class BorrowingRequestsView extends StatelessWidget {
           return ListView.builder(
             itemCount: borrowingRequests.length,
             itemBuilder: (context, index) {
-              var borrowingRequest = borrowingRequests[index];
-              return ListTile(
-                leading: Icon(itemTypes[borrowingRequest.item.type]!),
-                title: Text(borrowingRequest.item.id),
-                subtitle: isAdmin
-                    ? Text(
-                        '${borrowingRequest.issuer.name!} | ${formatDate(borrowingRequest.createdAt!)}')
-                    : Text(formatDate(borrowingRequest.createdAt!)),
-                trailing: BorrowingRequestActionsButton(),
+              return BorrowingRequestListItem(
+                borrowingRequest: borrowingRequests[index],
               );
             },
           );
