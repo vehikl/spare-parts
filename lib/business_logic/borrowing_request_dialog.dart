@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/borrowing_request.dart';
+import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 
@@ -24,7 +25,7 @@ class _BorrowingRequestDialogState extends State<BorrowingRequestDialog> {
     if (auth.currentUser?.uid == null) return;
 
     final borrowingRequest = BorrowingRequest(
-      issuer: BorrowingRequestIssuer.fromUser(auth.currentUser!),
+      issuer: CustomUser.fromUser(auth.currentUser!),
       item: BorrowingRequestItem.fromInventoryItem(widget.item),
     );
     setState(() {

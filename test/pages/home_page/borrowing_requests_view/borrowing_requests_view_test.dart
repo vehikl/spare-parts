@@ -8,7 +8,7 @@ import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowing_requests_view/borrowing_requests_view.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/utilities/helpers.dart';
+
 import '../../../helpers/mocks/mocks.dart';
 import '../../../helpers/test_helpers.dart';
 
@@ -30,12 +30,11 @@ void main() {
     final deskItem = InventoryItem(id: 'Desk#321', type: 'Desk');
 
     final chairBorrowingRequest = BorrowingRequest(
-      issuer: BorrowingRequestIssuer.fromCustomUser(user),
+      issuer: user,
       item: BorrowingRequestItem.fromInventoryItem(chairItem),
       createdAt: DateTime.now(),
     );
-    final otherIssuer =
-        BorrowingRequestIssuer(id: 'anotherUserId', name: 'Jane Doe');
+    final otherIssuer = CustomUser(uid: 'anotherUserId', name: 'Jane Doe');
     final deskBorrowingRequest = BorrowingRequest(
       issuer: otherIssuer,
       item: BorrowingRequestItem.fromInventoryItem(deskItem),

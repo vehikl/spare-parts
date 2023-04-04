@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mockito/annotations.dart';
 import 'package:spare_parts/entities/borrowing_request.dart';
+import 'package:spare_parts/entities/borrowing_response.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/event.dart';
@@ -187,5 +188,16 @@ class FirestoreService {
             .map((doc) => BorrowingRequest.fromFirestore(
                 doc as QueryDocumentSnapshot<Map<String, dynamic>>))
             .toList());
+  }
+
+  Future<void> approveBorrowingRequest(String decisionMakerId, BorrowingRequest borrowingRequest) async {
+    borrowingRequest.response = BorrowingResponse(
+      decisionMakerId: decisionMakerId,
+      approved: true,
+    );
+    final borrowingRequestId = borrowingRequest.id;
+    await borrowingRequestsCollection
+        .doc(borrowingRequestId)
+        .update(borrowingRequest.toFirestore());
   }
 }

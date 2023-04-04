@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:spare_parts/entities/borrowing_request.dart';
+import 'package:spare_parts/entities/borrowing_response.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowing_requests_view/borrowing_request_list_item.dart';
@@ -24,12 +26,11 @@ void main() {
     final deskItem = InventoryItem(id: 'Desk#321', type: 'Desk');
 
     final chairBorrowingRequest = BorrowingRequest(
-      issuer: BorrowingRequestIssuer.fromCustomUser(user),
+      issuer: user,
       item: BorrowingRequestItem.fromInventoryItem(chairItem),
       createdAt: DateTime.now(),
     );
-    final otherIssuer =
-        BorrowingRequestIssuer(id: 'anotherUserId', name: 'Jane Doe');
+    final otherIssuer = CustomUser(uid: 'anotherUserId', name: 'Jane Doe');
     final deskBorrowingRequest = BorrowingRequest(
       issuer: otherIssuer,
       item: BorrowingRequestItem.fromInventoryItem(deskItem),
@@ -37,8 +38,19 @@ void main() {
 
     setUpAll(() async {
       await firestore
+          .collection('items')
+          .doc(chairItem.id)
+          .set(chairItem.toFirestore());
+
+      await firestore
+          .collection('items')
+          .doc(deskItem.id)
+          .set(deskItem.toFirestore());
+
+      final chairBorrowingRequestRef = await firestore
           .collection('borrowingRequests')
           .add(chairBorrowingRequest.toFirestore());
+      chairBorrowingRequest.id = chairBorrowingRequestRef.id;
 
       await firestore
           .collection('borrowingRequests')
@@ -72,7 +84,8 @@ void main() {
         expect(find.textContaining(user.name!), findsNothing);
       });
 
-      testWidgets('does not display the issuer', (WidgetTester tester) async {
+      testWidgets('does not display the issuer or action buttons',
+          (WidgetTester tester) async {
         await pumpPage(
           Scaffold(
             body: BorrowingRequestListItem(
@@ -88,6 +101,7 @@ void main() {
           find.textContaining(chairBorrowingRequest.issuer.name!),
           findsNothing,
         );
+        expect(find.byIcon(Icons.more_vert), findsNothing);
       });
     });
 
@@ -110,6 +124,48 @@ void main() {
           expect(
             find.textContaining(chairBorrowingRequest.issuer.name!),
             findsOneWidget,
+          );
+        },
+      );
+
+      testWidgets(
+        'allows accepting the request',
+        (WidgetTester tester) async {
+          await pumpPage(
+            Scaffold(
+              body: BorrowingRequestListItem(
+                borrowingRequest: chairBorrowingRequest,
+              ),
+            ),
+            tester,
+            firestore: firestore,
+            auth: authMock,
+            userRole: UserRole.admin,
+          );
+
+          final optionsButton = find.byIcon(Icons.more_vert);
+          await tester.tap(optionsButton);
+          await tester.pumpAndSettle();
+
+          final approveButton = find.text('Approve');
+          await tester.tap(approveButton);
+          await tester.pumpAndSettle();
+
+          final newChairItemDoc =
+              await firestore.collection('items').doc(chairItem.id).get();
+          final newChairItem = InventoryItem.fromFirestore(newChairItemDoc);
+          expect(newChairItem.borrower, isNotNull);
+          expect(newChairItem.borrower!.uid, user.uid);
+
+          final newChairBorrowingRequestDoc = await firestore
+              .collection('borrowingRequests')
+              .doc(chairBorrowingRequest.id)
+              .get();
+
+          expect(newChairBorrowingRequestDoc.data()!['response'], isNotNull);
+          expect(
+            newChairBorrowingRequestDoc.data()!['response']['approved'],
+            isTrue,
           );
         },
       );

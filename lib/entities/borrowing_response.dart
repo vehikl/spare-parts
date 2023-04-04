@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BorrowingResponse {
   late String decisionMakerId;
-  late bool accepted;
+  late bool approved;
   String? details;
   DateTime? createdAt;
 
   BorrowingResponse({
     required this.decisionMakerId,
-    required this.accepted,
+    required this.approved,
     this.details,
     this.createdAt,
   });
@@ -16,7 +16,7 @@ class BorrowingResponse {
   static BorrowingResponse fromFirestore(Map<String, dynamic> data) {
     return BorrowingResponse(
       decisionMakerId: data['decisionMakerId'],
-      accepted: data['accepted'],
+      approved: data['approved'],
       details: data['details'],
       createdAt: data['createdAt'] != null
           ? (data['createdAt'] as Timestamp).toDate()
@@ -27,7 +27,7 @@ class BorrowingResponse {
   Map<String, dynamic> toFirestore() {
     return {
       'decisionMakerId': decisionMakerId,
-      'accepted': accepted,
+      'approved': approved,
       'details': details,
       'createdAt': createdAt == null ? null : Timestamp.fromDate(createdAt!),
     };

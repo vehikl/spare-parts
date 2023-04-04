@@ -20,7 +20,8 @@ class BorrowingRequestListItem extends StatelessWidget {
           ? Text(
               '${borrowingRequest.issuer.name!} | ${formatDate(borrowingRequest.createdAt!)}')
           : Text(formatDate(borrowingRequest.createdAt!)),
-      trailing: BorrowingRequestActionsButton(),
+      trailing:
+          BorrowingRequestActionsButton(borrowingRequest: borrowingRequest),
     );
   }
 }
