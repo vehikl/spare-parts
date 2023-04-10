@@ -191,11 +191,11 @@ class FirestoreService {
   }
 
   Future<void> approveBorrowingRequest(
-    String decisionMakerId,
+    CustomUser decisionMaker,
     BorrowingRequest borrowingRequest,
   ) async {
     borrowingRequest.response = BorrowingResponse(
-      decisionMakerId: decisionMakerId,
+      decisionMaker: decisionMaker,
       approved: true,
     );
     final borrowingRequestId = borrowingRequest.id;

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/borrowing_request.dart';
+import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 
@@ -71,7 +72,7 @@ class _BorrowingRequestActionsButtonState
             await firestoreService.updateItem(requestedItem.id, requestedItem);
 
             await firestoreService.approveBorrowingRequest(
-              auth.currentUser!.uid,
+              CustomUser.fromUser(auth.currentUser!),
               widget.borrowingRequest,
             );
           } catch (e) {

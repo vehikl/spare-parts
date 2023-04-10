@@ -16,10 +16,18 @@ class BorrowingRequestListItem extends StatelessWidget {
     return ListTile(
       leading: Icon(itemTypes[borrowingRequest.item.type]!),
       title: Text(borrowingRequest.item.id),
-      subtitle: isAdmin
-          ? Text(
-              '${borrowingRequest.issuer.name!} | ${formatDate(borrowingRequest.createdAt!)}')
-          : Text(formatDate(borrowingRequest.createdAt!)),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          isAdmin
+              ? Text(
+                  '${borrowingRequest.issuer.name!} | ${formatDate(borrowingRequest.createdAt!)}')
+              : Text(formatDate(borrowingRequest.createdAt!)),
+          if (borrowingRequest.response != null)
+            Text(
+                '${borrowingRequest.response!.approved ? 'Approved' : 'Denied'} by ${borrowingRequest.response!.decisionMaker.name!}')
+        ],
+      ),
       trailing: isAdmin
           ? BorrowingRequestActionsButton(borrowingRequest: borrowingRequest)
           : null,

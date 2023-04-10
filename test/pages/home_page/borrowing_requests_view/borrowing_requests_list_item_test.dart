@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -102,6 +101,46 @@ void main() {
           findsNothing,
         );
         expect(find.byIcon(Icons.more_vert), findsNothing);
+      });
+
+      testWidgets('shows the decision maker once the request was approved',
+          (WidgetTester tester) async {
+        final approvedRequest = BorrowingRequest(
+          issuer: user,
+          item: BorrowingRequestItem.fromInventoryItem(chairItem),
+          createdAt: DateTime.now(),
+          response: BorrowingResponse(approved: true, decisionMaker: user),
+        );
+
+        await pumpPage(
+          Scaffold(
+              body: BorrowingRequestListItem(
+            borrowingRequest: approvedRequest,
+          )),
+          tester,
+          firestore: firestore,
+          auth: authMock,
+        );
+        expect(find.text('Approved by ${user.name}'), findsOneWidget);
+      });
+
+      testWidgets('shows the decision maker once the request was denied',
+          (WidgetTester tester) async {
+        final deniedRequest = BorrowingRequest(
+          issuer: user,
+          item: BorrowingRequestItem.fromInventoryItem(chairItem),
+          createdAt: DateTime.now(),
+          response: BorrowingResponse(approved: false, decisionMaker: user),
+        );
+
+        await pumpPage(
+          Scaffold(
+              body: BorrowingRequestListItem(borrowingRequest: deniedRequest)),
+          tester,
+          firestore: firestore,
+          auth: authMock,
+        );
+        expect(find.text('Denied by ${user.name}'), findsOneWidget);
       });
     });
 
