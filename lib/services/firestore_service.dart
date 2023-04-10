@@ -176,7 +176,7 @@ class FirestoreService {
 
     if (whereIssuerIs != null) {
       query = borrowingRequestsCollection.where(
-        'issuer.id',
+        'issuer.uid',
         isEqualTo: whereIssuerIs,
       );
     }
@@ -190,7 +190,10 @@ class FirestoreService {
             .toList());
   }
 
-  Future<void> approveBorrowingRequest(String decisionMakerId, BorrowingRequest borrowingRequest) async {
+  Future<void> approveBorrowingRequest(
+    String decisionMakerId,
+    BorrowingRequest borrowingRequest,
+  ) async {
     borrowingRequest.response = BorrowingResponse(
       decisionMakerId: decisionMakerId,
       approved: true,
