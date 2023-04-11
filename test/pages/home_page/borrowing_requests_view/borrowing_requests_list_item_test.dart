@@ -56,6 +56,7 @@ void main() {
           .add(deskBorrowingRequest.toFirestore());
 
       when(userMock.uid).thenReturn(user.uid);
+      when(userMock.displayName).thenReturn(user.name);
       when(authMock.currentUser).thenReturn(userMock);
     });
 

@@ -5,4 +5,8 @@ class MockUser extends Mock implements User {
   @override
   String get uid =>
       super.noSuchMethod(Invocation.getter(#uid), returnValue: '');
+
+  @override
+  String? get displayName =>
+      super.noSuchMethod(Invocation.getter(#displayName), returnValue: '');
 }

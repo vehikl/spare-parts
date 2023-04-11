@@ -15,7 +15,7 @@ class BorrowingRequestListItem extends StatelessWidget {
 
     return ListTile(
       leading: Icon(itemTypes[borrowingRequest.item.type]!),
-      title: Text(borrowingRequest.item.id),
+      title: Text(borrowingRequest.item.name ?? borrowingRequest.item.id),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -25,7 +25,12 @@ class BorrowingRequestListItem extends StatelessWidget {
               : Text(formatDate(borrowingRequest.createdAt!)),
           if (borrowingRequest.response != null)
             Text(
-                '${borrowingRequest.response!.approved ? 'Approved' : 'Denied'} by ${borrowingRequest.response!.decisionMaker.name!}')
+              '${borrowingRequest.response!.approved ? 'Approved' : 'Denied'} by ${borrowingRequest.response!.decisionMaker.name!}',
+              style: TextStyle(
+                  color: borrowingRequest.response!.approved
+                      ? Colors.green
+                      : Colors.red),
+            )
         ],
       ),
       trailing: isAdmin
