@@ -171,6 +171,7 @@ class FirestoreService {
 
   Stream<List<BorrowingRequest>> getBorrowingRequestsStream({
     String? whereIssuerIs,
+    bool? processed,
   }) {
     Query<Object?>? query;
 
@@ -179,6 +180,18 @@ class FirestoreService {
         'issuer.uid',
         isEqualTo: whereIssuerIs,
       );
+    }
+
+    if (processed != null) {
+      if (processed) {
+        query = (query ?? borrowingRequestsCollection)
+            .where('response.approved', whereIn: [true, false]);
+      } else {
+        query = (query ?? borrowingRequestsCollection).where(
+          'response',
+          isNull: true,
+        );
+      }
     }
 
     return (query ?? borrowingRequestsCollection)

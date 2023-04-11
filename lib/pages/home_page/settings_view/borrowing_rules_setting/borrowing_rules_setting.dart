@@ -30,6 +30,8 @@ class BorrowingRulesSetting extends StatelessWidget {
         DataCell(
           Row(
             children: [
+              Icon(itemTypes[rule.type]),
+              SizedBox(width: 10),
               Flexible(child: Text(rule.type)),
             ],
           ),
