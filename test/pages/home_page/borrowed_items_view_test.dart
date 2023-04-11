@@ -43,7 +43,7 @@ void main() {
   });
 
   tearDown(() async {
-    deleteAllData(firestore);
+    await deleteAllData(firestore);
   });
 
   testWidgets(

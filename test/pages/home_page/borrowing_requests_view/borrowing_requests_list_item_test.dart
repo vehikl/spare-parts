@@ -35,7 +35,7 @@ void main() {
       item: BorrowingRequestItem.fromInventoryItem(deskItem),
     );
 
-    setUpAll(() async {
+    setUp(() async {
       await firestore
           .collection('items')
           .doc(chairItem.id)
@@ -57,6 +57,10 @@ void main() {
 
       when(userMock.uid).thenReturn(user.uid);
       when(authMock.currentUser).thenReturn(userMock);
+    });
+
+    tearDown(() async {
+      await deleteAllData(firestore);
     });
 
     group('for regular users', () {
@@ -208,6 +212,39 @@ void main() {
           );
         },
       );
+
+      testWidgets('allows denying the request', (WidgetTester tester) async {
+        await pumpPage(
+          Scaffold(
+            body: BorrowingRequestListItem(
+              borrowingRequest: chairBorrowingRequest,
+            ),
+          ),
+          tester,
+          firestore: firestore,
+          auth: authMock,
+          userRole: UserRole.admin,
+        );
+
+        final optionsButton = find.byIcon(Icons.more_vert);
+        await tester.tap(optionsButton);
+        await tester.pumpAndSettle();
+
+        final denyButton = find.text('Deny');
+        await tester.tap(denyButton);
+        await tester.pumpAndSettle();
+
+        final newChairBorrowingRequestDoc = await firestore
+            .collection('borrowingRequests')
+            .doc(chairBorrowingRequest.id)
+            .get();
+
+        expect(newChairBorrowingRequestDoc.data()!['response'], isNotNull);
+        expect(
+          newChairBorrowingRequestDoc.data()!['response']['approved'],
+          isFalse,
+        );
+      });
     });
   });
 }

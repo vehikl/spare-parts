@@ -19,8 +19,7 @@ class BorrowingRequestActionsButton extends StatefulWidget {
 
 class _BorrowingRequestActionsButtonState
     extends State<BorrowingRequestActionsButton> {
-  bool _approving = false;
-  bool _denying = false;
+  bool _processing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,7 @@ class _BorrowingRequestActionsButtonState
           value: 'approve',
           child: Row(
             children: [
-              _approving ? CircularProgressIndicator() : Icon(Icons.check),
+              _processing ? CircularProgressIndicator() : Icon(Icons.check),
               SizedBox(width: 4),
               Text('Approve'),
             ],
@@ -47,7 +46,7 @@ class _BorrowingRequestActionsButtonState
           value: 'deny',
           child: Row(
             children: [
-              _denying ? CircularProgressIndicator() : Icon(Icons.close),
+              _processing ? CircularProgressIndicator() : Icon(Icons.close),
               SizedBox(width: 4),
               Text('Deny'),
             ],
@@ -55,37 +54,35 @@ class _BorrowingRequestActionsButtonState
         )
       ],
       onSelected: (value) async {
-        if (_approving || _denying) return;
+        if (_processing) return;
 
-        if (value == 'approve') {
+        setState(() {
+          _processing = true;
+        });
+        try {
+          final requestedItemDoc = await firestoreService
+              .getItemDocumentReference(widget.borrowingRequest.item.id)
+              .get();
+          final requestedItem = InventoryItem.fromFirestore(
+            requestedItemDoc as DocumentSnapshot<Map<String, dynamic>>,
+          );
+          requestedItem.borrower = widget.borrowingRequest.issuer;
+          await firestoreService.updateItem(requestedItem.id, requestedItem);
+
+          await firestoreService.makeDecisionOnBorrowingRequest(
+              decisionMaker: CustomUser.fromUser(auth.currentUser!),
+              borrowingRequest: widget.borrowingRequest,
+              isApproved: value == 'approve');
+        } catch (e) {
+          print(e);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('An error occurred while approving the request'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ));
+        } finally {
           setState(() {
-            _approving = true;
+            _processing = false;
           });
-          try {
-            final requestedItemDoc = await firestoreService
-                .getItemDocumentReference(widget.borrowingRequest.item.id)
-                .get();
-            final requestedItem = InventoryItem.fromFirestore(
-              requestedItemDoc as DocumentSnapshot<Map<String, dynamic>>,
-            );
-            requestedItem.borrower = widget.borrowingRequest.issuer;
-            await firestoreService.updateItem(requestedItem.id, requestedItem);
-
-            await firestoreService.approveBorrowingRequest(
-              CustomUser.fromUser(auth.currentUser!),
-              widget.borrowingRequest,
-            );
-          } catch (e) {
-            print(e);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('An error occurred while approving the request'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ));
-          } finally {
-            setState(() {
-              _approving = false;
-            });
-          }
         }
       },
     );
