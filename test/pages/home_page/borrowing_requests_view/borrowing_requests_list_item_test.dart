@@ -147,72 +147,94 @@ void main() {
         );
         expect(find.text('Denied by ${user.name}'), findsOneWidget);
       });
+    
+      testWidgets('allows deleting the request', (WidgetTester tester) async {
+        await pumpPage(
+          Scaffold(
+            body: BorrowingRequestListItem(
+              borrowingRequest: chairBorrowingRequest,
+            ),
+          ),
+          tester,
+          firestore: firestore,
+          auth: authMock,
+        );
+
+        final optionsButton = find.byIcon(Icons.more_vert);
+        await tester.tap(optionsButton);
+        await tester.pumpAndSettle();
+
+        final deleteButton = find.text('Delete');
+        await tester.tap(deleteButton);
+        await tester.pumpAndSettle();
+
+        final newChairBorrowingRequestDoc = await firestore
+            .collection('borrowingRequests')
+            .doc(chairBorrowingRequest.id)
+            .get();
+
+        expect(newChairBorrowingRequestDoc.exists, isFalse);
+      });
     });
 
     group('for admins', () {
-      testWidgets(
-        'displays the issuer',
-        (WidgetTester tester) async {
-          await pumpPage(
-            Scaffold(
-              body: BorrowingRequestListItem(
-                borrowingRequest: chairBorrowingRequest,
-              ),
+      testWidgets('displays the issuer', (WidgetTester tester) async {
+        await pumpPage(
+          Scaffold(
+            body: BorrowingRequestListItem(
+              borrowingRequest: chairBorrowingRequest,
             ),
-            tester,
-            firestore: firestore,
-            auth: authMock,
-            userRole: UserRole.admin,
-          );
+          ),
+          tester,
+          firestore: firestore,
+          auth: authMock,
+          userRole: UserRole.admin,
+        );
 
-          expect(
-            find.textContaining(chairBorrowingRequest.issuer.name!),
-            findsOneWidget,
-          );
-        },
-      );
+        expect(
+          find.textContaining(chairBorrowingRequest.issuer.name!),
+          findsOneWidget,
+        );
+      });
 
-      testWidgets(
-        'allows accepting the request',
-        (WidgetTester tester) async {
-          await pumpPage(
-            Scaffold(
-              body: BorrowingRequestListItem(
-                borrowingRequest: chairBorrowingRequest,
-              ),
+      testWidgets('allows accepting the request', (WidgetTester tester) async {
+        await pumpPage(
+          Scaffold(
+            body: BorrowingRequestListItem(
+              borrowingRequest: chairBorrowingRequest,
             ),
-            tester,
-            firestore: firestore,
-            auth: authMock,
-            userRole: UserRole.admin,
-          );
+          ),
+          tester,
+          firestore: firestore,
+          auth: authMock,
+          userRole: UserRole.admin,
+        );
 
-          final optionsButton = find.byIcon(Icons.more_vert);
-          await tester.tap(optionsButton);
-          await tester.pumpAndSettle();
+        final optionsButton = find.byIcon(Icons.more_vert);
+        await tester.tap(optionsButton);
+        await tester.pumpAndSettle();
 
-          final approveButton = find.text('Approve');
-          await tester.tap(approveButton);
-          await tester.pumpAndSettle();
+        final approveButton = find.text('Approve');
+        await tester.tap(approveButton);
+        await tester.pumpAndSettle();
 
-          final newChairItemDoc =
-              await firestore.collection('items').doc(chairItem.id).get();
-          final newChairItem = InventoryItem.fromFirestore(newChairItemDoc);
-          expect(newChairItem.borrower, isNotNull);
-          expect(newChairItem.borrower!.uid, user.uid);
+        final newChairItemDoc =
+            await firestore.collection('items').doc(chairItem.id).get();
+        final newChairItem = InventoryItem.fromFirestore(newChairItemDoc);
+        expect(newChairItem.borrower, isNotNull);
+        expect(newChairItem.borrower!.uid, user.uid);
 
-          final newChairBorrowingRequestDoc = await firestore
-              .collection('borrowingRequests')
-              .doc(chairBorrowingRequest.id)
-              .get();
+        final newChairBorrowingRequestDoc = await firestore
+            .collection('borrowingRequests')
+            .doc(chairBorrowingRequest.id)
+            .get();
 
-          expect(newChairBorrowingRequestDoc.data()!['response'], isNotNull);
-          expect(
-            newChairBorrowingRequestDoc.data()!['response']['approved'],
-            isTrue,
-          );
-        },
-      );
+        expect(newChairBorrowingRequestDoc.data()!['response'], isNotNull);
+        expect(
+          newChairBorrowingRequestDoc.data()!['response']['approved'],
+          isTrue,
+        );
+      });
 
       testWidgets('allows denying the request', (WidgetTester tester) async {
         await pumpPage(

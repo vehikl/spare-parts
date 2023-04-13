@@ -6,11 +6,14 @@ import 'package:spare_parts/entities/borrowing_request.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/utilities/constants.dart';
 
 class BorrowingRequestActionsButton extends StatefulWidget {
   final BorrowingRequest borrowingRequest;
-  const BorrowingRequestActionsButton(
-      {super.key, required this.borrowingRequest});
+  const BorrowingRequestActionsButton({
+    super.key,
+    required this.borrowingRequest,
+  });
 
   @override
   State<BorrowingRequestActionsButton> createState() =>
@@ -22,31 +25,40 @@ class _BorrowingRequestActionsButtonState
   bool _processing = false;
 
   void _handleSelection(value) async {
-    final firestoreService = context.watch<FirestoreService>();
-    final auth = context.watch<FirebaseAuth>();
+    final firestoreService = context.read<FirestoreService>();
+    final auth = context.read<FirebaseAuth>();
     if (_processing) return;
 
     setState(() {
       _processing = true;
     });
-    try {
-      final requestedItemDoc = await firestoreService
-          .getItemDocumentReference(widget.borrowingRequest.item.id)
-          .get();
-      final requestedItem = InventoryItem.fromFirestore(
-        requestedItemDoc as DocumentSnapshot<Map<String, dynamic>>,
-      );
-      requestedItem.borrower = widget.borrowingRequest.issuer;
-      await firestoreService.updateItem(requestedItem.id, requestedItem);
 
-      await firestoreService.makeDecisionOnBorrowingRequest(
+    try {
+      if (value == 'delete') {
+        await firestoreService.deleteBorrowingRequest(
+          widget.borrowingRequest.id,
+        );
+      } else {
+        final requestedItemDoc = await firestoreService
+            .getItemDocumentReference(widget.borrowingRequest.item.id)
+            .get();
+        final requestedItem = InventoryItem.fromFirestore(
+          requestedItemDoc as DocumentSnapshot<Map<String, dynamic>>,
+        );
+        requestedItem.borrower = widget.borrowingRequest.issuer;
+        await firestoreService.updateItem(requestedItem.id, requestedItem);
+
+        await firestoreService.makeDecisionOnBorrowingRequest(
           decisionMaker: CustomUser.fromUser(auth.currentUser!),
           borrowingRequest: widget.borrowingRequest,
-          isApproved: value == 'approve');
+          isApproved: value == 'approve',
+        );
+      }
     } catch (e) {
       print(e);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('An error occurred while approving the request'),
+        content:
+            Text('An error occurred while acting on the borrowing request'),
         backgroundColor: Theme.of(context).colorScheme.error,
       ));
     } finally {
@@ -58,34 +70,55 @@ class _BorrowingRequestActionsButtonState
 
   @override
   Widget build(BuildContext context) {
+    final isAdmin = context.watch<UserRole>() == UserRole.admin;
+
     return PopupMenuButton<String>(
+      itemBuilder: (context) => [
+        if (isAdmin)
+          PopupMenuItem(
+            value: 'approve',
+            child: Row(
+              children: [
+                _processing
+                    ? CircularProgressIndicator()
+                    : Icon(Icons.check, color: Colors.green),
+                SizedBox(width: 4),
+                Text('Approve'),
+              ],
+            ),
+          ),
+        if (isAdmin)
+          PopupMenuItem(
+            value: 'deny',
+            child: Row(
+              children: [
+                _processing
+                    ? CircularProgressIndicator()
+                    : Icon(Icons.close, color: Colors.red),
+                SizedBox(width: 4),
+                Text('Deny'),
+              ],
+            ),
+          ),
+        if (!isAdmin)
+          PopupMenuItem(
+            value: 'delete',
+            child: Row(
+              children: [
+                _processing
+                    ? CircularProgressIndicator()
+                    : Icon(Icons.delete, color: Colors.red),
+                SizedBox(width: 4),
+                Text('Delete'),
+              ],
+            ),
+          )
+      ],
+      onSelected: _handleSelection,
       child: Padding(
         padding: EdgeInsets.all(10.0),
         child: Icon(Icons.more_vert),
       ),
-      itemBuilder: (context) => [
-        PopupMenuItem(
-          value: 'approve',
-          child: Row(
-            children: [
-              _processing ? CircularProgressIndicator() : Icon(Icons.check),
-              SizedBox(width: 4),
-              Text('Approve'),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          value: 'deny',
-          child: Row(
-            children: [
-              _processing ? CircularProgressIndicator() : Icon(Icons.close),
-              SizedBox(width: 4),
-              Text('Deny'),
-            ],
-          ),
-        )
-      ],
-      onSelected: _handleSelection,
     );
   }
 }

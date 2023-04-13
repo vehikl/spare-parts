@@ -33,9 +33,8 @@ class BorrowingRequestListItem extends StatelessWidget {
             )
         ],
       ),
-      trailing: isAdmin
-          ? BorrowingRequestActionsButton(borrowingRequest: borrowingRequest)
-          : null,
+      trailing:
+          BorrowingRequestActionsButton(borrowingRequest: borrowingRequest),
     );
   }
 }

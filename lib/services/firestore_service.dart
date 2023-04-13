@@ -34,10 +34,6 @@ class FirestoreService {
         );
   }
 
-  Future<void> addBorrowingRequest(BorrowingRequest borrowingRequest) async {
-    await borrowingRequestsCollection.add(borrowingRequest.toFirestore());
-  }
-
   Stream<List<BorrowingRule>> borrowingRulesStream() {
     return borrowingRulesCollection.snapshots().map((e) => e.docs
         .map((doc) => BorrowingRule.fromFirestore(
@@ -167,6 +163,14 @@ class FirestoreService {
         .doc(inventoryItemId)
         .collection('events')
         .add(event.toFirestore());
+  }
+
+    Future<void> addBorrowingRequest(BorrowingRequest borrowingRequest) async {
+    await borrowingRequestsCollection.add(borrowingRequest.toFirestore());
+  }
+
+  Future<void> deleteBorrowingRequest(String? borrowingRequestId) async {
+    await borrowingRequestsCollection.doc(borrowingRequestId).delete();
   }
 
   Stream<List<BorrowingRequest>> getBorrowingRequestsStream({
