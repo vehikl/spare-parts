@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/widgets/inventory_item_form.dart';
+import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 
 import '../helpers/test_helpers.dart';
 import '../helpers/tester_extension.dart';

@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/business_logic/borrowing_request_dialog.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
@@ -12,7 +13,7 @@ import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
-import 'package:spare_parts/widgets/inventory_item_form.dart';
+import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 import 'package:spare_parts/widgets/print_dialog/print_dialog_mobile.dart'
     if (dart.library.html) 'package:spare_parts/widgets/print_dialog/print_dialog_web.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
@@ -145,18 +146,29 @@ class BorrowItemAction extends ItemAction {
         if (user == null) return false;
 
         final borrowingRule =
-            await firestoreService.getBorrowingRuleForItemItemType(item.type);
+            await firestoreService.getBorrowingRuleForItemType(item.type);
 
         if (borrowingRule != null) {
           final borrowingCount = await firestoreService.getBorrowingCount(
-              item.type, auth.currentUser!.uid);
+            item.type,
+            auth.currentUser!.uid,
+          );
 
           if (borrowingCount >= borrowingRule.maxBorrowingCount) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                    'You have reached the maximum borrowing count for this item'),
-                backgroundColor: Theme.of(context).errorColor,
+            final pendingBorrowingRequest = await firestoreService
+                .getPendingBorrowingRequestForInventoryItem(item.id);
+            if (pendingBorrowingRequest != null) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('You have already requested this item'),
+              ));
+              return false;
+            }
+
+            showDialog(
+              context: context,
+              builder: (context) => BorrowingRequestDialog(
+                item: item,
+                maxBorrowingCount: borrowingRule.maxBorrowingCount,
               ),
             );
             return false;

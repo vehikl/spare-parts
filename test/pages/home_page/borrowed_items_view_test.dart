@@ -43,14 +43,12 @@ void main() {
   });
 
   tearDown(() async {
-    deleteAllData(firestore);
+    await deleteAllData(firestore);
   });
 
   testWidgets(
-    'Displays only items that were borrowed the current user',
+    'Displays only items that were borrowed by the current user',
     (WidgetTester tester) async {
-      when(authMock.currentUser).thenReturn(userMock);
-
       await pumpPage(
         Scaffold(body: BorrowedItemsView()),
         tester,
@@ -66,8 +64,6 @@ void main() {
   testWidgets(
     'Should not display the "borrow" action for an already borrowed item',
     (WidgetTester tester) async {
-      when(authMock.currentUser).thenReturn(userMock);
-
       await pumpPage(
         Scaffold(body: BorrowedItemsView()),
         tester,
@@ -94,8 +90,6 @@ void main() {
   testWidgets(
     'User can release an item from the list',
     (WidgetTester tester) async {
-      when(authMock.currentUser).thenReturn(userMock);
-
       await pumpPage(
         Scaffold(body: BorrowedItemsView()),
         tester,

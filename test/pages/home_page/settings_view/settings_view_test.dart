@@ -124,7 +124,7 @@ void main() {
 
   group('Borrowing rules setting', () {
     tearDown(() async {
-      deleteAllData(firestore);
+      await deleteAllData(firestore);
     });
 
     testWidgets(
@@ -294,9 +294,10 @@ void main() {
     testWidgets(
       'Can edit the borrowing rule type',
       (WidgetTester tester) async {
-        final borrowingRule =
-          BorrowingRule(type: 'Desk', maxBorrowingCount: 1);
-          await firestore.collection('borrowingRules').add(borrowingRule.toFirestore());
+        final borrowingRule = BorrowingRule(type: 'Desk', maxBorrowingCount: 1);
+        await firestore
+            .collection('borrowingRules')
+            .add(borrowingRule.toFirestore());
 
         await pumpPage(
           Scaffold(body: SettingsView()),
@@ -320,12 +321,18 @@ void main() {
     testWidgets(
       'Can not set the borrowing rule type to an existing type',
       (WidgetTester tester) async {
-          final firstBorrowingRule = BorrowingRule(type: 'Desk', maxBorrowingCount: 1);
-          final secondBorrowingRule = BorrowingRule(type: 'Chair', maxBorrowingCount: 3);
+        final firstBorrowingRule =
+            BorrowingRule(type: 'Desk', maxBorrowingCount: 1);
+        final secondBorrowingRule =
+            BorrowingRule(type: 'Chair', maxBorrowingCount: 3);
 
-          // add in reverse order
-          await firestore.collection('borrowingRules').add(secondBorrowingRule.toFirestore());
-          await firestore.collection('borrowingRules').add(firstBorrowingRule.toFirestore());
+        // add in reverse order
+        await firestore
+            .collection('borrowingRules')
+            .add(secondBorrowingRule.toFirestore());
+        await firestore
+            .collection('borrowingRules')
+            .add(firstBorrowingRule.toFirestore());
 
         await pumpPage(
           Scaffold(body: SettingsView()),

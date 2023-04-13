@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/widgets/item_actions_button.dart';
+import 'package:spare_parts/widgets/inventory_list_item/item_actions_button.dart';
 import 'package:spare_parts/widgets/item_icon.dart';
 
 /// Represents an inventory list item with actions

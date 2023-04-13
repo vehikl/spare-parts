@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'inventory_item_form.dart';
+import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 
 class AddInventoryItemButton extends StatelessWidget {
   const AddInventoryItemButton({

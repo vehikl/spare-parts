@@ -1,11 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
-import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
+import 'package:spare_parts/pages/home_page/borrowing_requests_view/borrowing_requests_view.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
@@ -130,6 +129,9 @@ class _HomePageState extends State<HomePage> {
           _pageTitle = 'Borrowed Items';
           break;
         case 2:
+          _pageTitle = 'Borrowing Requests';
+          break;
+        case 3:
           _pageTitle = 'Settings';
           break;
         default:
@@ -199,6 +201,15 @@ class _HomePageState extends State<HomePage> {
                             Expanded(child: BorrowedItemsView())
                           ],
                         ),
+                      ),
+                      VerticalDivider(),
+                      Expanded(
+                        child: Column(
+                          children: const [
+                            TitleText('Borrowing Requests'),
+                            Expanded(child: BorrowingRequestsView())
+                          ],
+                        ),
                       )
                     ],
                   ),
@@ -209,12 +220,14 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     InventoryView(),
                     BorrowedItemsView(),
+                    BorrowingRequestsView(),
                     if (isAdmin) SettingsView()
                   ],
                 ),
           bottomNavigationBar: layout == LayoutType.desktop
               ? null
               : BottomNavigationBar(
+                  type: BottomNavigationBarType.fixed,
                   items: [
                     BottomNavigationBarItem(
                       icon: Icon(Icons.home_outlined),
@@ -225,6 +238,11 @@ class _HomePageState extends State<HomePage> {
                       icon: Icon(Icons.backpack_outlined),
                       activeIcon: Icon(Icons.backpack),
                       label: 'Borrowed Items',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.waving_hand_outlined),
+                      activeIcon: Icon(Icons.waving_hand),
+                      label: 'Borrowing Requests',
                     ),
                     if (isAdmin)
                       BottomNavigationBarItem(

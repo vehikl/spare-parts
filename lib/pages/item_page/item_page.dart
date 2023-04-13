@@ -5,7 +5,7 @@ import 'package:spare_parts/pages/item_page/item_history.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/error_container.dart';
-import 'package:spare_parts/widgets/item_actions_button.dart';
+import 'package:spare_parts/widgets/inventory_list_item/item_actions_button.dart';
 import 'package:spare_parts/widgets/item_icon.dart';
 
 class ItemPage extends StatefulWidget {
