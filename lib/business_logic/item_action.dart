@@ -155,7 +155,10 @@ class BorrowItemAction extends ItemAction {
           if (borrowingCount >= borrowingRule.maxBorrowingCount) {
             showDialog(
               context: context,
-              builder: (context) => BorrowingRequestDialog(item: item),
+              builder: (context) => BorrowingRequestDialog(
+                item: item,
+                maxBorrowingCount: borrowingRule.maxBorrowingCount,
+              ),
             );
             return false;
           }

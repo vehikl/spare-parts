@@ -20,6 +20,7 @@ void main() {
     (WidgetTester tester) async {
       const userId = 'user123';
       final item = InventoryItem(id: 'foo', type: 'Desk');
+      const maxCount = 145;
 
       final userMock = MockUser();
 
@@ -33,7 +34,10 @@ void main() {
               child: Text('Launch'),
               onPressed: () => showDialog(
                 context: context,
-                builder: (_) => BorrowingRequestDialog(item: item),
+                builder: (_) => BorrowingRequestDialog(
+                  item: item,
+                  maxBorrowingCount: maxCount,
+                ),
               ),
             );
           }),
@@ -50,7 +54,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text('You have reached the maximum borrowing count for this item'),
+        find.text(
+            'You have reached the maximum borrowing count ($maxCount) for this item'),
         findsOneWidget,
       );
 

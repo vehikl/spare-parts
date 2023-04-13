@@ -8,8 +8,13 @@ import 'package:spare_parts/services/firestore_service.dart';
 
 class BorrowingRequestDialog extends StatefulWidget {
   final InventoryItem item;
+  final int maxBorrowingCount;
 
-  const BorrowingRequestDialog({super.key, required this.item});
+  const BorrowingRequestDialog({
+    super.key,
+    required this.item,
+    required this.maxBorrowingCount,
+  });
 
   @override
   State<BorrowingRequestDialog> createState() => _BorrowingRequestDialogState();
@@ -51,7 +56,7 @@ class _BorrowingRequestDialogState extends State<BorrowingRequestDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('You have reached the maximum borrowing count for this item'),
+          Text('You have reached the maximum borrowing count (${widget.maxBorrowingCount}) for this item'),
           Text(
             'You can submit a borrowing request for this item. We will notify you when the decision is made.',
           ),
