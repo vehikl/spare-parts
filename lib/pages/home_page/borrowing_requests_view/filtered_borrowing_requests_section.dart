@@ -8,8 +8,12 @@ import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 
-class PendingRequestsSection extends StatelessWidget {
-  const PendingRequestsSection({super.key});
+class FilteredBorrowingRequestsSection extends StatelessWidget {
+  final bool showProcessed;
+  const FilteredBorrowingRequestsSection({
+    super.key,
+    required this.showProcessed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +24,7 @@ class PendingRequestsSection extends StatelessWidget {
     return StreamBuilder<List<BorrowingRequest>>(
       stream: firestoreService.getBorrowingRequestsStream(
         whereIssuerIs: isAdmin ? null : auth.currentUser?.uid,
-        processed: false,
+        processed: showProcessed,
       ),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
@@ -43,6 +47,7 @@ class PendingRequestsSection extends StatelessWidget {
           itemBuilder: (context, index) {
             return BorrowingRequestListItem(
               borrowingRequest: borrowingRequests[index],
+              showOptions: !showProcessed,
             );
           },
         );

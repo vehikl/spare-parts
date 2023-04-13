@@ -88,7 +88,7 @@ void main() {
         expect(find.textContaining(user.name!), findsNothing);
       });
 
-      testWidgets('does not display the issuer or action buttons',
+      testWidgets('does not display the issuer',
           (WidgetTester tester) async {
         await pumpPage(
           Scaffold(
@@ -105,7 +105,6 @@ void main() {
           find.textContaining(chairBorrowingRequest.issuer.name!),
           findsNothing,
         );
-        expect(find.byIcon(Icons.more_vert), findsNothing);
       });
 
       testWidgets('shows the decision maker once the request was approved',

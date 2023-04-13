@@ -97,6 +97,10 @@ void main() {
             .add(borrowingRule.toFirestore());
       });
 
+      tearDown(() async {
+        await deleteAllData(firestore);
+      });
+
       testWidgets('displays a dialog notifying the user about the restriction',
           (WidgetTester tester) async {
         await pumpPage(
@@ -107,16 +111,7 @@ void main() {
           auth: mockFirebaseAuth,
         );
 
-        final availableChairListItem = find.ancestor(
-          of: find.text(availableItem.name),
-          matching: find.byType(ListTile),
-        );
-
-        final optionsButton = find.descendant(
-          of: availableChairListItem,
-          matching: find.byIcon(Icons.more_vert),
-        );
-
+        final optionsButton = find.byIcon(Icons.more_vert);
         await tester.tap(optionsButton);
         await tester.pumpAndSettle();
 
@@ -126,7 +121,7 @@ void main() {
 
         expect(
           find.text(
-              'You have reached the maximum borrowing count for this item'),
+              'You have reached the maximum borrowing count (1) for this item'),
           findsOneWidget,
         );
       });

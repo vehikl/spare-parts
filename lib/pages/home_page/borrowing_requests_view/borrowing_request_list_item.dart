@@ -7,7 +7,13 @@ import 'package:spare_parts/utilities/helpers.dart';
 
 class BorrowingRequestListItem extends StatelessWidget {
   final BorrowingRequest borrowingRequest;
-  const BorrowingRequestListItem({super.key, required this.borrowingRequest});
+  final bool showOptions;
+
+  const BorrowingRequestListItem({
+    super.key,
+    required this.borrowingRequest,
+    this.showOptions = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +39,9 @@ class BorrowingRequestListItem extends StatelessWidget {
             )
         ],
       ),
-      trailing:
-          BorrowingRequestActionsButton(borrowingRequest: borrowingRequest),
+      trailing: showOptions
+          ? BorrowingRequestActionsButton(borrowingRequest: borrowingRequest)
+          : null,
     );
   }
 }
