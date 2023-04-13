@@ -155,9 +155,9 @@ class BorrowItemAction extends ItemAction {
           );
 
           if (borrowingCount >= borrowingRule.maxBorrowingCount) {
-            final borrowingRequest = await firestoreService
-                .getBorrowingRequestForInventoryItem(item.id);
-            if (borrowingRequest != null) {
+            final pendingBorrowingRequest = await firestoreService
+                .getPendingBorrowingRequestForInventoryItem(item.id);
+            if (pendingBorrowingRequest != null) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text('You have already requested this item'),
               ));

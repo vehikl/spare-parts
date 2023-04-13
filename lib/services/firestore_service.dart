@@ -206,16 +206,18 @@ class FirestoreService {
             .toList());
   }
 
-  Future<BorrowingRequest?> getBorrowingRequestForInventoryItem(
+  Future<BorrowingRequest?> getPendingBorrowingRequestForInventoryItem(
     String inventoryItemId,
   ) async {
     final itemRequestsQuery = await borrowingRequestsCollection
         .where('item.id', isEqualTo: inventoryItemId)
+        .where('response', isNull: true)
         .get();
     if (itemRequestsQuery.docs.isEmpty) return null;
 
     return BorrowingRequest.fromFirestore(
-      itemRequestsQuery.docs.first as QueryDocumentSnapshot<Map<String, dynamic>>,
+      itemRequestsQuery.docs.first
+          as QueryDocumentSnapshot<Map<String, dynamic>>,
     );
   }
 
