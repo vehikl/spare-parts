@@ -41,8 +41,7 @@ class FirestoreService {
         .toList());
   }
 
-  Future<BorrowingRule?> getBorrowingRuleForItemItemType(
-      String itemType) async {
+  Future<BorrowingRule?> getBorrowingRuleForItemType(String itemType) async {
     final borrowingRuleDocs =
         await borrowingRulesCollection.where('type', isEqualTo: itemType).get();
 
@@ -165,7 +164,7 @@ class FirestoreService {
         .add(event.toFirestore());
   }
 
-    Future<void> addBorrowingRequest(BorrowingRequest borrowingRequest) async {
+  Future<void> addBorrowingRequest(BorrowingRequest borrowingRequest) async {
     await borrowingRequestsCollection.add(borrowingRequest.toFirestore());
   }
 
@@ -205,6 +204,19 @@ class FirestoreService {
             .map((doc) => BorrowingRequest.fromFirestore(
                 doc as QueryDocumentSnapshot<Map<String, dynamic>>))
             .toList());
+  }
+
+  Future<BorrowingRequest?> getBorrowingRequestForInventoryItem(
+    String inventoryItemId,
+  ) async {
+    final itemRequestsQuery = await borrowingRequestsCollection
+        .where('item.id', isEqualTo: inventoryItemId)
+        .get();
+    if (itemRequestsQuery.docs.isEmpty) return null;
+
+    return BorrowingRequest.fromFirestore(
+      itemRequestsQuery.docs.first as QueryDocumentSnapshot<Map<String, dynamic>>,
+    );
   }
 
   Future<void> makeDecisionOnBorrowingRequest({

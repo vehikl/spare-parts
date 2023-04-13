@@ -146,13 +146,24 @@ class BorrowItemAction extends ItemAction {
         if (user == null) return false;
 
         final borrowingRule =
-            await firestoreService.getBorrowingRuleForItemItemType(item.type);
+            await firestoreService.getBorrowingRuleForItemType(item.type);
 
         if (borrowingRule != null) {
           final borrowingCount = await firestoreService.getBorrowingCount(
-              item.type, auth.currentUser!.uid);
+            item.type,
+            auth.currentUser!.uid,
+          );
 
           if (borrowingCount >= borrowingRule.maxBorrowingCount) {
+            final borrowingRequest = await firestoreService
+                .getBorrowingRequestForInventoryItem(item.id);
+            if (borrowingRequest != null) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('You have already requested this item'),
+              ));
+              return false;
+            }
+
             showDialog(
               context: context,
               builder: (context) => BorrowingRequestDialog(

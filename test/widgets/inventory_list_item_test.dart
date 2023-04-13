@@ -2,6 +2,7 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:spare_parts/entities/borrowing_request.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
@@ -96,41 +97,73 @@ void main() {
             .add(borrowingRule.toFirestore());
       });
 
+      testWidgets('displays a dialog notifying the user about the restriction',
+          (WidgetTester tester) async {
+        await pumpPage(
+          Scaffold(body: InventoryListItem(item: availableItem)),
+          tester,
+          userRole: UserRole.user,
+          firestore: firestore,
+          auth: mockFirebaseAuth,
+        );
+
+        final availableChairListItem = find.ancestor(
+          of: find.text(availableItem.name),
+          matching: find.byType(ListTile),
+        );
+
+        final optionsButton = find.descendant(
+          of: availableChairListItem,
+          matching: find.byIcon(Icons.more_vert),
+        );
+
+        await tester.tap(optionsButton);
+        await tester.pumpAndSettle();
+
+        final borrowButton = find.text('Borrow');
+        await tester.tap(borrowButton);
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text(
+              'You have reached the maximum borrowing count for this item'),
+          findsOneWidget,
+        );
+      });
+
       testWidgets(
-        'displays a dialog notifying the user about the restriction',
-        (WidgetTester tester) async {
-          await pumpPage(
-            Scaffold(body: InventoryListItem(item: availableItem)),
-            tester,
-            userRole: UserRole.user,
-            firestore: firestore,
-            auth: mockFirebaseAuth,
-          );
+          'and a borrowing request already exists, does not display a dialog',
+          (WidgetTester tester) async {
+        final borrowingRequest = BorrowingRequest(
+          issuer: CustomUser(uid: 'foo'),
+          item: BorrowingRequestItem.fromInventoryItem(availableItem),
+        );
+        await firestore
+            .collection('borrowingRequests')
+            .add(borrowingRequest.toFirestore());
 
-          final availableChairListItem = find.ancestor(
-            of: find.text(availableItem.name),
-            matching: find.byType(ListTile),
-          );
+        await pumpPage(
+          Scaffold(body: InventoryListItem(item: availableItem)),
+          tester,
+          userRole: UserRole.user,
+          firestore: firestore,
+          auth: mockFirebaseAuth,
+        );
 
-          final optionsButton = find.descendant(
-            of: availableChairListItem,
-            matching: find.byIcon(Icons.more_vert),
-          );
+        final optionsButton = find.byIcon(Icons.more_vert);
 
-          await tester.tap(optionsButton);
-          await tester.pumpAndSettle();
+        await tester.tap(optionsButton);
+        await tester.pumpAndSettle();
 
-          final borrowButton = find.text('Borrow');
-          await tester.tap(borrowButton);
-          await tester.pumpAndSettle();
+        final borrowButton = find.text('Borrow');
+        await tester.tap(borrowButton);
+        await tester.pumpAndSettle();
 
-          expect(
-            find.text(
-                'You have reached the maximum borrowing count for this item'),
-            findsOneWidget,
-          );
-        },
-      );
+        expect(
+          find.text('You have already requested this item'),
+          findsOneWidget,
+        );
+      });
     });
   });
 }
