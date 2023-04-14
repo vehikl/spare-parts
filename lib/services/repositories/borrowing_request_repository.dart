@@ -78,5 +78,4 @@ Future<void> add(BorrowingRequest borrowingRequest) async {
         .doc(borrowingRequestId)
         .update(borrowingRequest.toFirestore());
   }
-
 }
