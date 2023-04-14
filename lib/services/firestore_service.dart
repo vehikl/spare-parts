@@ -5,7 +5,6 @@ import 'package:spare_parts/entities/borrowing_response.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/event.dart';
-import 'package:spare_parts/entities/inventory_item.dart';
 
 @GenerateNiceMocks([MockSpec<FirestoreService>()])
 class FirestoreService {
@@ -21,18 +20,6 @@ class FirestoreService {
 
   CollectionReference get borrowingRequestsCollection =>
       _firestore.collection('borrowingRequests');
-
-  DocumentReference getItemDocumentReference(String? itemId) {
-    return itemsCollection.doc(itemId);
-  }
-
-  Stream<InventoryItem> getItemStream(String? itemId) {
-    return getItemDocumentReference(itemId).snapshots().map(
-          (e) => InventoryItem.fromFirestore(
-            e as DocumentSnapshot<Map<String, dynamic>>,
-          ),
-        );
-  }
 
   Stream<List<BorrowingRule>> borrowingRulesStream() {
     return borrowingRulesCollection.snapshots().map((e) => e.docs
@@ -72,79 +59,6 @@ class FirestoreService {
         .get();
 
     return items.docs.length;
-  }
-
-  deleteItem(String? itemId) async {
-    await getItemDocumentReference(itemId).delete();
-  }
-
-  borrowItem(InventoryItem item, CustomUser user) async {
-    await getItemDocumentReference(item.id).update({
-      'borrower': user.toFirestore(),
-      'borrowerId': user.uid,
-    });
-  }
-
-  releaseItem(InventoryItem item) async {
-    await getItemDocumentReference(item.id).update({
-      'borrower': null,
-      'borrowerId': null,
-    });
-  }
-
-  addItem(InventoryItem item) async {
-    await itemsCollection.doc(item.id).set(item.toFirestore());
-  }
-
-  updateItem(String? itemId, InventoryItem item) async {
-    await deleteItem(itemId);
-    await addItem(item);
-  }
-
-  Stream<List<InventoryItem>> getItemsStream({
-    bool? withNoBorrower,
-    String? whereBorrowerIs,
-    List<String>? whereBorrowerIn,
-    List<String>? whereTypeIn,
-    bool excludePrivates = false,
-  }) {
-    Query<Object?>? query;
-
-    if (withNoBorrower != null && withNoBorrower) {
-      query = itemsCollection.where('borrowerId', isNull: true);
-    }
-
-    if (whereBorrowerIs != null) {
-      query = itemsCollection.where('borrowerId', isEqualTo: whereBorrowerIs);
-    }
-
-    if (whereBorrowerIn != null) {
-      query = (query ?? itemsCollection).where(
-        'borrowerId',
-        whereIn: whereBorrowerIn,
-      );
-    }
-
-    if (whereTypeIn != null) {
-      query = (query ?? itemsCollection).where('type', whereIn: whereTypeIn);
-    }
-
-    if (excludePrivates) {
-      query = (query ?? itemsCollection).where('isPrivate', isEqualTo: false);
-    }
-
-    return (query ?? itemsCollection)
-        .snapshots()
-        .map(_mapQuerySnapshotToInventoryItems);
-  }
-
-  List<InventoryItem> _mapQuerySnapshotToInventoryItems(
-    QuerySnapshot<Object?> snapshot,
-  ) {
-    return snapshot.docs
-        .map((doc) => InventoryItem.fromFirestore(
-            doc as QueryDocumentSnapshot<Map<String, dynamic>>))
-        .toList();
   }
 
   Stream<List<Event>> getEventsStream(String? inventoryItemId) {

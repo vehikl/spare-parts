@@ -6,6 +6,7 @@ import 'package:spare_parts/entities/borrowing_request.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 class BorrowingRequestActionsButton extends StatefulWidget {
@@ -26,6 +27,7 @@ class _BorrowingRequestActionsButtonState
 
   void _handleSelection(value) async {
     final firestoreService = context.read<FirestoreService>();
+    final inventoryItemRepository = context.read<InventoryItemRepository>();
     final auth = context.read<FirebaseAuth>();
     if (_processing) return;
 
@@ -39,14 +41,14 @@ class _BorrowingRequestActionsButtonState
           widget.borrowingRequest.id,
         );
       } else {
-        final requestedItemDoc = await firestoreService
+        final requestedItemDoc = await inventoryItemRepository
             .getItemDocumentReference(widget.borrowingRequest.item.id)
             .get();
         final requestedItem = InventoryItem.fromFirestore(
           requestedItemDoc as DocumentSnapshot<Map<String, dynamic>>,
         );
         requestedItem.borrower = widget.borrowingRequest.issuer;
-        await firestoreService.updateItem(requestedItem.id, requestedItem);
+        await inventoryItemRepository.update(requestedItem.id, requestedItem);
 
         await firestoreService.makeDecisionOnBorrowingRequest(
           decisionMaker: CustomUser.fromUser(auth.currentUser!),

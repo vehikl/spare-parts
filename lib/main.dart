@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/theme.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/signin_page.dart';
@@ -45,6 +46,8 @@ class _MyAppState extends State<MyApp> {
         Provider<FirebaseAuth>(create: (_) => FirebaseAuth.instance),
         Provider<FirestoreService>(
             create: (_) => FirestoreService(FirebaseFirestore.instance)),
+            Provider<InventoryItemRepository>(
+            create: (_) => InventoryItemRepository(FirebaseFirestore.instance)),
         Provider<CallableService>(create: (_) => CallableService())
       ],
       child: MaterialApp(

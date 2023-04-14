@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/item_page/item_history.dart';
-import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 import 'package:spare_parts/widgets/inventory_list_item/item_actions_button.dart';
@@ -18,13 +18,13 @@ class ItemPage extends StatefulWidget {
 }
 
 class _ItemPageState extends State<ItemPage> {
-  FirestoreService get firestoreService => context.watch<FirestoreService>();
+  InventoryItemRepository get inventoryItemRepository => context.read<InventoryItemRepository>();
   UserRole get userRole => context.watch<UserRole>();
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: firestoreService.getItemStream(widget.itemId),
+        stream: inventoryItemRepository.getItemStream(widget.itemId),
         builder: (context, AsyncSnapshot<InventoryItem> snapshot) {
           if (snapshot.hasError) {
             return ErrorContainer(error: snapshot.error.toString());

@@ -9,6 +9,7 @@ import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/services/repositories/inventory_item_repository.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 import 'mocks/mocks.dart';
@@ -20,6 +21,7 @@ Future<void> pumpPage(
   FirebaseAuth? auth,
   FirebaseFirestore? firestore,
   FirestoreService? firestoreService,
+  InventoryItemRepository? inventoryItemRepository,
   CallableService? callableService,
 }) async {
   final mockCallableService = MockCallableService();
@@ -40,6 +42,10 @@ Future<void> pumpPage(
             create: (context) =>
                 firestoreService ??
                 FirestoreService(firestore ?? FakeFirebaseFirestore())),
+        Provider<InventoryItemRepository>(
+            create: (context) =>
+                inventoryItemRepository ??
+                InventoryItemRepository(firestore ?? FakeFirebaseFirestore())),
         Provider<CallableService>(
             create: (context) => callableService ?? mockCallableService),
       ],
