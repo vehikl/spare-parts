@@ -6,11 +6,11 @@ class DeleteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestoreService = context.watch<FirestoreService>();
+    final borrowingRuleRepository = context.read<BorrowingRuleRepository>();
 
     return AsyncIconButton(
       onPressed: () async {
-        await firestoreService.deleteBorrowingRule(rule);
+        await borrowingRuleRepository.delete(rule);
       },
       icon: Icons.delete,
       color: Theme.of(context).errorColor,

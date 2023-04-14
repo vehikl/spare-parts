@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/print_dialog/refreshable_title.dart';
-import 'package:spare_parts/widgets/title_text.dart';
+
 import '../../services/dymo_service.dart';
 
 class PrintDialogBody extends StatefulWidget {

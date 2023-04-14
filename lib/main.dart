@@ -3,13 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spare_parts/utilities/theme.dart';
+import 'package:spare_parts/repository_registrant.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/signin_page.dart';
 import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
+import 'package:spare_parts/utilities/theme.dart';
 
 import 'firebase_options.dart';
 
@@ -47,38 +48,41 @@ class _MyAppState extends State<MyApp> {
             create: (_) => FirestoreService(FirebaseFirestore.instance)),
         Provider<CallableService>(create: (_) => CallableService())
       ],
-      child: MaterialApp(
-        title: 'Spare Parts',
-        theme: buildTheme(lightColorScheme),
-        darkTheme: buildTheme(darkColorScheme),
-        home: StreamBuilder<User?>(
-          stream: _authStream,
-          builder: (context, snapshot) {
-            final user = snapshot.data;
-
-            var userEmailValid = user?.email?.endsWith('vehikl.com') ?? false;
-
-            if (!userEmailValid) {
-              return SignInPage(
-                error: user == null
-                    ? null
-                    : 'Please log in with your Vehikl email',
-              );
-            }
-
-            return FutureBuilder<IdTokenResult>(
-              future: user!.getIdTokenResult(true),
-              builder: (context, snap) {
-                if (!snap.hasData) return Scaffold(body: Container());
-
-                final isAdmin = snap.data?.claims?['role'] == 'admin';
-                return Provider<UserRole>(
-                  create: (context) => isAdmin ? UserRole.admin : UserRole.user,
-                  child: HomePage(),
+      child: RepositoryRegistrant(
+        firestore: FirebaseFirestore.instance,
+        child: MaterialApp(
+          title: 'Spare Parts',
+          theme: buildTheme(lightColorScheme),
+          darkTheme: buildTheme(darkColorScheme),
+          home: StreamBuilder<User?>(
+            stream: _authStream,
+            builder: (context, snapshot) {
+              final user = snapshot.data;
+      
+              var userEmailValid = user?.email?.endsWith('vehikl.com') ?? false;
+      
+              if (!userEmailValid) {
+                return SignInPage(
+                  error: user == null
+                      ? null
+                      : 'Please log in with your Vehikl email',
                 );
-              },
-            );
-          },
+              }
+      
+              return FutureBuilder<IdTokenResult>(
+                future: user!.getIdTokenResult(true),
+                builder: (context, snap) {
+                  if (!snap.hasData) return Scaffold(body: Container());
+      
+                  final isAdmin = snap.data?.claims?['role'] == 'admin';
+                  return Provider<UserRole>(
+                    create: (context) => isAdmin ? UserRole.admin : UserRole.user,
+                    child: HomePage(),
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );

@@ -18,6 +18,8 @@ import 'package:spare_parts/widgets/print_dialog/print_dialog_mobile.dart'
     if (dart.library.html) 'package:spare_parts/widgets/print_dialog/print_dialog_web.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
 
+import '../services/repositories/repositories.dart';
+
 enum ItemActionType { delete, edit, borrow, release, assign, print }
 
 abstract class ItemAction {
@@ -63,10 +65,13 @@ class DeleteItemAction extends ItemAction {
 
   @override
   handle(BuildContext context, InventoryItem item) {
-    final firestoreService = context.read<FirestoreService>();
+    final inventoryItemRepository = context.read<InventoryItemRepository>();
 
     commonHandle(
-      () => firestoreService.deleteItem(item.id),
+      () async {
+        await inventoryItemRepository.delete(item.id);
+        return true;
+      },
       context,
       'deleted',
     );
@@ -85,7 +90,7 @@ class AssignItemAction extends ItemAction {
 
   @override
   handle(BuildContext context, InventoryItem item) {
-    final firestoreService = context.read<FirestoreService>();
+    final inventoryItemRepository = context.read<InventoryItemRepository>();
     final callableService = context.read<CallableService>();
 
     commonHandle(
@@ -116,7 +121,7 @@ class AssignItemAction extends ItemAction {
         item.borrower = userIds.isEmpty
             ? null
             : users.firstWhere((u) => u.id == userIds.first).toCustomUser();
-        await firestoreService.updateItem(item.id, item);
+        await inventoryItemRepository.update(item.id, item);
         return true;
       },
       context,
@@ -138,6 +143,9 @@ class BorrowItemAction extends ItemAction {
   @override
   handle(BuildContext context, InventoryItem item) {
     final firestoreService = context.read<FirestoreService>();
+    final inventoryItemRepository = context.read<InventoryItemRepository>();
+    final borrowingRuleRepository = context.read<BorrowingRuleRepository>();
+        final borrowingRequestRepository = context.read<BorrowingRequestRepository>();
     final auth = context.read<FirebaseAuth>();
 
     commonHandle(
@@ -146,17 +154,17 @@ class BorrowItemAction extends ItemAction {
         if (user == null) return false;
 
         final borrowingRule =
-            await firestoreService.getBorrowingRuleForItemType(item.type);
+            await borrowingRuleRepository.getForItemType(item.type);
 
         if (borrowingRule != null) {
-          final borrowingCount = await firestoreService.getBorrowingCount(
+          final borrowingCount = await borrowingRuleRepository.getBorrowingCount(
             item.type,
             auth.currentUser!.uid,
           );
 
           if (borrowingCount >= borrowingRule.maxBorrowingCount) {
-            final pendingBorrowingRequest = await firestoreService
-                .getPendingBorrowingRequestForInventoryItem(item.id);
+            final pendingBorrowingRequest = await borrowingRequestRepository
+                .getPendingForInventoryItem(item.id);
             if (pendingBorrowingRequest != null) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text('You have already requested this item'),
@@ -175,7 +183,7 @@ class BorrowItemAction extends ItemAction {
           }
         }
 
-        await firestoreService.borrowItem(
+        await inventoryItemRepository.borrow(
           item,
           CustomUser.fromUser(user),
         );
@@ -209,6 +217,7 @@ class ReleaseItemAction extends ItemAction {
   @override
   handle(BuildContext context, InventoryItem item) {
     final firestoreService = context.read<FirestoreService>();
+    final inventoryItemRepository = context.read<InventoryItemRepository>();
     final auth = context.read<FirebaseAuth>();
 
     commonHandle(
@@ -220,7 +229,7 @@ class ReleaseItemAction extends ItemAction {
           createdAt: DateTime.now(),
         );
         await firestoreService.addEvent(item.id, event);
-        await firestoreService.releaseItem(item);
+        await inventoryItemRepository.release(item);
 
         return true;
       },

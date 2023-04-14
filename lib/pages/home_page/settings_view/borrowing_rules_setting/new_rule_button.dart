@@ -15,11 +15,12 @@ class NewRuleButton extends StatefulWidget {
 }
 
 class _NewRuleButtonState extends State<NewRuleButton> {
-  Future<void> _handlePress(FirestoreService firestoreService) async {
+  Future<void> _handlePress() async {
+    final borrowingRuleRepository = context.read<BorrowingRuleRepository>();
     final ruleTypes = widget.rules.map((rule) => rule.type);
     final firstAvailableType =
         itemTypes.keys.firstWhere((type) => !ruleTypes.contains(type));
-    await firestoreService.addBorrowingRule(BorrowingRule(
+    await borrowingRuleRepository.add(BorrowingRule(
       type: firstAvailableType,
       maxBorrowingCount: 1,
     ));
@@ -27,18 +28,14 @@ class _NewRuleButtonState extends State<NewRuleButton> {
 
   @override
   Widget build(BuildContext context) {
-    final firestoreService = context.watch<FirestoreService>();
     if (widget.isIcon) {
       return AsyncIconButton(
-        onPressed: () => _handlePress(firestoreService),
+        onPressed: _handlePress,
         icon: Icons.add_box,
         color: Theme.of(context).colorScheme.primary,
       );
     }
 
-    return AsyncElevatedButton(
-      onPressed: () => _handlePress(firestoreService),
-      text: 'Add Rule',
-    );
+    return AsyncElevatedButton(onPressed: _handlePress, text: 'Add Rule');
   }
 }

@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/repository_registrant.dart';
 import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 import 'mocks/mocks.dart';
@@ -20,9 +22,11 @@ Future<void> pumpPage(
   FirebaseAuth? auth,
   FirebaseFirestore? firestore,
   FirestoreService? firestoreService,
+  InventoryItemRepository? inventoryItemRepository,
   CallableService? callableService,
 }) async {
   final mockCallableService = MockCallableService();
+  final firestoreInstance = firestore ?? FakeFirebaseFirestore();
   when(mockCallableService.getUsers()).thenAnswer((_) => Future.value([
         UserDto(
           id: 'foo',
@@ -37,13 +41,16 @@ Future<void> pumpPage(
         Provider<FirebaseAuth>(create: (context) => auth ?? MockFirebaseAuth()),
         Provider<UserRole>(create: (context) => userRole ?? UserRole.user),
         Provider<FirestoreService>(
-            create: (context) =>
-                firestoreService ??
-                FirestoreService(firestore ?? FakeFirebaseFirestore())),
+            create: (_) =>
+                firestoreService ?? FirestoreService(firestoreInstance)),
         Provider<CallableService>(
-            create: (context) => callableService ?? mockCallableService),
+            create: (_) => callableService ?? mockCallableService),
       ],
-      child: MaterialApp(home: page),
+      child: RepositoryRegistrant(
+        firestore: firestoreInstance,
+        inventoryItemRepository: inventoryItemRepository,
+        child: MaterialApp(home: page),
+      ),
     ),
   );
 

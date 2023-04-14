@@ -6,7 +6,8 @@ import 'package:mockito/mockito.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
-import 'package:spare_parts/services/firestore_service.mocks.dart';
+import 'package:spare_parts/services/repositories/inventory_item_repository.mocks.dart';
+
 import '../../helpers/mocks/mocks.dart';
 import '../../helpers/test_helpers.dart';
 
@@ -19,7 +20,7 @@ class MockUser extends Mock implements User {
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
   final authMock = MockFirebaseAuth();
-  MockFirestoreService firestoreServiceMock = MockFirestoreService();
+  MockInventoryItemRepository inventoryItemRepository = MockInventoryItemRepository();
   final userMock = MockUser();
   const user = CustomUser(uid: 'qwe123');
   final chairItem =
@@ -27,7 +28,7 @@ void main() {
   final deskItem = InventoryItem(id: 'Desk#321', type: 'Desk');
 
   setUp(() async {
-    firestoreServiceMock = MockFirestoreService();
+    inventoryItemRepository = MockInventoryItemRepository();
     await firestore
         .collection('items')
         .doc(chairItem.id)
@@ -123,7 +124,7 @@ void main() {
     (WidgetTester tester) async {
       const String errorMessage = 'Something went wrong';
       when(
-        firestoreServiceMock.getItemsStream(
+        inventoryItemRepository.getItemsStream(
           whereBorrowerIs: anyNamed('whereBorrowerIs'),
         ),
       ).thenAnswer(
@@ -134,7 +135,7 @@ void main() {
         Scaffold(body: BorrowedItemsView()),
         tester,
         auth: authMock,
-        firestoreService: firestoreServiceMock,
+        inventoryItemRepository: inventoryItemRepository,
       );
 
       expect(find.textContaining(errorMessage), findsOneWidget);

@@ -7,12 +7,12 @@ class IncreaseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestoreService = context.watch<FirestoreService>();
+    final borrowingRuleRepository = context.read<BorrowingRuleRepository>();
 
     return AsyncIconButton(
       onPressed: () async {
         rule.maxBorrowingCount++;
-        await firestoreService.updateBorrowingRule(rule);
+        await borrowingRuleRepository.update(rule);
       },
       icon: Icons.add,
     );

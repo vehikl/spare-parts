@@ -8,7 +8,7 @@ import 'package:spare_parts/pages/home_page/borrowing_requests_view/borrowing_re
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
-import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/add_inventory_item_button.dart';
 import 'package:spare_parts/widgets/custom_layout_builder.dart';
@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleScan() {
-    final firestore = context.read<FirestoreService>();
+    final inventoryItemRepository = context.read<InventoryItemRepository>();
     final userRole = context.read<UserRole>();
 
     var scanning = true;
@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
                   final barcodeValue = barcodes.first.rawValue;
                   print("IDDD: $barcodeValue");
 
-                  final itemRef = await firestore
+                  final itemRef = await inventoryItemRepository
                       .getItemDocumentReference(barcodeValue)
                       .get();
 

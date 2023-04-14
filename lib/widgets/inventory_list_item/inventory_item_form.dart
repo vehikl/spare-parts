@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
-import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 
@@ -41,7 +41,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
   }
 
   _handleSave() async {
-    final firestoreService = context.read<FirestoreService>();
+    final inventoryItemRepository = context.read<InventoryItemRepository>();
 
     if (_formKey.currentState!.validate()) {
       try {
@@ -54,9 +54,9 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
           isPrivate: _newIsPrivate,
         );
         if (widget.formState == InventoryFormState.add) {
-          await firestoreService.addItem(item);
+          await inventoryItemRepository.add(item);
         } else {
-          await firestoreService.updateItem(widget.item?.id, item);
+          await inventoryItemRepository.update(widget.item?.id, item);
         }
         Navigator.of(context).pop();
       } catch (e) {

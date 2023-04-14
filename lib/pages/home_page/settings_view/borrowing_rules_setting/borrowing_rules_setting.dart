@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/pages/home_page/settings_view/borrowing_rules_setting/item_type_edit_button.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/buttons/async_elevated_button.dart';
 import 'package:spare_parts/widgets/buttons/async_icon_button.dart';
@@ -56,13 +57,14 @@ class BorrowingRulesSetting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final firestoreService = context.watch<FirestoreService>();
+    final borrowingRuleRepository = context.read<BorrowingRuleRepository>();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         TitleText('Borrowing Rules'),
         StreamBuilder<List<BorrowingRule>>(
-          stream: firestoreService.borrowingRulesStream(),
+          stream: borrowingRuleRepository.borrowingRulesStream(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return ErrorContainer(error: snapshot.error.toString());

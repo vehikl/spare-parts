@@ -4,7 +4,7 @@ import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/available_items_filter.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/search_field.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/user_filter.dart';
-import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
@@ -47,7 +47,7 @@ class _InventoryViewState extends State<InventoryView> {
 
   @override
   Widget build(BuildContext context) {
-    final firestoreService = context.watch<FirestoreService>();
+    final inventoryItemRepository = context.read<InventoryItemRepository>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -99,7 +99,7 @@ class _InventoryViewState extends State<InventoryView> {
         Divider(),
         Expanded(
           child: StreamBuilder<List<InventoryItem>>(
-            stream: firestoreService.getItemsStream(
+            stream: inventoryItemRepository.getItemsStream(
               withNoBorrower:
                   _selectedBorrowers.isEmpty && _showOnlyAvailableItems,
               whereTypeIn:

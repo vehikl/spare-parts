@@ -5,6 +5,7 @@ import 'package:spare_parts/entities/borrowing_request.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/services/repositories/repositories.dart';
 
 class BorrowingRequestDialog extends StatefulWidget {
   final InventoryItem item;
@@ -25,6 +26,7 @@ class _BorrowingRequestDialogState extends State<BorrowingRequestDialog> {
 
   submitBorrowingRequest() async {
     FirestoreService firestoreService = context.read<FirestoreService>();
+    BorrowingRequestRepository borrowingRequestRepository = context.read<BorrowingRequestRepository>();
     FirebaseAuth auth = context.read<FirebaseAuth>();
 
     if (auth.currentUser?.uid == null) return;
@@ -36,7 +38,7 @@ class _BorrowingRequestDialogState extends State<BorrowingRequestDialog> {
     setState(() {
       _isLoading = true;
     });
-    await firestoreService.addBorrowingRequest(borrowingRequest);
+    await borrowingRequestRepository.add(borrowingRequest);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
           'Your borrowing request was submitted successfully. You will be notified when a decision is made.'),
