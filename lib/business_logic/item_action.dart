@@ -144,6 +144,7 @@ class BorrowItemAction extends ItemAction {
   handle(BuildContext context, InventoryItem item) {
     final firestoreService = context.read<FirestoreService>();
     final inventoryItemRepository = context.read<InventoryItemRepository>();
+    final borrowingRuleRepository = context.read<BorrowingRuleRepository>();
     final auth = context.read<FirebaseAuth>();
 
     commonHandle(
@@ -152,10 +153,10 @@ class BorrowItemAction extends ItemAction {
         if (user == null) return false;
 
         final borrowingRule =
-            await firestoreService.getBorrowingRuleForItemType(item.type);
+            await borrowingRuleRepository.getForItemType(item.type);
 
         if (borrowingRule != null) {
-          final borrowingCount = await firestoreService.getBorrowingCount(
+          final borrowingCount = await borrowingRuleRepository.getBorrowingCount(
             item.type,
             auth.currentUser!.uid,
           );

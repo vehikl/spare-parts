@@ -21,46 +21,6 @@ class FirestoreService {
   CollectionReference get borrowingRequestsCollection =>
       _firestore.collection('borrowingRequests');
 
-  Stream<List<BorrowingRule>> borrowingRulesStream() {
-    return borrowingRulesCollection.snapshots().map((e) => e.docs
-        .map((doc) => BorrowingRule.fromFirestore(
-            doc as QueryDocumentSnapshot<Map<String, dynamic>>))
-        .toList());
-  }
-
-  Future<BorrowingRule?> getBorrowingRuleForItemType(String itemType) async {
-    final borrowingRuleDocs =
-        await borrowingRulesCollection.where('type', isEqualTo: itemType).get();
-
-    if (borrowingRuleDocs.docs.isEmpty) return null;
-
-    return BorrowingRule.fromFirestore(borrowingRuleDocs.docs.first
-        as QueryDocumentSnapshot<Map<String, dynamic>>);
-  }
-
-  Future<void> updateBorrowingRule(BorrowingRule borrowingRule) async {
-    await borrowingRulesCollection.doc(borrowingRule.id).update(
-          borrowingRule.toFirestore(),
-        );
-  }
-
-  Future<void> addBorrowingRule(BorrowingRule borrowingRule) async {
-    await borrowingRulesCollection.add(borrowingRule.toFirestore());
-  }
-
-  Future<void> deleteBorrowingRule(BorrowingRule borrowingRule) async {
-    await borrowingRulesCollection.doc(borrowingRule.id).delete();
-  }
-
-  Future<dynamic> getBorrowingCount(String itemType, String uid) async {
-    final items = await itemsCollection
-        .where('type', isEqualTo: itemType)
-        .where('borrowerId', isEqualTo: uid)
-        .get();
-
-    return items.docs.length;
-  }
-
   Stream<List<Event>> getEventsStream(String? inventoryItemId) {
     return itemsCollection
         .doc(inventoryItemId)

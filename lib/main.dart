@@ -46,8 +46,10 @@ class _MyAppState extends State<MyApp> {
         Provider<FirebaseAuth>(create: (_) => FirebaseAuth.instance),
         Provider<FirestoreService>(
             create: (_) => FirestoreService(FirebaseFirestore.instance)),
-            Provider<InventoryItemRepository>(
+        Provider<InventoryItemRepository>(
             create: (_) => InventoryItemRepository(FirebaseFirestore.instance)),
+            Provider<BorrowingRuleRepository>(
+            create: (_) => BorrowingRuleRepository(FirebaseFirestore.instance)),
         Provider<CallableService>(create: (_) => CallableService())
       ],
       child: MaterialApp(
