@@ -49,6 +49,10 @@ Future<void> pumpPage(
         Provider<BorrowingRuleRepository>(
             create: (_) =>
                 BorrowingRuleRepository(firestore ?? FakeFirebaseFirestore())),
+        Provider<BorrowingRequestRepository>(
+          create: (_) =>
+              BorrowingRequestRepository(firestore ?? FakeFirebaseFirestore()),
+        ),
         Provider<CallableService>(
             create: (context) => callableService ?? mockCallableService),
       ],

@@ -145,6 +145,7 @@ class BorrowItemAction extends ItemAction {
     final firestoreService = context.read<FirestoreService>();
     final inventoryItemRepository = context.read<InventoryItemRepository>();
     final borrowingRuleRepository = context.read<BorrowingRuleRepository>();
+        final borrowingRequestRepository = context.read<BorrowingRequestRepository>();
     final auth = context.read<FirebaseAuth>();
 
     commonHandle(
@@ -162,8 +163,8 @@ class BorrowItemAction extends ItemAction {
           );
 
           if (borrowingCount >= borrowingRule.maxBorrowingCount) {
-            final pendingBorrowingRequest = await firestoreService
-                .getPendingBorrowingRequestForInventoryItem(item.id);
+            final pendingBorrowingRequest = await borrowingRequestRepository
+                .getPendingForInventoryItem(item.id);
             if (pendingBorrowingRequest != null) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text('You have already requested this item'),

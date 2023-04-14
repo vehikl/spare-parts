@@ -50,6 +50,8 @@ class _MyAppState extends State<MyApp> {
             create: (_) => InventoryItemRepository(FirebaseFirestore.instance)),
             Provider<BorrowingRuleRepository>(
             create: (_) => BorrowingRuleRepository(FirebaseFirestore.instance)),
+            Provider<BorrowingRuleRepository>(
+            create: (_) => BorrowingRuleRepository(FirebaseFirestore.instance)),
         Provider<CallableService>(create: (_) => CallableService())
       ],
       child: MaterialApp(

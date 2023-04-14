@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/borrowing_request.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
-import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
@@ -26,8 +25,9 @@ class _BorrowingRequestActionsButtonState
   bool _processing = false;
 
   void _handleSelection(value) async {
-    final firestoreService = context.read<FirestoreService>();
     final inventoryItemRepository = context.read<InventoryItemRepository>();
+    final borrowingRequestRepository =
+        context.read<BorrowingRequestRepository>();
     final auth = context.read<FirebaseAuth>();
     if (_processing) return;
 
@@ -37,9 +37,7 @@ class _BorrowingRequestActionsButtonState
 
     try {
       if (value == 'delete') {
-        await firestoreService.deleteBorrowingRequest(
-          widget.borrowingRequest.id,
-        );
+        await borrowingRequestRepository.delete(widget.borrowingRequest.id);
       } else {
         final requestedItemDoc = await inventoryItemRepository
             .getItemDocumentReference(widget.borrowingRequest.item.id)
@@ -50,7 +48,7 @@ class _BorrowingRequestActionsButtonState
         requestedItem.borrower = widget.borrowingRequest.issuer;
         await inventoryItemRepository.update(requestedItem.id, requestedItem);
 
-        await firestoreService.makeDecisionOnBorrowingRequest(
+        await borrowingRequestRepository.makeDecision(
           decisionMaker: CustomUser.fromUser(auth.currentUser!),
           borrowingRequest: widget.borrowingRequest,
           isApproved: value == 'approve',
