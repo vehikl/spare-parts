@@ -40,7 +40,7 @@ class BorrowingRuleRepository extends FirestoreService {
   Future<dynamic> getBorrowingCount(String itemType, String uid) async {
     final items = await itemsCollection
         .where('type', isEqualTo: itemType)
-        .where('borrowerId', isEqualTo: uid)
+        .where('borrower.uid', isEqualTo: uid)
         .get();
 
     return items.docs.length;

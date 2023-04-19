@@ -48,7 +48,6 @@ class InventoryItem {
       'description': description,
       'storageLocation': storageLocation,
       'borrower': borrower?.toFirestore(),
-      'borrowerId': borrower?.uid,
       'isPrivate': isPrivate,
     };
   }

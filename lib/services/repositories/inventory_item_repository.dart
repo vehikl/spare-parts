@@ -30,16 +30,16 @@ class InventoryItemRepository extends FirestoreService {
     Query<Object?>? query;
 
     if (withNoBorrower != null && withNoBorrower) {
-      query = itemsCollection.where('borrowerId', isNull: true);
+      query = itemsCollection.where('borrower.uid', isNull: true);
     }
 
     if (whereBorrowerIs != null) {
-      query = itemsCollection.where('borrowerId', isEqualTo: whereBorrowerIs);
+      query = itemsCollection.where('borrower.uid', isEqualTo: whereBorrowerIs);
     }
 
     if (whereBorrowerIn != null) {
       query = (query ?? itemsCollection).where(
-        'borrowerId',
+        'borrower.uid',
         whereIn: whereBorrowerIn,
       );
     }
@@ -64,14 +64,12 @@ class InventoryItemRepository extends FirestoreService {
   Future<void> borrow(InventoryItem item, CustomUser user) async {
     await getItemDocumentReference(item.id).update({
       'borrower': user.toFirestore(),
-      'borrowerId': user.uid,
     });
   }
 
   Future<void> release(InventoryItem item) async {
     await getItemDocumentReference(item.id).update({
       'borrower': null,
-      'borrowerId': null,
     });
   }
 
