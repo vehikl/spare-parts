@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
+import 'package:spare_parts/entities/inventory_items/laptop.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
@@ -10,6 +11,10 @@ import '../helpers/test_helpers.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
+
+  setUp(() {
+    deleteAllData(firestore);
+  });
 
   testWidgets('Displays the name of the item', (WidgetTester tester) async {
     final testItem = InventoryItem(
@@ -82,6 +87,24 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('Displays Laptop metadata', (WidgetTester tester) async {
+    final testItem =
+        Laptop(id: 'foo', name: 'Test Item', serialNumber: '145541');
+
+    await firestore
+        .collection('items')
+        .doc(testItem.id)
+        .set(testItem.toFirestore());
+
+    await pumpPage(
+      Scaffold(body: ItemPage(itemId: testItem.id)),
+      tester,
+      firestore: firestore,
+    );
+
+    expect(find.text(testItem.serialNumber), findsOneWidget);
   });
 
   group('item event history', () {
