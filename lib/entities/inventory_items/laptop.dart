@@ -41,4 +41,20 @@ class Laptop extends InventoryItem {
       isPrivate: data['isPrivate'] ?? false,
     );
   }
+
+  static Laptop fromInventoryItem(InventoryItem item) {
+    if (item is Laptop) {
+      return item;
+    }
+
+    return Laptop(
+      id: item.id,
+      name: item.name,
+      serialNumber: '',
+      description: item.description,
+      storageLocation: item.storageLocation,
+      borrower: item.borrower,
+      isPrivate: item.isPrivate,
+    );
+  }
 }

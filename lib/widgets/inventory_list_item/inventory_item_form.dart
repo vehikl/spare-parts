@@ -21,26 +21,20 @@ class InventoryItemForm extends StatefulWidget {
 
 class _InventoryItemFormState extends State<InventoryItemForm> {
   final _formKey = GlobalKey<FormState>();
-  String _newId = '';
-  String _newName = '';
-  String? _newDescription;
-  String _newType = itemTypes.keys.first;
-  String? _newStorageLocation;
-  bool _newIsPrivate = false;
-
-  String _serialNumber = '';
+  late InventoryItem _newItem;
 
   @override
   void initState() {
+    _newItem = InventoryItem(id: '', type: itemTypes.keys.first);
     final item = widget.item;
     if (item != null) {
-      _newId = item.id;
-      _newType = item.type;
-      _newName = item.name;
-      _newDescription = item.description;
-      _newIsPrivate = item.isPrivate;
+      _newItem.id = item.id;
+      _newItem.type = item.type;
+      _newItem.name = item.name;
+      _newItem.description = item.description;
+      _newItem.isPrivate = item.isPrivate;
       if (item is Laptop) {
-        _serialNumber = item.serialNumber;
+        _newItem = Laptop.fromInventoryItem(_newItem);
       }
     }
     super.initState();
@@ -51,27 +45,10 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
 
     if (_formKey.currentState!.validate()) {
       try {
-        final item = widget.item is Laptop
-            ? Laptop(
-                id: _newId,
-                name: _newName,
-                serialNumber: _serialNumber,
-                description: _newDescription,
-                storageLocation: _newStorageLocation,
-                isPrivate: _newIsPrivate,
-              )
-            : InventoryItem(
-                id: _newId,
-                type: _newType,
-                name: _newName,
-                description: _newDescription,
-                storageLocation: _newStorageLocation,
-                isPrivate: _newIsPrivate,
-              );
         if (widget.formState == InventoryFormState.add) {
-          await inventoryItemRepository.add(item);
+          await inventoryItemRepository.add(_newItem);
         } else {
-          await inventoryItemRepository.update(widget.item?.id, item);
+          await inventoryItemRepository.update(widget.item?.id, _newItem);
         }
         Navigator.of(context).pop();
       } catch (e) {
@@ -99,7 +76,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                 decoration: const InputDecoration(label: Text('ID')),
                 onChanged: (String newValue) {
                   setState(() {
-                    _newId = newValue;
+                    _newItem.id = newValue;
                   });
                 },
                 validator: (text) {
@@ -110,11 +87,11 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                 },
               ),
               TextFormField(
-                initialValue: _newName,
+                initialValue: _newItem.name,
                 decoration: const InputDecoration(label: Text('Name')),
                 onChanged: (String newValue) {
                   setState(() {
-                    _newName = newValue;
+                    _newItem.name = newValue;
                   });
                 },
                 validator: (text) {
@@ -125,7 +102,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                 },
               ),
               DropdownButtonFormField<String>(
-                value: _newType,
+                value: _newItem.type,
                 decoration: InputDecoration(label: Text('Item Type')),
                 items: itemTypes.keys
                     .map<DropdownMenuItem<String>>((String value) {
@@ -136,18 +113,23 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                 }).toList(),
                 onChanged: (String? newValue) {
                   setState(() {
-                    _newType = newValue!;
+                    if (newValue == 'Laptop') {
+                      _newItem = Laptop.fromInventoryItem(_newItem);
+                    } else {
+                      _newItem = InventoryItem.fromInventoryItem(_newItem);
+                    }
+                    _newItem.type = newValue!;
                   });
                 },
               ),
-              if (widget.item is Laptop)
+              if (_newItem is Laptop)
                 TextFormField(
-                  initialValue: _serialNumber,
+                  initialValue: (_newItem as Laptop).serialNumber,
                   decoration:
                       const InputDecoration(label: Text('Serial Number')),
                   onChanged: (String newValue) {
                     setState(() {
-                      _serialNumber = newValue;
+                      (_newItem as Laptop).serialNumber = newValue;
                     });
                   },
                   validator: (text) {
@@ -158,7 +140,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                   },
                 ),
               DropdownButtonFormField<String>(
-                value: _newStorageLocation,
+                value: _newItem.storageLocation,
                 decoration: InputDecoration(label: Text('Storage Location')),
                 items: ['Waterloo', 'London'].map((String value) {
                   return DropdownMenuItem<String>(
@@ -168,27 +150,27 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                 }).toList(),
                 onChanged: (String? newValue) {
                   setState(() {
-                    _newStorageLocation = newValue!;
+                    _newItem.storageLocation = newValue!;
                   });
                 },
               ),
               TextFormField(
-                initialValue: _newDescription,
+                initialValue: _newItem.description,
                 decoration: const InputDecoration(labelText: 'Description'),
                 minLines: 1,
                 maxLines: 3,
                 onChanged: (String newValue) {
                   setState(() {
-                    _newDescription = newValue;
+                    _newItem.description = newValue;
                   });
                 },
               ),
               SwitchListTile(
                 title: const Text('Only visible to admins'),
-                value: _newIsPrivate,
+                value: _newItem.isPrivate,
                 onChanged: (value) {
                   setState(() {
-                    _newIsPrivate = value;
+                    _newItem.isPrivate = value;
                   });
                 },
               )

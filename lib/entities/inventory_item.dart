@@ -57,4 +57,16 @@ class InventoryItem {
       'isPrivate': isPrivate,
     };
   }
+
+  static InventoryItem fromInventoryItem(InventoryItem item) {
+    return InventoryItem(
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      description: item.description,
+      storageLocation: item.storageLocation,
+      borrower: item.borrower,
+      isPrivate: item.isPrivate,
+    );
+  }
 }
