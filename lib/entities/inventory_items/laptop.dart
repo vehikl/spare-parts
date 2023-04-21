@@ -3,11 +3,11 @@ import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 
 class Laptop extends InventoryItem {
-  String serialNumber;
+  String serial;
 
   Laptop({
     required super.id,
-    required this.serialNumber,
+    required this.serial,
     String? name,
     super.description,
     super.storageLocation,
@@ -19,7 +19,7 @@ class Laptop extends InventoryItem {
   Map<String, dynamic> toFirestore() {
     return {
       ...super.toFirestore(),
-      'serialNumber': serialNumber,
+      'serial': serial,
     };
   }
 
@@ -32,7 +32,7 @@ class Laptop extends InventoryItem {
     return Laptop(
       id: doc.id,
       name: data['name'] ?? doc.id,
-      serialNumber: data['serialNumber'],
+      serial: data['serial'],
       description: data['description'],
       storageLocation: data['storageLocation'],
       borrower: data['borrower'] == null
@@ -50,7 +50,7 @@ class Laptop extends InventoryItem {
     return Laptop(
       id: item.id,
       name: item.name,
-      serialNumber: '',
+      serial: '',
       description: item.description,
       storageLocation: item.storageLocation,
       borrower: item.borrower,

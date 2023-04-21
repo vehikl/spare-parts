@@ -185,7 +185,8 @@ void main() {
         await tester.pumpAndSettle();
 
         await tester.enterTextByLabel('Name', newItemName);
-        await tester.selectDropdownOption('Item Type', 'Laptop');
+        const newType = 'Desk';
+        await tester.selectDropdownOption('Item Type', newType);
 
         await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
@@ -194,7 +195,7 @@ void main() {
         expect(find.text(oldItemName), findsNothing);
         final newItemTypeIcon = find.descendant(
           of: find.byType(InventoryListItem),
-          matching: find.byIcon(Icons.laptop),
+          matching: find.byIcon(itemTypes[newType]!),
         );
         expect(newItemTypeIcon, findsOneWidget);
       },

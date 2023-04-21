@@ -5,6 +5,7 @@ import 'package:spare_parts/entities/inventory_items/laptop.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
+import 'package:spare_parts/widgets/buttons/async_elevated_button.dart';
 
 enum InventoryFormState { edit, add }
 
@@ -28,19 +29,16 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
     _newItem = InventoryItem(id: '', type: itemTypes.keys.first);
     final item = widget.item;
     if (item != null) {
-      _newItem.id = item.id;
-      _newItem.type = item.type;
-      _newItem.name = item.name;
-      _newItem.description = item.description;
-      _newItem.isPrivate = item.isPrivate;
       if (item is Laptop) {
-        _newItem = Laptop.fromInventoryItem(_newItem);
+        _newItem = Laptop.fromInventoryItem(item);
+      } else {
+        _newItem = InventoryItem.fromInventoryItem(item);
       }
     }
     super.initState();
   }
 
-  _handleSave() async {
+  Future<void> _handleSave() async {
     final inventoryItemRepository = context.read<InventoryItemRepository>();
 
     if (_formKey.currentState!.validate()) {
@@ -124,12 +122,12 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
               ),
               if (_newItem is Laptop)
                 TextFormField(
-                  initialValue: (_newItem as Laptop).serialNumber,
+                  initialValue: (_newItem as Laptop).serial,
                   decoration:
                       const InputDecoration(label: Text('Serial Number')),
                   onChanged: (String newValue) {
                     setState(() {
-                      (_newItem as Laptop).serialNumber = newValue;
+                      (_newItem as Laptop).serial = newValue;
                     });
                   },
                   validator: (text) {
@@ -179,7 +177,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
         ),
       ),
       actions: <Widget>[
-        ElevatedButton(onPressed: _handleSave, child: const Text('Save')),
+        AsyncElevatedButton(onPressed: _handleSave, text: 'Save'),
       ],
     );
   }

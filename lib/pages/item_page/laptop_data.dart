@@ -14,7 +14,7 @@ class LaptopData extends StatelessWidget {
           'Serial Number:',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        Text(laptop.serialNumber),
+        Text(laptop.serial),
       ],
     );
   }

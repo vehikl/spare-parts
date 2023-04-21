@@ -30,7 +30,7 @@ class InventoryItemRepository extends FirestoreService {
     Query<Object?>? query;
 
     if (withNoBorrower != null && withNoBorrower) {
-      query = itemsCollection.where('borrower.uid', isNull: true);
+      query = itemsCollection.where('borrower', isNull: true);
     }
 
     if (whereBorrowerIs != null) {

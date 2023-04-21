@@ -84,7 +84,7 @@ void main() {
         storageLocation: 'Waterloo',
         description: 'Lorem ipsum',
         isPrivate: true,
-        serialNumber: '123456789',
+        serial: '123456789',
       );
       await pumpPage(
         InventoryItemForm(formState: InventoryFormState.edit, item: item),
@@ -93,7 +93,7 @@ void main() {
       );
 
       expect(find.text('Serial Number'), findsOneWidget);
-      expect(find.text(item.serialNumber), findsOneWidget);
+      expect(find.text(item.serial), findsOneWidget);
     });
   });
 }
