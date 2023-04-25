@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
+import 'package:spare_parts/utilities/helpers.dart';
 
 class Laptop extends InventoryItem {
   String serial;
+  DateTime? purchaseDate;
 
   Laptop({
     required super.id,
     required this.serial,
+    this.purchaseDate,
     String? name,
     super.description,
     super.storageLocation,
@@ -15,11 +18,20 @@ class Laptop extends InventoryItem {
     super.isPrivate = false,
   }) : super(type: 'Laptop', name: name);
 
+  String get formattedPurchaseDate {
+    if (purchaseDate == null) {
+      return 'Not set';
+    }
+
+    return formatDate(purchaseDate!, withTime: false);
+  }
+
   @override
   Map<String, dynamic> toFirestore() {
     return {
       ...super.toFirestore(),
       'serial': serial,
+      'purchaseDate': purchaseDate,
     };
   }
 
@@ -33,6 +45,7 @@ class Laptop extends InventoryItem {
       id: doc.id,
       name: data['name'] ?? doc.id,
       serial: data['serial'],
+      purchaseDate: data['purchaseDate']?.toDate(),
       description: data['description'],
       storageLocation: data['storageLocation'],
       borrower: data['borrower'] == null

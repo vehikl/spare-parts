@@ -33,6 +33,10 @@ Future configureEmulators() async {
   }
 }
 
-String formatDate(DateTime dateTime) {
-  return DateFormat.yMMMMd().add_jm().format(dateTime);
+String formatDate(DateTime dateTime, {bool withTime = true}) {
+  var dateTimeFormat = DateFormat.yMMMMd();
+  if (withTime) {
+    dateTimeFormat = dateTimeFormat.add_jm();
+  }
+  return dateTimeFormat.format(dateTime);
 }

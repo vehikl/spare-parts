@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
 import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 
 import '../helpers/test_helpers.dart';
@@ -78,22 +79,25 @@ void main() {
 
     testWidgets('Allows editing extra data if an item is a Laptop',
         (WidgetTester tester) async {
-      final item = Laptop(
+      final laptop = Laptop(
         id: '#145',
         name: 'Laptop 3000',
         storageLocation: 'Waterloo',
         description: 'Lorem ipsum',
         isPrivate: true,
         serial: '123456789',
+        purchaseDate: DateTime.now()
       );
       await pumpPage(
-        InventoryItemForm(formState: InventoryFormState.edit, item: item),
+        InventoryItemForm(formState: InventoryFormState.edit, item: laptop),
         tester,
         userRole: UserRole.admin,
       );
 
       expect(find.text('Serial Number'), findsOneWidget);
-      expect(find.text(item.serial), findsOneWidget);
+      expect(find.text(laptop.serial), findsOneWidget);
+      expect(find.text('Purchase Date'), findsOneWidget);
+      expect(find.text(laptop.formattedPurchaseDate), findsOneWidget);
     });
   });
 }

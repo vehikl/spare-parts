@@ -6,6 +6,7 @@ import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/buttons/async_elevated_button.dart';
+import 'package:spare_parts/widgets/inventory_list_item/laptop_form_fields.dart';
 
 enum InventoryFormState { edit, add }
 
@@ -121,22 +122,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                 },
               ),
               if (_newItem is Laptop)
-                TextFormField(
-                  initialValue: (_newItem as Laptop).serial,
-                  decoration:
-                      const InputDecoration(label: Text('Serial Number')),
-                  onChanged: (String newValue) {
-                    setState(() {
-                      (_newItem as Laptop).serial = newValue;
-                    });
-                  },
-                  validator: (text) {
-                    if (text == null || text.isEmpty) {
-                      return 'You must set a serial number';
-                    }
-                    return null;
-                  },
-                ),
+                LaptopFormFields(laptop: _newItem as Laptop),
               DropdownButtonFormField<String>(
                 value: _newItem.storageLocation,
                 decoration: InputDecoration(label: Text('Storage Location')),
