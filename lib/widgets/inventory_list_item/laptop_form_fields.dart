@@ -40,7 +40,10 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
         ),
         TextFormField(
           controller: _purchaseDateController,
-          decoration: const InputDecoration(label: Text('Purchase Date')),
+          decoration: const InputDecoration(
+            label: Text('Purchase Date'),
+            suffixIcon: Icon(Icons.calendar_today),
+          ),
           onTap: () async {
             final value = await showDatePicker(
               context: context,
@@ -50,7 +53,8 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             );
             setState(() {
               widget.laptop.purchaseDate = value;
-              _purchaseDateController.text = widget.laptop.formattedPurchaseDate;
+              _purchaseDateController.text =
+                  widget.laptop.formattedPurchaseDate;
             });
           },
         ),
