@@ -15,6 +15,11 @@ class LaptopData extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         Text(laptop.serial),
+        Text(
+          'Purchase Date:',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(laptop.formattedPurchaseDate),
       ],
     );
   }

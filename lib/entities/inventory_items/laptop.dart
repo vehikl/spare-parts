@@ -20,7 +20,7 @@ class Laptop extends InventoryItem {
 
   String get formattedPurchaseDate {
     if (purchaseDate == null) {
-      return 'Not set';
+      return 'N/A';
     }
 
     return formatDate(purchaseDate!, withTime: false);

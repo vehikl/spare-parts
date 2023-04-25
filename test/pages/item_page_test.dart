@@ -90,7 +90,7 @@ void main() {
   });
 
   testWidgets('Displays Laptop metadata', (WidgetTester tester) async {
-    final testItem = Laptop(id: 'foo', name: 'Test Item', serial: '145541');
+    final testItem = Laptop(id: 'foo', name: 'Test Item', serial: '145541', purchaseDate: DateTime.now(),);
 
     await firestore
         .collection('items')
@@ -104,6 +104,7 @@ void main() {
     );
 
     expect(find.text(testItem.serial), findsOneWidget);
+    expect(find.text(testItem.formattedPurchaseDate), findsOneWidget);
   });
 
   group('item event history', () {
