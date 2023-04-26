@@ -110,6 +110,8 @@ class _InventoryViewState extends State<InventoryView> {
             ),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
+                debugPrint(snapshot.error.toString());
+                debugPrintStack(stackTrace: snapshot.stackTrace);
                 return ErrorContainer(error: snapshot.error.toString());
               }
 

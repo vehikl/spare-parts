@@ -74,12 +74,13 @@ class _ItemPageState extends State<ItemPage> {
                                     : 'N/A'),
                               ],
                             ),
+                            SizedBox(height: 10),
                             if (item is Laptop) LaptopData(laptop: item),
+                            SizedBox(height: 10),
                             if (item.description != null)
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(height: 10),
                                   Text(
                                     'Description:',
                                     style:

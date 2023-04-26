@@ -6,11 +6,27 @@ import 'package:spare_parts/utilities/helpers.dart';
 class Laptop extends InventoryItem {
   String serial;
   DateTime? purchaseDate;
+  int? year;
+  int? size;
+  String? model;
+  String? colour;
+  String? build;
+  int? ram;
+  String? disk;
+  String? warranty;
 
   Laptop({
     required super.id,
     required this.serial,
     this.purchaseDate,
+    this.year,
+    this.size,
+    this.model,
+    this.colour,
+    this.build,
+    this.ram,
+    this.disk,
+    this.warranty,
     String? name,
     super.description,
     super.storageLocation,
@@ -26,12 +42,28 @@ class Laptop extends InventoryItem {
     return formatDate(purchaseDate!, withTime: false);
   }
 
+  String get formattedSize {
+    if (size == null) {
+      return 'N/A';
+    }
+
+    return '$size"';
+  }
+
   @override
   Map<String, dynamic> toFirestore() {
     return {
       ...super.toFirestore(),
       'serial': serial,
       'purchaseDate': purchaseDate,
+      'year': year,
+      'size': size,
+      'model': model,
+      'colour': colour,
+      'build': build,
+      'ram': ram,
+      'disk': disk,
+      'warranty': warranty,
     };
   }
 
@@ -46,6 +78,14 @@ class Laptop extends InventoryItem {
       name: data['name'] ?? doc.id,
       serial: data['serial'],
       purchaseDate: data['purchaseDate']?.toDate(),
+      year: data['year'],
+      size: data['size'],
+      model: data['model'],
+      colour: data['colour'],
+      build: data['build'],
+      ram: data['ram'],
+      disk: data['disk'],
+      warranty: data['warranty'],
       description: data['description'],
       storageLocation: data['storageLocation'],
       borrower: data['borrower'] == null

@@ -90,7 +90,20 @@ void main() {
   });
 
   testWidgets('Displays Laptop metadata', (WidgetTester tester) async {
-    final testItem = Laptop(id: 'foo', name: 'Test Item', serial: '145541', purchaseDate: DateTime.now(),);
+    final testItem = Laptop(
+      id: 'foo',
+      name: 'Test Item',
+      serial: '145541',
+      purchaseDate: DateTime.now(),
+      year: 2019,
+      size: 15,
+      model: 'MacBook Pro',
+      colour: 'Space Grey',
+      build: '2.3GHz x 4 i7 / 32GB',
+      ram: 16,
+      disk: '512GB',
+      warranty: 'AppleCare+',
+    );
 
     await firestore
         .collection('items')
@@ -105,6 +118,14 @@ void main() {
 
     expect(find.text(testItem.serial), findsOneWidget);
     expect(find.text(testItem.formattedPurchaseDate), findsOneWidget);
+    expect(find.text(testItem.year.toString()), findsOneWidget);
+    expect(find.text(testItem.formattedSize), findsOneWidget);
+    expect(find.text(testItem.model!), findsOneWidget);
+    expect(find.text(testItem.colour!), findsOneWidget);
+    expect(find.text(testItem.build!), findsOneWidget);
+    expect(find.text(testItem.ram.toString()), findsOneWidget);
+    expect(find.text(testItem.disk!), findsOneWidget);
+    expect(find.text(testItem.warranty!), findsOneWidget);
   });
 
   group('item event history', () {
