@@ -21,6 +21,7 @@ class LaptopData extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: ItemPropertyText(
@@ -50,6 +51,7 @@ class LaptopData extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               flex: 2,
