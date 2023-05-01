@@ -86,7 +86,15 @@ void main() {
         description: 'Lorem ipsum',
         isPrivate: true,
         serial: '123456789',
-        purchaseDate: DateTime.now()
+        purchaseDate: DateTime.now(),
+        year: 2000,
+        size: 12,
+        model: 'Big',
+        colour: 'Yellow',
+        build: 'Good',
+        ram: 64,
+        disk: '1GB',
+        warranty: 'Will not break for sure',
       );
       await pumpPage(
         InventoryItemForm(formState: InventoryFormState.edit, item: laptop),
@@ -98,6 +106,22 @@ void main() {
       expect(find.text(laptop.serial), findsOneWidget);
       expect(find.text('Purchase Date'), findsOneWidget);
       expect(find.text(laptop.formattedPurchaseDate), findsOneWidget);
+      expect(find.text('Year'), findsOneWidget);
+      expect(find.text(laptop.year.toString()), findsOneWidget);
+      expect(find.text('Size (In.)'), findsOneWidget);
+      expect(find.text(laptop.size.toString()), findsOneWidget);
+      expect(find.text('Model'), findsOneWidget);
+      expect(find.text(laptop.model!), findsOneWidget);
+      expect(find.text('Colour'), findsOneWidget);
+      expect(find.text(laptop.colour!), findsOneWidget);
+      expect(find.text('Build'), findsOneWidget);
+      expect(find.text(laptop.build!), findsOneWidget);
+      expect(find.text('RAM (GB)'), findsOneWidget);
+      expect(find.text(laptop.ram.toString()), findsOneWidget);
+      expect(find.text('Disk'), findsOneWidget);
+      expect(find.text(laptop.disk!), findsOneWidget);
+      expect(find.text('Warranty'), findsOneWidget);
+      expect(find.text(laptop.warranty!), findsOneWidget);
     });
   });
 }

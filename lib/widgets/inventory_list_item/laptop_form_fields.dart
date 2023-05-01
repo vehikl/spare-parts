@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
-import 'package:spare_parts/utilities/helpers.dart';
 
 class LaptopFormFields extends StatefulWidget {
   final Laptop laptop;
@@ -55,6 +55,114 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
               widget.laptop.purchaseDate = value;
               _purchaseDateController.text =
                   widget.laptop.formattedPurchaseDate;
+            });
+          },
+        ),
+        TextFormField(
+          initialValue: widget.laptop.year?.toString(),
+          decoration: const InputDecoration(label: Text('Year')),
+          onChanged: (String newValue) {
+            setState(() {
+              widget.laptop.year = newValue == "" ? null : int.parse(newValue);
+            });
+          },
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          validator: (text) {
+            if (text == null || text.isEmpty) return null;
+
+            final number = int.tryParse(text);
+            if (number == null) {
+              return 'Please enter a valid number';
+            }
+
+            return null;
+          },
+        ),
+        TextFormField(
+          initialValue: widget.laptop.size?.toString(),
+          decoration: const InputDecoration(label: Text('Size (In.)')),
+          onChanged: (String newValue) {
+            setState(() {
+              widget.laptop.size = newValue == "" ? null : int.parse(newValue);
+            });
+          },
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          validator: (text) {
+            if (text == null || text.isEmpty) return null;
+
+            final number = int.tryParse(text);
+            if (number == null) {
+              return 'Please enter a valid number';
+            }
+
+            return null;
+          },
+        ),
+        TextFormField(
+          initialValue: widget.laptop.model,
+          decoration: const InputDecoration(label: Text('Model')),
+          onChanged: (String newValue) {
+            setState(() {
+              widget.laptop.model = newValue == "" ? null : newValue;
+            });
+          },
+        ),
+        TextFormField(
+          initialValue: widget.laptop.colour,
+          decoration: const InputDecoration(label: Text('Colour')),
+          onChanged: (String newValue) {
+            setState(() {
+              widget.laptop.colour = newValue == "" ? null : newValue;
+            });
+          },
+        ),
+        TextFormField(
+          initialValue: widget.laptop.build,
+          decoration: const InputDecoration(label: Text('Build')),
+          onChanged: (String newValue) {
+            setState(() {
+              widget.laptop.build = newValue == "" ? null : newValue;
+            });
+          },
+        ),
+        TextFormField(
+          initialValue: widget.laptop.ram?.toString(),
+          decoration: const InputDecoration(label: Text('RAM (GB)')),
+          onChanged: (String newValue) {
+            setState(() {
+              widget.laptop.ram = newValue == "" ? null : int.parse(newValue);
+            });
+          },
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          validator: (text) {
+            if (text == null || text.isEmpty) return null;
+
+            final number = int.tryParse(text);
+            if (number == null) {
+              return 'Please enter a valid number';
+            }
+
+            return null;
+          },
+        ),
+        TextFormField(
+          initialValue: widget.laptop.disk,
+          decoration: const InputDecoration(label: Text('Disk')),
+          onChanged: (String newValue) {
+            setState(() {
+              widget.laptop.disk = newValue == "" ? null : newValue;
+            });
+          },
+        ),
+        TextFormField(
+          initialValue: widget.laptop.warranty,
+          decoration: const InputDecoration(label: Text('Warranty')),
+          onChanged: (String newValue) {
+            setState(() {
+              widget.laptop.warranty = newValue == "" ? null : newValue;
             });
           },
         ),
