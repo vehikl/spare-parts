@@ -8,6 +8,7 @@ import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 import '../helpers/test_helpers.dart';
+import '../helpers/tester_extension.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
@@ -89,8 +90,8 @@ void main() {
     );
   });
 
-  testWidgets('Displays Laptop metadata', (WidgetTester tester) async {
-    final testItem = Laptop(
+  group('when item is Laptop', () {
+    final laptop = Laptop(
       id: 'foo',
       name: 'Test Item',
       serial: '145541',
@@ -105,27 +106,57 @@ void main() {
       warranty: 'AppleCare+',
     );
 
-    await firestore
-        .collection('items')
-        .doc(testItem.id)
-        .set(testItem.toFirestore());
+    setUp(() async {
+      await firestore
+          .collection('items')
+          .doc(laptop.id)
+          .set(laptop.toFirestore());
+    });
 
-    await pumpPage(
-      Scaffold(body: ItemPage(itemId: testItem.id)),
-      tester,
-      firestore: firestore,
-    );
+    tearDown(() {
+      deleteAllData(firestore);
+    });
 
-    expect(find.text(testItem.serial), findsOneWidget);
-    expect(find.text(testItem.formattedPurchaseDate), findsOneWidget);
-    expect(find.text(testItem.year.toString()), findsOneWidget);
-    expect(find.text(testItem.formattedSize), findsOneWidget);
-    expect(find.text(testItem.model!), findsOneWidget);
-    expect(find.text(testItem.colour!), findsOneWidget);
-    expect(find.text(testItem.build!), findsOneWidget);
-    expect(find.text(testItem.ram.toString()), findsOneWidget);
-    expect(find.text(testItem.disk!), findsOneWidget);
-    expect(find.text(testItem.warranty!), findsOneWidget);
+    testWidgets('Displays Laptop metadata', (WidgetTester tester) async {
+      await pumpPage(
+        Scaffold(body: ItemPage(itemId: laptop.id)),
+        tester,
+        firestore: firestore,
+      );
+
+      expect(find.text(laptop.serial), findsOneWidget);
+      expect(find.text(laptop.formattedPurchaseDate), findsOneWidget);
+      expect(find.text(laptop.year.toString()), findsOneWidget);
+      expect(find.text(laptop.formattedSize), findsOneWidget);
+      expect(find.text(laptop.model!), findsOneWidget);
+      expect(find.text(laptop.colour!), findsOneWidget);
+      expect(find.text(laptop.build!), findsOneWidget);
+      expect(find.text(laptop.ram.toString()), findsOneWidget);
+      expect(find.text(laptop.disk!), findsOneWidget);
+      expect(find.text(laptop.warranty!), findsOneWidget);
+    });
+
+    testWidgets('Saves year information after editing a Laptop',
+        (WidgetTester tester) async {
+      String newYear = '2020';
+      await pumpPage(Scaffold(body: ItemPage(itemId: laptop.id)), tester,
+          firestore: firestore, userRole: UserRole.admin);
+
+      final optionsButton = find.byIcon(Icons.more_vert);
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
+      final editButton = find.text('Edit');
+      await tester.tap(editButton);
+      await tester.pumpAndSettle();
+
+      await tester.enterTextByLabel('Year', newYear);
+
+      final saveButton = find.text('Save');
+      await tester.tap(saveButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text(newYear), findsOneWidget);
+    });
   });
 
   group('item event history', () {
