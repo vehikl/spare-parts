@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
 import 'package:spare_parts/widgets/inputs/numeric_form_field.dart';
 
@@ -104,25 +103,13 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             });
           },
         ),
-        TextFormField(
-          initialValue: widget.laptop.ram?.toString(),
-          decoration: const InputDecoration(label: Text('RAM (GB)')),
-          onChanged: (String newValue) {
+        NumericFormField(
+          initValue: widget.laptop.ram,
+          label: 'RAM (GB)',
+          onChanged: (newRam) {
             setState(() {
-              widget.laptop.ram = newValue == "" ? null : int.parse(newValue);
+              widget.laptop.ram = newRam;
             });
-          },
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          validator: (text) {
-            if (text == null || text.isEmpty) return null;
-
-            final number = int.tryParse(text);
-            if (number == null) {
-              return 'Please enter a valid number';
-            }
-
-            return null;
           },
         ),
         TextFormField(
