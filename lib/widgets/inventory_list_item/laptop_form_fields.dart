@@ -59,25 +59,13 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             });
           },
         ),
-        TextFormField(
-          initialValue: widget.laptop.year?.toString(),
-          decoration: const InputDecoration(label: Text('Year')),
-          onChanged: (String newValue) {
+        NumericFormField(
+          initValue: widget.laptop.year,
+          label: 'Year',
+          onChanged: (newYear) {
             setState(() {
-              widget.laptop.year = newValue == "" ? null : int.parse(newValue);
+              widget.laptop.year = newYear;
             });
-          },
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          validator: (text) {
-            if (text == null || text.isEmpty) return null;
-
-            final number = int.tryParse(text);
-            if (number == null) {
-              return 'Please enter a valid number';
-            }
-
-            return null;
           },
         ),
         NumericFormField(
