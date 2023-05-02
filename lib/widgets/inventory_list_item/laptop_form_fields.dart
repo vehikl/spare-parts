@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
+import 'package:spare_parts/widgets/inputs/numeric_form_field.dart';
 
 class LaptopFormFields extends StatefulWidget {
   final Laptop laptop;
@@ -79,25 +80,13 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             return null;
           },
         ),
-        TextFormField(
-          initialValue: widget.laptop.size?.toString(),
-          decoration: const InputDecoration(label: Text('Size (In.)')),
-          onChanged: (String newValue) {
+        NumericFormField(
+          initValue: widget.laptop.size,
+          label: 'Size (In.)',
+          onChanged: (newSize) {
             setState(() {
-              widget.laptop.size = newValue == "" ? null : int.parse(newValue);
+              widget.laptop.size = newSize;
             });
-          },
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          validator: (text) {
-            if (text == null || text.isEmpty) return null;
-
-            final number = int.tryParse(text);
-            if (number == null) {
-              return 'Please enter a valid number';
-            }
-
-            return null;
           },
         ),
         TextFormField(
