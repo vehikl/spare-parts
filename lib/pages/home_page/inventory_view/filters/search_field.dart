@@ -12,8 +12,6 @@ class SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('SearchField.build');
-
     return TextField(
       key: Key('search'),
       controller: searchFieldController,
