@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 
 class SearchField extends StatelessWidget {
-  final String value;
   final void Function(String) onChanged;
+  final TextEditingController searchFieldController;
 
-  const SearchField({
+  SearchField({
     super.key,
-    required this.value,
     required this.onChanged,
+    required this.searchFieldController,
   });
 
   @override
   Widget build(BuildContext context) {
-    final searchFieldController = TextEditingController(text: value);
+    print('SearchField.build');
 
     return TextField(
+      key: Key('search'),
       controller: searchFieldController,
       decoration: InputDecoration(
         hintText: 'Search',
@@ -22,7 +23,8 @@ class SearchField extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(100)),
         ),
         suffixIcon: IconButton(
-          icon: Icon(value.isEmpty ? Icons.search : Icons.clear),
+          icon: Icon(
+              searchFieldController.text.isEmpty ? Icons.search : Icons.clear),
           onPressed: () {
             onChanged('');
             searchFieldController.clear();

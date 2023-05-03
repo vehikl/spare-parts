@@ -23,6 +23,7 @@ class _InventoryViewState extends State<InventoryView> {
   List<String> _selectedBorrowers = [];
   late bool _showOnlyAvailableItems;
   String _searchQuery = '';
+  final searchFieldController = TextEditingController();
 
   bool get isAdmin => context.read<UserRole>() == UserRole.admin;
 
@@ -58,7 +59,7 @@ class _InventoryViewState extends State<InventoryView> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SearchField(
-                  value: _searchQuery,
+                  searchFieldController: searchFieldController,
                   onChanged: (value) => setState(() {
                     _searchQuery = value;
                   }),
