@@ -12,7 +12,7 @@ import '../helpers/tester_extension.dart';
 
 void main() {
   group('InventoryItemForm', () {
-    testWidgets('Displays an error if no ID provided',
+    testWidgets('displays an error if no ID provided',
         (WidgetTester tester) async {
       await pumpPage(
         InventoryItemForm(formState: InventoryFormState.add),
@@ -31,7 +31,7 @@ void main() {
       expect(find.text('You must set an ID'), findsOneWidget);
     });
 
-    testWidgets('Displays an error if no name provided',
+    testWidgets('displays an error if no name provided',
         (WidgetTester tester) async {
       await pumpPage(
         InventoryItemForm(formState: InventoryFormState.add),
@@ -50,28 +50,57 @@ void main() {
       expect(find.text('You must set a name'), findsOneWidget);
     });
 
-    testWidgets('Allows generating a name', (WidgetTester tester) async {
-      final inventoryItemRepository = MockInventoryItemRepository();
-      await pumpPage(
-        InventoryItemForm(formState: InventoryFormState.add),
-        tester,
-        userRole: UserRole.admin,
-        inventoryItemRepository: inventoryItemRepository,
-      );
+    group('when generating item name', () {
+      testWidgets('generates new name', (WidgetTester tester) async {
+        final inventoryItemRepository = MockInventoryItemRepository();
+        await pumpPage(
+          InventoryItemForm(formState: InventoryFormState.add),
+          tester,
+          userRole: UserRole.admin,
+          inventoryItemRepository: inventoryItemRepository,
+        );
 
-      await tester.enterTextByLabel('ID', 'foo');
-      final generateNameButton = find.byIcon(Icons.autorenew);
-      await tester.tap(generateNameButton);
-      await tester.pumpAndSettle();
+        await tester.enterTextByLabel('ID', 'foo');
+        final generateNameButton = find.byIcon(Icons.autorenew);
+        await tester.tap(generateNameButton);
+        await tester.pumpAndSettle();
 
-      final addButton = find.text('Save');
-      await tester.tap(addButton);
-      await tester.pumpAndSettle();
+        final addButton = find.text('Save');
+        await tester.tap(addButton);
+        await tester.pumpAndSettle();
 
-      final savedItem = (verify(inventoryItemRepository.add(captureAny))
-          .captured
-          .single as InventoryItem);
-      expect(savedItem.name, 'Desk #1');
+        final savedItem = (verify(inventoryItemRepository.add(captureAny))
+            .captured
+            .single as InventoryItem);
+        expect(savedItem.name, 'Desk #1');
+      });
+
+      testWidgets('generates name based on the selected type',
+          (WidgetTester tester) async {
+        final inventoryItemRepository = MockInventoryItemRepository();
+        await pumpPage(
+          InventoryItemForm(formState: InventoryFormState.add),
+          tester,
+          userRole: UserRole.admin,
+          inventoryItemRepository: inventoryItemRepository,
+        );
+
+        await tester.enterTextByLabel('ID', 'foo');
+        const newItemType = 'Chair';
+        await tester.selectDropdownOption('Item Type', newItemType);
+        final generateNameButton = find.byIcon(Icons.autorenew);
+        await tester.tap(generateNameButton);
+        await tester.pumpAndSettle();
+
+        final addButton = find.text('Save');
+        await tester.tap(addButton);
+        await tester.pumpAndSettle();
+
+        final savedItem = (verify(inventoryItemRepository.add(captureAny))
+            .captured
+            .single as InventoryItem);
+        expect(savedItem.name, contains(newItemType));
+      });
     });
 
     testWidgets('Fills all the inputs when editing an item',

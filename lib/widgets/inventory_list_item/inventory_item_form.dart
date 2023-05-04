@@ -39,7 +39,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
     }
 
     _nameController.text = _newItem.name;
-    
+
     super.initState();
   }
 
@@ -64,7 +64,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
   }
 
   String _generateName() {
-    return 'Desk #1';
+    return '${_newItem.type} #1';
   }
 
   @override
