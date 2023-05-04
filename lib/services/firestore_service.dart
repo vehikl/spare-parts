@@ -16,6 +16,9 @@ class FirestoreService {
 
   CollectionReference get borrowingRequestsCollection =>
       _firestore.collection('borrowingRequests');
+  
+  CollectionReference get metaCollection => _firestore.collection('meta');
+
 
   Stream<List<Event>> getEventsStream(String? inventoryItemId) {
     return itemsCollection

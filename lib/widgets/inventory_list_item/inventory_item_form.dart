@@ -7,6 +7,7 @@ import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/buttons/async_elevated_button.dart';
 import 'package:spare_parts/widgets/inventory_list_item/laptop_form_fields.dart';
+import 'package:spare_parts/widgets/inventory_list_item/name_generation_button.dart';
 
 enum InventoryFormState { edit, add }
 
@@ -63,10 +64,6 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
     }
   }
 
-  String _generateName() {
-    return '${_newItem.type} #1';
-  }
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -97,14 +94,14 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                 controller: _nameController,
                 decoration: InputDecoration(
                   label: Text('Name'),
-                  suffixIcon: IconButton(
-                    onPressed: () {
+                  suffixIcon: NameGenerationButton(
+                    itemType: _newItem.type,
+                    onGenerate: (newName) {
                       setState(() {
-                        _newItem.name = _generateName();
-                        _nameController.text = _newItem.name;
+                        _newItem.name = newName;
+                        _nameController.text = newName;
                       });
                     },
-                    icon: Icon(Icons.autorenew),
                   ),
                 ),
                 onChanged: (String newValue) {

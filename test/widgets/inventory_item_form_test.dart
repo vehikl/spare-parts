@@ -1,3 +1,4 @@
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -100,6 +101,46 @@ void main() {
             .captured
             .single as InventoryItem);
         expect(savedItem.name, contains(newItemType));
+      });
+
+      testWidgets('generates name with a unique number',
+          (WidgetTester tester) async {
+        final inventoryItemRepository = MockInventoryItemRepository();
+        final firestore = FakeFirebaseFirestore();
+        final existingItem = InventoryItem(
+          id: '#1',
+          name: 'Desk #1',
+          type: 'Desk',
+          storageLocation: 'Waterloo',
+          description: 'Lorem ipsum',
+          isPrivate: true,
+        );
+        await firestore.collection('items').add(existingItem.toFirestore());
+        await firestore.collection('meta').doc('itemNameIds').set({
+          'Desk': 1,
+        });
+
+        await pumpPage(
+          InventoryItemForm(formState: InventoryFormState.add),
+          tester,
+          userRole: UserRole.admin,
+          inventoryItemRepository: inventoryItemRepository,
+          firestore: firestore,
+        );
+
+        await tester.enterTextByLabel('ID', 'foo');
+        final generateNameButton = find.byIcon(Icons.autorenew);
+        await tester.tap(generateNameButton);
+        await tester.pumpAndSettle();
+
+        final addButton = find.text('Save');
+        await tester.tap(addButton);
+        await tester.pumpAndSettle();
+
+        final savedItem = (verify(inventoryItemRepository.add(captureAny))
+            .captured
+            .single as InventoryItem);
+        expect(savedItem.name, 'Desk #2');
       });
     });
 
