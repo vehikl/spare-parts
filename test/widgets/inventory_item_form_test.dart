@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
+import 'package:spare_parts/services/repositories/inventory_item_repository.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 
 import '../helpers/test_helpers.dart';
@@ -47,6 +48,30 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('You must set a name'), findsOneWidget);
+    });
+
+    testWidgets('Allows generating a name', (WidgetTester tester) async {
+      final inventoryItemRepository = MockInventoryItemRepository();
+      await pumpPage(
+        InventoryItemForm(formState: InventoryFormState.add),
+        tester,
+        userRole: UserRole.admin,
+        inventoryItemRepository: inventoryItemRepository,
+      );
+
+      await tester.enterTextByLabel('ID', 'foo');
+      final generateNameButton = find.byIcon(Icons.autorenew);
+      await tester.tap(generateNameButton);
+      await tester.pumpAndSettle();
+
+      final addButton = find.text('Save');
+      await tester.tap(addButton);
+      await tester.pumpAndSettle();
+
+      final savedItem = (verify(inventoryItemRepository.add(captureAny))
+          .captured
+          .single as InventoryItem);
+      expect(savedItem.name, 'Desk #1');
     });
 
     testWidgets('Fills all the inputs when editing an item',

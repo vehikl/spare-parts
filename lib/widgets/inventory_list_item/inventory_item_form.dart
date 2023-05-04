@@ -24,6 +24,7 @@ class InventoryItemForm extends StatefulWidget {
 class _InventoryItemFormState extends State<InventoryItemForm> {
   final _formKey = GlobalKey<FormState>();
   late InventoryItem _newItem;
+  final _nameController = TextEditingController();
 
   @override
   void initState() {
@@ -36,6 +37,9 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
         _newItem = InventoryItem.fromInventoryItem(item);
       }
     }
+
+    _nameController.text = _newItem.name;
+    
     super.initState();
   }
 
@@ -57,6 +61,10 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
         );
       }
     }
+  }
+
+  String _generateName() {
+    return 'Desk #1';
   }
 
   @override
@@ -86,8 +94,19 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                 },
               ),
               TextFormField(
-                initialValue: _newItem.name,
-                decoration: const InputDecoration(label: Text('Name')),
+                controller: _nameController,
+                decoration: InputDecoration(
+                  label: Text('Name'),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _newItem.name = _generateName();
+                        _nameController.text = _newItem.name;
+                      });
+                    },
+                    icon: Icon(Icons.autorenew),
+                  ),
+                ),
                 onChanged: (String newValue) {
                   setState(() {
                     _newItem.name = newValue;
