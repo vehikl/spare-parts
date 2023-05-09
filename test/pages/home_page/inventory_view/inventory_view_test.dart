@@ -92,7 +92,6 @@ void main() {
   testWidgets(
     'Adds new item to inventory list',
     (WidgetTester tester) async {
-      const itemId = '21DSAdd4';
       const itemName = 'Table #3';
       const itemType = 'Desk';
       const itemStorageLocation = 'Waterloo';
@@ -111,7 +110,6 @@ void main() {
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
-      await tester.enterTextByLabel('ID', itemId);
       await tester.enterTextByLabel('Name', itemName);
       await tester.enterTextByLabel('Description', itemDescription);
       await tester.selectDropdownOption('Item Type', itemType);
@@ -133,7 +131,6 @@ void main() {
       await tester.tap(newItemListItem);
       await tester.pumpAndSettle();
 
-      expect(find.textContaining(itemId), findsOneWidget);
       expect(
         find.descendant(
           of: find.byType(Card),
@@ -185,7 +182,8 @@ void main() {
         await tester.pumpAndSettle();
 
         await tester.enterTextByLabel('Name', newItemName);
-        await tester.selectDropdownOption('Item Type', 'Laptop');
+        const newType = 'Desk';
+        await tester.selectDropdownOption('Item Type', newType);
 
         await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
@@ -194,7 +192,7 @@ void main() {
         expect(find.text(oldItemName), findsNothing);
         final newItemTypeIcon = find.descendant(
           of: find.byType(InventoryListItem),
-          matching: find.byIcon(Icons.laptop),
+          matching: find.byIcon(itemTypes[newType]!),
         );
         expect(newItemTypeIcon, findsOneWidget);
       },
@@ -732,7 +730,8 @@ void main() {
   });
 
   group('Searching for items', () {
-    testWidgets('should return items with ids containing the query',
+    testWidgets(
+        'should return items with ids containing the query if name is not provided',
         (WidgetTester tester) async {
       final deskItem = InventoryItem(id: 'Desk#145', type: 'Desk');
       final monitorItem = InventoryItem(id: 'Monitor#999', type: 'Monitor');
@@ -757,15 +756,101 @@ void main() {
       await tester.pumpAndSettle();
 
       var listItems = find.byType(InventoryListItem);
-      expect(listItems, findsNWidgets(3));
+      expect(listItems, findsNWidgets(2));
 
       await tester.enterText(searchField, '#1');
       await tester.pumpAndSettle();
 
       listItems = find.byType(InventoryListItem);
-      expect(listItems, findsNWidgets(2));
+      expect(listItems, findsNWidgets(1));
 
       await tester.enterText(searchField, '#14');
+      await tester.pumpAndSettle();
+
+      listItems = find.byType(InventoryListItem);
+      expect(listItems, findsNWidgets(1));
+    });
+
+    testWidgets('should return items with names containing the query',
+        (WidgetTester tester) async {
+      final deskItem = InventoryItem(
+        id: 'Desk#145',
+        name: 'Best Desk',
+        type: 'Desk',
+      );
+      final monitorItem = InventoryItem(
+        id: 'Monitor#999',
+        name: 'Better Monitor',
+        type: 'Monitor',
+      );
+      await firestore
+          .collection('items')
+          .doc(deskItem.id)
+          .set(deskItem.toFirestore());
+      await firestore
+          .collection('items')
+          .doc(monitorItem.id)
+          .set(monitorItem.toFirestore());
+
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.user,
+        firestore: firestore,
+      );
+
+      final searchField = find.byType(TextField);
+      await tester.enterText(searchField, 'Be');
+      await tester.pumpAndSettle();
+
+      var listItems = find.byType(InventoryListItem);
+      expect(listItems, findsNWidgets(2));
+
+      await tester.enterText(searchField, 'Best');
+      await tester.pumpAndSettle();
+
+      listItems = find.byType(InventoryListItem);
+      expect(listItems, findsNWidgets(1));
+    });
+
+    testWidgets('should return items with borrowers containing the query',
+        (WidgetTester tester) async {
+      final deskItem = InventoryItem(
+        id: 'Desk#145',
+        name: 'Best Desk',
+        type: 'Desk',
+        borrower: CustomUser(uid: 'foo', name: 'John Doe'),
+      );
+      final monitorItem = InventoryItem(
+        id: 'Monitor#999',
+        name: 'Better Monitor',
+        type: 'Monitor',
+        borrower: CustomUser(uid: 'bar', name: 'Jane Doe'),
+      );
+      await firestore
+          .collection('items')
+          .doc(deskItem.id)
+          .set(deskItem.toFirestore());
+      await firestore
+          .collection('items')
+          .doc(monitorItem.id)
+          .set(monitorItem.toFirestore());
+
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+      );
+
+      final searchField = find.byType(TextField);
+      await tester.enterText(searchField, 'J');
+      await tester.pumpAndSettle();
+
+      var listItems = find.byType(InventoryListItem);
+      expect(listItems, findsNWidgets(2));
+
+      await tester.enterText(searchField, 'John');
       await tester.pumpAndSettle();
 
       listItems = find.byType(InventoryListItem);
@@ -848,7 +933,7 @@ void main() {
         firestore: firestore,
       );
 
-      var query = chairItem.id.toLowerCase();
+      var query = chairItem.name.toLowerCase();
       final searchField = find.byType(TextField);
       await tester.enterText(searchField, query);
       await tester.pumpAndSettle();
@@ -856,7 +941,7 @@ void main() {
       var listItems = find.byType(InventoryListItem);
       expect(listItems, findsOneWidget);
 
-      query = chairItem.id.toUpperCase();
+      query = chairItem.name.toUpperCase();
       await tester.enterText(searchField, query);
       await tester.pumpAndSettle();
 

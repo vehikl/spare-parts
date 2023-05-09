@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
+import 'package:spare_parts/entities/inventory_items/laptop.dart';
 import 'package:spare_parts/pages/item_page/item_history.dart';
+import 'package:spare_parts/pages/item_page/laptop_data.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/error_container.dart';
@@ -18,7 +20,8 @@ class ItemPage extends StatefulWidget {
 }
 
 class _ItemPageState extends State<ItemPage> {
-  InventoryItemRepository get inventoryItemRepository => context.read<InventoryItemRepository>();
+  InventoryItemRepository get inventoryItemRepository =>
+      context.read<InventoryItemRepository>();
   UserRole get userRole => context.watch<UserRole>();
 
   @override
@@ -71,11 +74,13 @@ class _ItemPageState extends State<ItemPage> {
                                     : 'N/A'),
                               ],
                             ),
+                            SizedBox(height: 10),
+                            if (item is Laptop) LaptopData(laptop: item),
+                            SizedBox(height: 10),
                             if (item.description != null)
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(height: 10),
                                   Text(
                                     'Description:',
                                     style:

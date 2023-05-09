@@ -13,7 +13,7 @@ class DeleteButton extends StatelessWidget {
         await borrowingRuleRepository.delete(rule);
       },
       icon: Icons.delete,
-      color: Theme.of(context).errorColor,
+      color: Theme.of(context).colorScheme.error,
     );
   }
 }

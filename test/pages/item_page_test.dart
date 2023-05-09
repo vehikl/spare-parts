@@ -3,13 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
+import 'package:spare_parts/entities/inventory_items/laptop.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
 import '../helpers/test_helpers.dart';
+import '../helpers/tester_extension.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
+
+  setUp(() {
+    deleteAllData(firestore);
+  });
 
   testWidgets('Displays the name of the item', (WidgetTester tester) async {
     final testItem = InventoryItem(
@@ -82,6 +88,75 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  group('when item is Laptop', () {
+    final laptop = Laptop(
+      id: 'foo',
+      name: 'Test Item',
+      serial: '145541',
+      purchaseDate: DateTime.now(),
+      year: 2019,
+      size: 15,
+      model: 'MacBook Pro',
+      colour: 'Space Grey',
+      build: '2.3GHz x 4 i7 / 32GB',
+      ram: 16,
+      disk: '512GB',
+      warranty: 'AppleCare+',
+    );
+
+    setUp(() async {
+      await firestore
+          .collection('items')
+          .doc(laptop.id)
+          .set(laptop.toFirestore());
+    });
+
+    tearDown(() {
+      deleteAllData(firestore);
+    });
+
+    testWidgets('Displays Laptop metadata', (WidgetTester tester) async {
+      await pumpPage(
+        Scaffold(body: ItemPage(itemId: laptop.id)),
+        tester,
+        firestore: firestore,
+      );
+
+      expect(find.text(laptop.serial), findsOneWidget);
+      expect(find.text(laptop.formattedPurchaseDate), findsOneWidget);
+      expect(find.text(laptop.year.toString()), findsOneWidget);
+      expect(find.text(laptop.formattedSize), findsOneWidget);
+      expect(find.text(laptop.model!), findsOneWidget);
+      expect(find.text(laptop.colour!), findsOneWidget);
+      expect(find.text(laptop.build!), findsOneWidget);
+      expect(find.text(laptop.ram.toString()), findsOneWidget);
+      expect(find.text(laptop.disk!), findsOneWidget);
+      expect(find.text(laptop.warranty!), findsOneWidget);
+    });
+
+    testWidgets('Saves year information after editing a Laptop',
+        (WidgetTester tester) async {
+      String newYear = '2020';
+      await pumpPage(Scaffold(body: ItemPage(itemId: laptop.id)), tester,
+          firestore: firestore, userRole: UserRole.admin);
+
+      final optionsButton = find.byIcon(Icons.more_vert);
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
+      final editButton = find.text('Edit');
+      await tester.tap(editButton);
+      await tester.pumpAndSettle();
+
+      await tester.enterTextByLabel('Year', newYear);
+
+      final saveButton = find.text('Save');
+      await tester.tap(saveButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text(newYear), findsOneWidget);
+    });
   });
 
   group('item event history', () {

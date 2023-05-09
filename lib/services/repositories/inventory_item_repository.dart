@@ -30,16 +30,16 @@ class InventoryItemRepository extends FirestoreService {
     Query<Object?>? query;
 
     if (withNoBorrower != null && withNoBorrower) {
-      query = itemsCollection.where('borrowerId', isNull: true);
+      query = itemsCollection.where('borrower', isNull: true);
     }
 
     if (whereBorrowerIs != null) {
-      query = itemsCollection.where('borrowerId', isEqualTo: whereBorrowerIs);
+      query = itemsCollection.where('borrower.uid', isEqualTo: whereBorrowerIs);
     }
 
     if (whereBorrowerIn != null) {
       query = (query ?? itemsCollection).where(
-        'borrowerId',
+        'borrower.uid',
         whereIn: whereBorrowerIn,
       );
     }
@@ -64,24 +64,21 @@ class InventoryItemRepository extends FirestoreService {
   Future<void> borrow(InventoryItem item, CustomUser user) async {
     await getItemDocumentReference(item.id).update({
       'borrower': user.toFirestore(),
-      'borrowerId': user.uid,
     });
   }
 
   Future<void> release(InventoryItem item) async {
     await getItemDocumentReference(item.id).update({
       'borrower': null,
-      'borrowerId': null,
     });
   }
 
   Future<void> add(InventoryItem item) async {
-    await itemsCollection.doc(item.id).set(item.toFirestore());
+    await itemsCollection.doc().set(item.toFirestore());
   }
 
-  Future<void> update(String? itemId, InventoryItem item) async {
-    await delete(itemId);
-    await add(item);
+  Future<void> update(InventoryItem item) async {
+    await itemsCollection.doc(item.id).update(item.toFirestore());
   }
 
   List<InventoryItem> _mapQuerySnapshotToInventoryItems(

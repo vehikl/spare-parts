@@ -23,6 +23,7 @@ class _InventoryViewState extends State<InventoryView> {
   List<String> _selectedBorrowers = [];
   late bool _showOnlyAvailableItems;
   String _searchQuery = '';
+  final searchFieldController = TextEditingController();
 
   bool get isAdmin => context.read<UserRole>() == UserRole.admin;
 
@@ -58,7 +59,7 @@ class _InventoryViewState extends State<InventoryView> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SearchField(
-                  value: _searchQuery,
+                  searchFieldController: searchFieldController,
                   onChanged: (value) => setState(() {
                     _searchQuery = value;
                   }),
@@ -110,6 +111,8 @@ class _InventoryViewState extends State<InventoryView> {
             ),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
+                debugPrint(snapshot.error.toString());
+                debugPrintStack(stackTrace: snapshot.stackTrace);
                 return ErrorContainer(error: snapshot.error.toString());
               }
 
@@ -125,8 +128,13 @@ class _InventoryViewState extends State<InventoryView> {
                 );
               }
 
-              final filteredItems = items.where((i) =>
-                  i.id.toLowerCase().contains(_searchQuery.toLowerCase()));
+              final filteredItems = items.where((item) {
+                List<String?> properties = [item.name, item.borrower?.name];
+                return properties.where((property) => property != null).any(
+                    (property) => property!
+                        .toLowerCase()
+                        .contains(_searchQuery.toLowerCase()));
+              });
 
               return ListView(
                 children: filteredItems

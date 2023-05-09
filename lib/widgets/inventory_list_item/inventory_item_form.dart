@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
+import 'package:spare_parts/entities/inventory_items/laptop.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
+import 'package:spare_parts/widgets/buttons/async_elevated_button.dart';
+import 'package:spare_parts/widgets/inventory_list_item/laptop_form_fields.dart';
+import 'package:spare_parts/widgets/inventory_list_item/name_generation_button.dart';
 
 enum InventoryFormState { edit, add }
 
@@ -20,43 +24,35 @@ class InventoryItemForm extends StatefulWidget {
 
 class _InventoryItemFormState extends State<InventoryItemForm> {
   final _formKey = GlobalKey<FormState>();
-  String _newId = '';
-  String _newName = '';
-  String? _newDescription;
-  String _newType = itemTypes.keys.first;
-  String? _newStorageLocation;
-  bool _newIsPrivate = false;
+  late InventoryItem _newItem;
+  final _nameController = TextEditingController();
 
   @override
   void initState() {
+    _newItem = InventoryItem(id: '', type: itemTypes.keys.first);
     final item = widget.item;
     if (item != null) {
-      _newId = item.id;
-      _newType = item.type;
-      _newName = item.name;
-      _newDescription = item.description;
-      _newIsPrivate = item.isPrivate;
+      if (item is Laptop) {
+        _newItem = Laptop.fromInventoryItem(item);
+      } else {
+        _newItem = InventoryItem.fromInventoryItem(item);
+      }
     }
+
+    _nameController.text = _newItem.name;
+
     super.initState();
   }
 
-  _handleSave() async {
+  Future<void> _handleSave() async {
     final inventoryItemRepository = context.read<InventoryItemRepository>();
 
     if (_formKey.currentState!.validate()) {
       try {
-        final item = InventoryItem(
-          id: _newId,
-          type: _newType,
-          name: _newName,
-          description: _newDescription,
-          storageLocation: _newStorageLocation,
-          isPrivate: _newIsPrivate,
-        );
         if (widget.formState == InventoryFormState.add) {
-          await inventoryItemRepository.add(item);
+          await inventoryItemRepository.add(_newItem);
         } else {
-          await inventoryItemRepository.update(widget.item?.id, item);
+          await inventoryItemRepository.update(_newItem);
         }
         Navigator.of(context).pop();
       } catch (e) {
@@ -74,96 +70,101 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
       title: const Text('New Item'),
       content: Form(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              initialValue: widget.item?.id,
-              decoration: const InputDecoration(label: Text('ID')),
-              onChanged: (String newValue) {
-                setState(() {
-                  _newId = newValue;
-                });
-              },
-              validator: (text) {
-                if (text == null || text.isEmpty) {
-                  return 'You must set an ID';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              initialValue: _newName,
-              decoration: const InputDecoration(label: Text('Name')),
-              onChanged: (String newValue) {
-                setState(() {
-                  _newName = newValue;
-                });
-              },
-              validator: (text) {
-                if (text == null || text.isEmpty) {
-                  return 'You must set a name';
-                }
-                return null;
-              },
-            ),
-            DropdownButtonFormField<String>(
-              value: _newType,
-              decoration: InputDecoration(label: Text('Item Type')),
-              items:
-                  itemTypes.keys.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _newType = newValue!;
-                });
-              },
-            ),
-            DropdownButtonFormField<String>(
-              value: _newStorageLocation,
-              decoration: InputDecoration(label: Text('Storage Location')),
-              items: ['Waterloo', 'London'].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _newStorageLocation = newValue!;
-                });
-              },
-            ),
-            TextFormField(
-              initialValue: _newDescription,
-              decoration: const InputDecoration(labelText: 'Description'),
-              minLines: 1,
-              maxLines: 3,
-              onChanged: (String newValue) {
-                setState(() {
-                  _newDescription = newValue;
-                });
-              },
-            ),
-            SwitchListTile(
-                title: const Text('Only visible to admins'),
-                value: _newIsPrivate,
-                onChanged: (value) {
+        child: SizedBox(
+          width: 500,
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  label: Text('Name'),
+                  suffixIcon: NameGenerationButton(
+                    itemType: _newItem.type,
+                    onGenerate: (newName) {
+                      setState(() {
+                        _newItem.name = newName;
+                        _nameController.text = newName;
+                      });
+                    },
+                  ),
+                ),
+                onChanged: (String newValue) {
                   setState(() {
-                    _newIsPrivate = value;
+                    _newItem.name = newValue;
                   });
                 },
-            )
-          ],
+                validator: (text) {
+                  if (text == null || text.isEmpty) {
+                    return 'You must set a name';
+                  }
+                  return null;
+                },
+              ),
+              DropdownButtonFormField<String>(
+                value: _newItem.type,
+                decoration: InputDecoration(label: Text('Item Type')),
+                items: itemTypes.keys
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    if (newValue == 'Laptop') {
+                      _newItem = Laptop.fromInventoryItem(_newItem);
+                    } else {
+                      _newItem = InventoryItem.fromInventoryItem(_newItem);
+                    }
+                    _newItem.type = newValue!;
+                  });
+                },
+              ),
+              if (_newItem is Laptop)
+                LaptopFormFields(laptop: _newItem as Laptop),
+              DropdownButtonFormField<String>(
+                value: _newItem.storageLocation,
+                decoration: InputDecoration(label: Text('Storage Location')),
+                items: ['Waterloo', 'London'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _newItem.storageLocation = newValue!;
+                  });
+                },
+              ),
+              TextFormField(
+                initialValue: _newItem.description,
+                decoration: const InputDecoration(labelText: 'Description'),
+                minLines: 1,
+                maxLines: 3,
+                onChanged: (String newValue) {
+                  setState(() {
+                    _newItem.description = newValue;
+                  });
+                },
+              ),
+              SwitchListTile(
+                title: const Text('Only visible to admins'),
+                value: _newItem.isPrivate,
+                onChanged: (value) {
+                  setState(() {
+                    _newItem.isPrivate = value;
+                  });
+                },
+              )
+            ],
+          ),
         ),
       ),
       actions: <Widget>[
-        ElevatedButton(onPressed: _handleSave, child: const Text('Save')),
+        AsyncElevatedButton(onPressed: _handleSave, text: 'Save'),
       ],
     );
   }
