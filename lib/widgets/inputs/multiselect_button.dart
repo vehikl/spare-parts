@@ -42,7 +42,7 @@ class MultiselectButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final buttonStyle = TextButton.styleFrom(
       foregroundColor: selectedValues.isEmpty
-          ? Theme.of(context).textTheme.bodyText1!.color
+          ? Theme.of(context).textTheme.bodyLarge!.color
           : null,
     );
     if (icon == null) {

@@ -18,7 +18,7 @@ class AvailableItemsFilter extends StatelessWidget {
         value ? Icons.check_box : Icons.check_box_outline_blank,
       ),
       style: TextButton.styleFrom(
-        foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
+        foregroundColor: Theme.of(context).textTheme.bodyLarge!.color,
       ),
       onPressed: onPressed,
     );
