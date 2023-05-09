@@ -1,24 +1,24 @@
 import * as functions from 'firebase-functions'
-import { firebaseApp } from './admin'
-import { incrementItemNameIds } from './incrementItemNameId'
-import { associateUserWithExistingItems } from './associateUserWithExistingItems'
-import { associateItemWithExistingUsers } from './associateItemWithExistingUsers'
+import {firebaseApp} from './admin'
+import {incrementItemNameIds} from './incrementItemNameId'
+import {associateUserWithExistingItems} from './associateUserWithExistingItems'
+import {associateItemWithExistingUsers} from './associateItemWithExistingUsers'
 
 export const deleteIfIncorrectEmail = functions.auth
-  .user()
-  .beforeCreate(async (user, _) => {
-    if (!user.email?.endsWith('@vehikl.com')) {
-      console.log(`Deleting user with incorrect email: ${user.email}`)
-      await firebaseApp.auth().deleteUser(user.uid)
-    }
-  })
+    .user()
+    .beforeCreate(async (user, _) => {
+      if (!user.email?.endsWith('@vehikl.com')) {
+        console.log(`Deleting user with incorrect email: ${user.email}`)
+        await firebaseApp.auth().deleteUser(user.uid)
+      }
+    })
 
 export const userCreated = functions.auth
-  .user()
-  .onCreate(async (user, _) => {
-    await associateUserWithExistingItems(user)
-    return null
-  })
+    .user()
+    .onCreate(async (user, _) => {
+      await associateUserWithExistingItems(user)
+      return null
+    })
 
 
 export const getUsers = functions.https.onCall(async (_, __) => {
@@ -51,28 +51,28 @@ export const setAdmins = functions.https.onCall(async (data, _) => {
 })
 
 export const itemCreated = functions.firestore
-  .document('items/{itemId}')
-  .onCreate(async (snap, _) => {
-    const item = snap.data()
+    .document('items/{itemId}')
+    .onCreate(async (snap, _) => {
+      const item = snap.data()
 
-  if (item.borrower?.name && !item.borrower?.id) {
-      await associateItemWithExistingUsers(item, snap)
-    }
+      if (item.borrower?.name && !item.borrower?.id) {
+        await associateItemWithExistingUsers(item, snap)
+      }
 
-    return null
-  })
+      return null
+    })
 
 export const itemChanged = functions.firestore
-  .document('items/{itemId}')
-  .onWrite(async (change, _) => {
-    const item = change.after.data()
-    const oldItem = change.before.data()
+    .document('items/{itemId}')
+    .onWrite(async (change, _) => {
+      const item = change.after.data()
+      const oldItem = change.before.data()
 
-    if (!item) return null
+      if (!item) return null
 
-    if (item.name !== oldItem?.name) {
-      await incrementItemNameIds(item)
-    }
+      if (item.name !== oldItem?.name) {
+        await incrementItemNameIds(item)
+      }
 
-    return null
-  })
+      return null
+    })
