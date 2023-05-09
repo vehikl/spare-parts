@@ -2,6 +2,7 @@ import * as functions from 'firebase-functions'
 import { firebaseApp } from './admin'
 import { incrementItemNameIds } from './incrementItemNameId'
 import { associateUserWithExistingItems } from './associateUserWithExistingItems'
+import { associateItemWithExistingUsers } from './associateItemWithExistingUsers'
 
 export const deleteIfIncorrectEmail = functions.auth
   .user()
@@ -49,6 +50,18 @@ export const setAdmins = functions.https.onCall(async (data, _) => {
   return null
 })
 
+export const itemCreated = functions.firestore
+  .document('items/{itemId}')
+  .onCreate(async (snap, _) => {
+    const item = snap.data()
+
+  if (item.borrower?.name && !item.borrower?.id) {
+      await associateItemWithExistingUsers(item, snap)
+    }
+
+    return null
+  })
+
 export const itemChanged = functions.firestore
   .document('items/{itemId}')
   .onWrite(async (change, _) => {
@@ -58,7 +71,7 @@ export const itemChanged = functions.firestore
     if (!item) return null
 
     if (item.name !== oldItem?.name) {
-      incrementItemNameIds(item)
+      await incrementItemNameIds(item)
     }
 
     return null

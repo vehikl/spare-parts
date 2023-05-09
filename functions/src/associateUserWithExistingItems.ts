@@ -7,7 +7,7 @@ export async function associateUserWithExistingItems(user: UserRecord) {
       .where('borrower.name', '==', user.displayName)
       .get()
 
-    console.log(`Found ${itemsRef.docs.length} items for ${user.displayName}`)
+    console.log(`Assigning ${itemsRef.docs.length} items to ${user.displayName}`)
 
     for (const item of itemsRef.docs) {
       console.log(`Updating ${item.data().name}`)
