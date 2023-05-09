@@ -36,7 +36,7 @@ class InventoryItem {
 
     return InventoryItem(
       id: doc.id,
-      name: data['name'] ?? doc.id,
+      name: data['name'],
       type: data['type'],
       description: data['description'],
       storageLocation: data['storageLocation'],

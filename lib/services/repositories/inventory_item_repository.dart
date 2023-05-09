@@ -74,12 +74,11 @@ class InventoryItemRepository extends FirestoreService {
   }
 
   Future<void> add(InventoryItem item) async {
-    await itemsCollection.doc(item.id).set(item.toFirestore());
+    await itemsCollection.doc().set(item.toFirestore());
   }
 
-  Future<void> update(String? itemId, InventoryItem item) async {
-    await delete(itemId);
-    await add(item);
+  Future<void> update(InventoryItem item) async {
+    await itemsCollection.doc(item.id).update(item.toFirestore());
   }
 
   List<InventoryItem> _mapQuerySnapshotToInventoryItems(

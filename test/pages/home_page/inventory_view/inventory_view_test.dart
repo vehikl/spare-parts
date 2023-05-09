@@ -92,7 +92,6 @@ void main() {
   testWidgets(
     'Adds new item to inventory list',
     (WidgetTester tester) async {
-      const itemId = '21DSAdd4';
       const itemName = 'Table #3';
       const itemType = 'Desk';
       const itemStorageLocation = 'Waterloo';
@@ -111,7 +110,6 @@ void main() {
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
-      await tester.enterTextByLabel('ID', itemId);
       await tester.enterTextByLabel('Name', itemName);
       await tester.enterTextByLabel('Description', itemDescription);
       await tester.selectDropdownOption('Item Type', itemType);
@@ -133,7 +131,6 @@ void main() {
       await tester.tap(newItemListItem);
       await tester.pumpAndSettle();
 
-      expect(find.textContaining(itemId), findsOneWidget);
       expect(
         find.descendant(
           of: find.byType(Card),

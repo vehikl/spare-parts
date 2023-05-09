@@ -46,7 +46,7 @@ class _BorrowingRequestActionsButtonState
           requestedItemDoc as DocumentSnapshot<Map<String, dynamic>>,
         );
         requestedItem.borrower = widget.borrowingRequest.issuer;
-        await inventoryItemRepository.update(requestedItem.id, requestedItem);
+        await inventoryItemRepository.update(requestedItem);
 
         await borrowingRequestRepository.makeDecision(
           decisionMaker: CustomUser.fromUser(auth.currentUser!),

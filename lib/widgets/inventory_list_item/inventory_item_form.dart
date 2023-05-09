@@ -52,7 +52,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
         if (widget.formState == InventoryFormState.add) {
           await inventoryItemRepository.add(_newItem);
         } else {
-          await inventoryItemRepository.update(widget.item?.id, _newItem);
+          await inventoryItemRepository.update(_newItem);
         }
         Navigator.of(context).pop();
       } catch (e) {
@@ -75,21 +75,6 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
           child: ListView(
             shrinkWrap: true,
             children: [
-              TextFormField(
-                initialValue: widget.item?.id,
-                decoration: const InputDecoration(label: Text('ID')),
-                onChanged: (String newValue) {
-                  setState(() {
-                    _newItem.id = newValue;
-                  });
-                },
-                validator: (text) {
-                  if (text == null || text.isEmpty) {
-                    return 'You must set an ID';
-                  }
-                  return null;
-                },
-              ),
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(

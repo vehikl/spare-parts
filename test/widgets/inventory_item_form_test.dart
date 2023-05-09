@@ -13,25 +13,6 @@ import '../helpers/tester_extension.dart';
 
 void main() {
   group('InventoryItemForm', () {
-    testWidgets('displays an error if no ID provided',
-        (WidgetTester tester) async {
-      await pumpPage(
-        InventoryItemForm(formState: InventoryFormState.add),
-        tester,
-        userRole: UserRole.admin,
-      );
-
-      expect(find.text('You must set an ID'), findsNothing);
-
-      await tester.enterTextByLabel('Name', 'foo');
-
-      final addButton = find.text('Save');
-      await tester.tap(addButton);
-      await tester.pumpAndSettle();
-
-      expect(find.text('You must set an ID'), findsOneWidget);
-    });
-
     testWidgets('displays an error if no name provided',
         (WidgetTester tester) async {
       await pumpPage(
@@ -41,8 +22,6 @@ void main() {
       );
 
       expect(find.text('You must set a name'), findsNothing);
-
-      await tester.enterTextByLabel('ID', 'foo');
 
       final addButton = find.text('Save');
       await tester.tap(addButton);
@@ -61,7 +40,6 @@ void main() {
           inventoryItemRepository: inventoryItemRepository,
         );
 
-        await tester.enterTextByLabel('ID', 'foo');
         final generateNameButton = find.byIcon(Icons.autorenew);
         await tester.tap(generateNameButton);
         await tester.pumpAndSettle();
@@ -86,7 +64,6 @@ void main() {
           inventoryItemRepository: inventoryItemRepository,
         );
 
-        await tester.enterTextByLabel('ID', 'foo');
         const newItemType = 'Chair';
         await tester.selectDropdownOption('Item Type', newItemType);
         final generateNameButton = find.byIcon(Icons.autorenew);
@@ -128,7 +105,6 @@ void main() {
           firestore: firestore,
         );
 
-        await tester.enterTextByLabel('ID', 'foo');
         final generateNameButton = find.byIcon(Icons.autorenew);
         await tester.tap(generateNameButton);
         await tester.pumpAndSettle();
@@ -160,7 +136,6 @@ void main() {
         userRole: UserRole.admin,
       );
 
-      expect(find.text(item.id), findsOneWidget);
       expect(find.text(item.name), findsOneWidget);
       expect(find.text(item.type), findsOneWidget);
       expect(find.text(item.storageLocation!), findsOneWidget);

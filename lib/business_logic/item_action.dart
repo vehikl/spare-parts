@@ -121,7 +121,7 @@ class AssignItemAction extends ItemAction {
         item.borrower = userIds.isEmpty
             ? null
             : users.firstWhere((u) => u.id == userIds.first).toCustomUser();
-        await inventoryItemRepository.update(item.id, item);
+        await inventoryItemRepository.update(item);
         return true;
       },
       context,
