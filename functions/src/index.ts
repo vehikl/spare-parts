@@ -1,47 +1,27 @@
 import * as functions from 'firebase-functions'
-
-import * as admin from 'firebase-admin'
-
-admin.initializeApp()
+import { firebaseApp } from './admin'
+import { incrementItemNameIds } from './incrementItemNameId'
+import { associateUserWithExistingItems } from './associateUserWithExistingItems'
 
 export const deleteIfIncorrectEmail = functions.auth
-    .user()
-    .onCreate((user, context) => {
-      if (!user.email?.endsWith('@vehikl.com')) {
-        console.log(`Deleting user with incorrect email: ${user.email}`)
-        return admin.auth().deleteUser(user.uid)
-      }
-      return null
-    })
+  .user()
+  .beforeCreate(async (user, _) => {
+    if (!user.email?.endsWith('@vehikl.com')) {
+      console.log(`Deleting user with incorrect email: ${user.email}`)
+      await firebaseApp.auth().deleteUser(user.uid)
+    }
+  })
 
-export const associateWithExistingItems = functions.auth
-    .user()
-    .onCreate(async (user, context) => {
-      const db = admin.firestore()
-      const itemsRef = await db
-          .collection('items')
-          .where('borrower.name', '==', user.displayName)
-          .get()
-
-      console.log(`Found ${itemsRef.docs.length} items for ${user.displayName}`)
-
-      for (const item of itemsRef.docs) {
-        console.log(`Updating ${item.data().name}`)
-        await item.ref.set({
-          ...item.data(),
-          borrower: {
-            uid: user.uid,
-            name: user.displayName,
-            photoURL: user.photoURL,
-          },
-        })
-      }
-      return null
-    })
+export const userCreated = functions.auth
+  .user()
+  .onCreate(async (user, _) => {
+    await associateUserWithExistingItems(user)
+    return null
+  })
 
 
-export const getUsers = functions.https.onCall(async (data, context) => {
-  const userListResult = await admin.auth().listUsers()
+export const getUsers = functions.https.onCall(async (_, __) => {
+  const userListResult = await firebaseApp.auth().listUsers()
   const users = userListResult.users
 
   return users.map((user) => ({
@@ -52,16 +32,16 @@ export const getUsers = functions.https.onCall(async (data, context) => {
   }))
 })
 
-export const setAdmins = functions.https.onCall(async (data, context) => {
+export const setAdmins = functions.https.onCall(async (data, _) => {
   const uids = data.uids as string[]
 
   if (!uids) throw new Error('The `uids` parameter is required')
 
-  const userListResult = await admin.auth().listUsers()
+  const userListResult = await firebaseApp.auth().listUsers()
   const users = userListResult.users
 
   for (const user of users) {
-    await admin.auth().setCustomUserClaims(user.uid, {
+    await firebaseApp.auth().setCustomUserClaims(user.uid, {
       role: uids.includes(user.uid) ? 'admin' : 'user',
     })
   }
@@ -70,31 +50,16 @@ export const setAdmins = functions.https.onCall(async (data, context) => {
 })
 
 export const itemChanged = functions.firestore
-    .document('items/{itemId}')
-    .onWrite(async (change, context) => {
-      const item = change.after.data()
-      const oldItem = change.before.data()
+  .document('items/{itemId}')
+  .onWrite(async (change, _) => {
+    const item = change.after.data()
+    const oldItem = change.before.data()
 
-      if (!item) return null
+    if (!item) return null
 
-      if (item.name !== oldItem?.name) {
-        const newId = item.name.match(/\w+ #(\d+)/)?.[1]
-        if (newId) {
-          const highestNameIdsDoc = await admin
-              .firestore()
-              .collection('meta')
-              .doc('itemNameIds')
-              .get()
-          const highestNameIds = highestNameIdsDoc.data() ?? {}
-          const highestNameId = highestNameIds[item.type] ?? 0
-          if (+newId > highestNameId) {
-            admin.firestore().collection('meta').doc('itemNameIds').set({
-              ...highestNameIds,
-              [item.type]: +newId,
-            })
-          }
-        }
-      }
+    if (item.name !== oldItem?.name) {
+      incrementItemNameIds(item)
+    }
 
-      return null
-    })
+    return null
+  })
