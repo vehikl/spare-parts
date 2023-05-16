@@ -118,7 +118,7 @@ class _InventoryViewState extends State<InventoryView> {
                 return ErrorContainer(error: snapshot.error.toString());
               }
 
-              if (!snapshot.hasData) {
+              if (true) {
                 return Column(
                   children:
                       List.generate(6, (index) => InventoryListItemLoading()),
