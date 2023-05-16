@@ -27,6 +27,7 @@ dependencies:
   google_sign_in: ^5.4.4
   mobile_scanner: ^3.0.0
   js: ^0.6.5
+  flutter_animate: ^4.1.1+1
 
 dev_dependencies:
   flutter_test:

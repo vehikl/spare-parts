@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/available_items_filter.dart';
@@ -10,6 +11,7 @@ import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
+import 'package:spare_parts/widgets/inventory_list_item_loading.dart';
 
 class InventoryView extends StatefulWidget {
   const InventoryView({Key? key}) : super(key: key);
@@ -117,7 +119,10 @@ class _InventoryViewState extends State<InventoryView> {
               }
 
               if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
+                return Column(
+                  children:
+                      List.generate(6, (index) => InventoryListItemLoading()),
+                );
               }
 
               final items = snapshot.data!;
