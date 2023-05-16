@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:spare_parts/utilities/constants.dart';
 
 class InventoryListItemLoading extends StatelessWidget {
   const InventoryListItemLoading({super.key});
@@ -9,9 +10,10 @@ class InventoryListItemLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final randomWidth = 150 + Random().nextDouble() * 250;
+    final randomIdx = Random().nextInt(itemTypes.length);
 
     return ListTile(
-      leading: Icon(Icons.chair, color: Colors.grey),
+      leading: Icon(itemTypes.values.elementAt(randomIdx), color: Colors.grey),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
