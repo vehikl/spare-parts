@@ -26,11 +26,23 @@ class ValueSelectionDialog extends StatefulWidget {
 
 class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
   late final List<String> _newSelectedValues;
+  final TextEditingController _newUserController = TextEditingController();
+  final List<String> _addedValues = [];
 
   @override
   void initState() {
     _newSelectedValues = [...widget.selectedValues];
     super.initState();
+  }
+
+  void _addNewUser() {
+    final newUserName = _newUserController.text;
+    _newUserController.clear();
+    if (newUserName.isNotEmpty) {
+      setState(() {
+        _addedValues.add(newUserName);
+      });
+    }
   }
 
   @override
@@ -52,34 +64,67 @@ class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
             Expanded(
               child: ListView(
                 shrinkWrap: true,
-                children: widget.values
-                    .map((value) => ListTile(
-                          title: Text(widget.labelBuilder == null
-                              ? value
-                              : widget.labelBuilder!(value)),
-                          leading: widget.leadingBuilder == null
-                              ? null
-                              : widget.leadingBuilder!(value),
-                          selected: _newSelectedValues.contains(value),
-                          selectedTileColor:
-                              Theme.of(context).colorScheme.primary,
-                          selectedColor:
-                              Theme.of(context).colorScheme.onPrimary,
-                          enabled: !widget.disabledValues.contains(value),
-                          onTap: () {
-                            setState(() {
-                              if (_newSelectedValues.contains(value)) {
-                                _newSelectedValues.remove(value);
-                              } else {
-                                if (widget.isSingleSelection) {
-                                  _newSelectedValues.clear();
+                children: [
+                  ...widget.values
+                      .map((value) => ListTile(
+                            title: Text(widget.labelBuilder == null
+                                ? value
+                                : widget.labelBuilder!(value)),
+                            leading: widget.leadingBuilder == null
+                                ? null
+                                : widget.leadingBuilder!(value),
+                            selected: _newSelectedValues.contains(value),
+                            selectedTileColor:
+                                Theme.of(context).colorScheme.primary,
+                            selectedColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            enabled: !widget.disabledValues.contains(value),
+                            onTap: () {
+                              setState(() {
+                                if (_newSelectedValues.contains(value)) {
+                                  _newSelectedValues.remove(value);
+                                } else {
+                                  if (widget.isSingleSelection) {
+                                    _newSelectedValues.clear();
+                                  }
+                                  _newSelectedValues.add(value);
                                 }
-                                _newSelectedValues.add(value);
-                              }
-                            });
-                          },
-                        ))
-                    .toList(),
+                              });
+                            },
+                          ))
+                      .toList(),
+                  ..._addedValues.map(
+                    (value) => ListTile(
+                      title: Text(value),
+                      selected: _newSelectedValues.contains(value),
+                      selectedTileColor: Theme.of(context).colorScheme.primary,
+                      selectedColor: Theme.of(context).colorScheme.onPrimary,
+                      onTap: () {
+                        setState(() {
+                          if (_newSelectedValues.contains(value)) {
+                            _newSelectedValues.remove(value);
+                          } else {
+                            if (widget.isSingleSelection) {
+                              _newSelectedValues.clear();
+                            }
+                            _newSelectedValues.add(value);
+                          }
+                        });
+                      },
+                    ),
+                  ),
+                  TextField(
+                    key: Key('newUser'),
+                    controller: _newUserController,
+                    decoration: InputDecoration(
+                      hintText: 'Add new user',
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: _addNewUser,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

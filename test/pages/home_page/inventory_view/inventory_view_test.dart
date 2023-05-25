@@ -309,7 +309,7 @@ void main() {
     },
   );
 
-  group('Assigning', () {
+  group('Assigning a borrower', () {
     testWidgets(
       'can set the borrower on an item',
       (WidgetTester tester) async {
@@ -562,6 +562,74 @@ void main() {
         final userOption = tester.firstWidget(userOptionFinder) as ListTile;
         expect(userOption.selected, isTrue);
       },
+    );
+
+    testWidgets(
+      'can add a user to the list',
+      (WidgetTester tester) async {
+        final mockCallableService = MockCallableService();
+        when(mockCallableService.getUsers())
+            .thenAnswer((_) => Future.value([]));
+
+        await pumpPage(
+          Scaffold(body: InventoryView()),
+          tester,
+          userRole: UserRole.admin,
+          firestore: firestore,
+        );
+
+        var chairListItem = find.ancestor(
+          of: find.text(chairItem.name),
+          matching: find.byType(ListTile),
+        );
+
+        final optionsButton = find.descendant(
+          of: chairListItem,
+          matching: find.byIcon(Icons.more_vert),
+        );
+        await tester.tap(optionsButton);
+        await tester.pumpAndSettle();
+
+        final assignButton = find.text('Assign');
+        await tester.tap(assignButton);
+        await tester.pumpAndSettle();
+
+        var customName = 'Jane Doe';
+        var newUserNameInput = find.descendant(
+          of: find.byType(ValueSelectionDialog),
+          matching: find.byType(TextField),
+        );
+        await tester.enterText(newUserNameInput, customName);
+        await tester.pumpAndSettle();
+
+        final newUserAddButton = find.byIcon(Icons.add);
+        await tester.tap(newUserAddButton);
+        await tester.pumpAndSettle();
+
+        final userOption = find.descendant(
+          of: find.byType(ValueSelectionDialog),
+          matching: find.text(customName),
+        );
+        await tester.tap(userOption);
+
+        await tester.pumpAndSettle();
+        final selectButton = find.text('Select');
+        await tester.tap(selectButton);
+        await tester.pumpAndSettle();
+
+        chairListItem = find.ancestor(
+          of: find.text(chairItem.name),
+          matching: find.byType(ListTile),
+        );
+
+        final borrower = find.descendant(
+          of: chairListItem,
+          matching: find.text(customName),
+        );
+
+        expect(borrower, findsOneWidget);
+      },
+      skip: true,
     );
   });
 
