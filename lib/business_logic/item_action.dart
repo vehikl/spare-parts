@@ -91,27 +91,29 @@ class AssignItemAction extends ItemAction {
   @override
   handle(BuildContext context, InventoryItem item) {
     final inventoryItemRepository = context.read<InventoryItemRepository>();
-    final callableService = context.read<CallableService>();
+    final userRepository = context.read<UserRepository>();
 
     commonHandle(
       () async {
-        final users = await callableService.getUsers();
+        final users = await userRepository.getAll();
 
+        // ignore: use_build_context_synchronously
         final userIds = await showDialog<List<String>?>(
           context: context,
           builder: (context) => ValueSelectionDialog(
             isSingleSelection: true,
             title: 'Select user',
-            values: users.map((u) => u.id).toList(),
+            values: users.map((u) => u.uid).toList(),
             selectedValues: users
-                .where((user) => user.id == item.borrower?.uid)
-                .map((user) => user.id)
+                .where((user) => user.uid == item.borrower?.uid)
+                .map((user) => user.uid)
                 .toList(),
             labelBuilder: (uid) =>
-                users.singleWhere((user) => user.id == uid).name,
+                users.singleWhere((user) => user.uid == uid).name ??
+                '<no name>',
             leadingBuilder: (uid) {
-              final user = users.singleWhere((user) => user.id == uid);
-              return UserAvatar(photoUrl: user.photoUrl);
+              final user = users.singleWhere((user) => user.uid == uid);
+              return UserAvatar(photoUrl: user.photoURL);
             },
           ),
         );
@@ -120,7 +122,7 @@ class AssignItemAction extends ItemAction {
 
         item.borrower = userIds.isEmpty
             ? null
-            : users.firstWhere((u) => u.id == userIds.first).toCustomUser();
+            : users.firstWhere((u) => u.uid == userIds.first);
         await inventoryItemRepository.update(item);
         return true;
       },
