@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/available_items_filter.dart';
@@ -118,10 +117,10 @@ class _InventoryViewState extends State<InventoryView> {
                 return ErrorContainer(error: snapshot.error.toString());
               }
 
-              if (true) {
+              if (!snapshot.hasData) {
                 return Column(
                   children:
-                      List.generate(6, (index) => InventoryListItemLoading()),
+                      List.generate(5, (index) => InventoryListItemLoading()),
                 );
               }
 
