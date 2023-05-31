@@ -118,9 +118,11 @@ class _InventoryViewState extends State<InventoryView> {
               }
 
               if (!snapshot.hasData) {
-                return Column(
+                return ListView(
                   children:
-                      List.generate(5, (index) => InventoryListItemLoading()),
+                      List.generate(10, (index) => InventoryListItemLoading(
+                  hasAuthor: isAdmin,
+                      )),
                 );
               }
 

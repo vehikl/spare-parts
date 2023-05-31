@@ -2,17 +2,15 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:provider/provider.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/loading_placeholder.dart';
 
 class InventoryListItemLoading extends StatelessWidget {
-  const InventoryListItemLoading({super.key});
+  final bool hasAuthor;
+  const InventoryListItemLoading({super.key, this.hasAuthor = false});
 
   @override
   Widget build(BuildContext context) {
-    final isAdmin = context.read<UserRole>() == UserRole.admin;
-
     final titleWidth = 75 + Random().nextDouble() * 200;
     final subtitleWidth = 50 + Random().nextDouble() * 25;
     final randomIdx = Random().nextInt(itemTypes.length);
@@ -29,7 +27,7 @@ class InventoryListItemLoading extends StatelessWidget {
           if (Random().nextBool()) LoadingPlaceholder(width: 30, height: 18)
         ],
       ),
-      subtitle: Random().nextBool() && isAdmin
+      subtitle: hasAuthor && Random().nextBool()
           ? Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
