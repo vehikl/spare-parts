@@ -10,6 +10,7 @@ import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
+import 'package:spare_parts/widgets/inventory_list_item_loading.dart';
 
 class InventoryView extends StatefulWidget {
   const InventoryView({Key? key}) : super(key: key);
@@ -117,7 +118,12 @@ class _InventoryViewState extends State<InventoryView> {
               }
 
               if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
+                return ListView(
+                  children:
+                      List.generate(10, (index) => InventoryListItemLoading(
+                  hasAuthor: isAdmin,
+                      )),
+                );
               }
 
               final items = snapshot.data!;
