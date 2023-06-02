@@ -72,52 +72,48 @@ class _UserSelectionDialogState extends State<UserSelectionDialog> {
 
                   return ListView.builder(
                     shrinkWrap: true,
-                    itemCount: users.length + 1,
+                    itemCount: users.length,
                     itemBuilder: (context, index) {
-                      if (index < users.length) {
-                        final user = users[index];
+                      final user = users[index];
 
-                        return ListTile(
-                          title: Text(user.name ?? '<no name>'),
-                          leading: UserAvatar(photoUrl: user.photoURL),
-                          selected:
-                              _newSelectedUsers.any((u) => user.uid == u.uid),
-                          selectedTileColor:
-                              Theme.of(context).colorScheme.primary,
-                          selectedColor:
-                              Theme.of(context).colorScheme.onPrimary,
-                          enabled: !widget.disabledUids.contains(user.uid),
-                          onTap: () {
-                            setState(() {
-                              if (_newSelectedUsers
-                                  .any((u) => user.uid == u.uid)) {
-                                _newSelectedUsers
-                                    .removeWhere((u) => user.uid == u.uid);
-                              } else {
-                                if (widget.isSingleSelection) {
-                                  _newSelectedUsers.clear();
-                                }
-                                _newSelectedUsers.add(user);
+                      return ListTile(
+                        title: Text(user.name ?? '<no name>'),
+                        leading: UserAvatar(photoUrl: user.photoURL),
+                        selected:
+                            _newSelectedUsers.any((u) => user.uid == u.uid),
+                        selectedTileColor:
+                            Theme.of(context).colorScheme.primary,
+                        selectedColor: Theme.of(context).colorScheme.onPrimary,
+                        enabled: !widget.disabledUids.contains(user.uid),
+                        onTap: () {
+                          setState(() {
+                            if (_newSelectedUsers
+                                .any((u) => user.uid == u.uid)) {
+                              _newSelectedUsers
+                                  .removeWhere((u) => user.uid == u.uid);
+                            } else {
+                              if (widget.isSingleSelection) {
+                                _newSelectedUsers.clear();
                               }
-                            });
-                          },
-                        );
-                      }
-
-                      return TextField(
-                        key: Key('newUser'),
-                        controller: _newUsernameController,
-                        decoration: InputDecoration(
-                          hintText: 'Add new user',
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.add),
-                            onPressed: _addNewUser,
-                          ),
-                        ),
+                              _newSelectedUsers.add(user);
+                            }
+                          });
+                        },
                       );
                     },
                   );
                 },
+              ),
+            ),
+            TextField(
+              key: Key('newUser'),
+              controller: _newUsernameController,
+              decoration: InputDecoration(
+                hintText: 'Add new user',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: _addNewUser,
+                ),
               ),
             ),
           ],

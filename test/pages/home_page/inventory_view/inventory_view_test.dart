@@ -313,11 +313,9 @@ void main() {
   group('Assigning a borrower', () {
     final user = CustomUser(uid: 'foo', name: 'Foo');
 
-    setUp(() async {
+    setUpAll(() async {
       await firestore.collection('users').add(user.toFirestore());
     });
-
-    tearDown(() => deleteAllData(firestore));
 
     testWidgets(
       'can set the borrower on an item',
