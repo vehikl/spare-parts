@@ -12,4 +12,14 @@ class UserRepository extends FirestoreService {
         .map((e) => CustomUser.fromFirestore(e.data() as Map<String, dynamic>))
         .toList();
   }
+
+  Future<void> add(CustomUser user) async {
+    await usersCollection.add(user.toFirestore());
+  }
+
+  Stream<List<CustomUser>> getAllStream() {
+    return usersCollection.snapshots().map((snapshot) => snapshot.docs
+        .map((e) => CustomUser.fromFirestore(e.data() as Map<String, dynamic>))
+        .toList());
+  }
 }
