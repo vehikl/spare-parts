@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/custom_user.dart';
+import 'package:spare_parts/pages/home_page/settings_view/users_setting/user_form.dart';
 import 'package:spare_parts/services/repositories/user_repository.dart';
 import 'package:spare_parts/widgets/inputs/new_user_input.dart';
 import 'package:spare_parts/widgets/title_text.dart';
@@ -35,6 +36,12 @@ class UsersSetting extends StatelessWidget {
                   return ListTile(
                     title: Text(user.name ?? '<no name>'),
                     leading: UserAvatar(photoUrl: user.photoURL),
+                    trailing: IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () => showDialog(
+                          context: context,
+                          builder: (context) => UserForm(user: user)),
+                    ),
                   );
                 },
               );
