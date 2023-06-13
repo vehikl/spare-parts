@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/services/repositories/user_repository.dart';
+import 'package:spare_parts/widgets/inputs/new_user_input.dart';
 import 'package:spare_parts/widgets/title_text.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
 
@@ -40,6 +41,7 @@ class UsersSetting extends StatelessWidget {
             },
           ),
         ),
+        NewUserInput(),
       ],
     );
   }

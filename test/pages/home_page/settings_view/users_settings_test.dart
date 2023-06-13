@@ -8,11 +8,11 @@ import '../../../helpers/test_helpers.dart';
 
 void main() {
   group('UsersSetting', () {
+    final user1 = CustomUser(uid: 'user1', name: 'John Doe');
+    final user2 = CustomUser(uid: 'user2', name: 'Jane Doe');
+
     testWidgets('displays available users', (WidgetTester tester) async {
       final firestore = FakeFirebaseFirestore();
-
-      final user1 = CustomUser(uid: 'user1', name: 'John Doe');
-      final user2 = CustomUser(uid: 'user2', name: 'Jane Doe');
 
       await firestore.collection('users').add(user1.toFirestore());
       await firestore.collection('users').add(user2.toFirestore());
@@ -25,6 +25,30 @@ void main() {
 
       expect(find.text('John Doe'), findsOneWidget);
       expect(find.text('Jane Doe'), findsOneWidget);
+    });
+
+    testWidgets('can add a new user', (tester) async {
+      await pumpPage(
+        Scaffold(body: UsersSetting()),
+        tester,
+      );
+
+      var customName = 'New user';
+      var newUserNameInput = find.byType(TextField);
+      await tester.enterText(newUserNameInput, customName);
+      await tester.pumpAndSettle();
+
+      final newUserAddButton = find.byIcon(Icons.add);
+      await tester.tap(newUserAddButton);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.descendant(
+          of: find.byType(ListView),
+          matching: find.text(customName),
+        ),
+        findsOneWidget,
+      );
     });
   });
 }

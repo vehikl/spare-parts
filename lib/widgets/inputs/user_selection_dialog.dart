@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/services/repositories/user_repository.dart';
+import 'package:spare_parts/widgets/inputs/new_user_input.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
-import 'package:uuid/uuid.dart';
 
 class UserSelectionDialog extends StatefulWidget {
   final List<CustomUser> selectedUsers;
@@ -25,21 +25,11 @@ class UserSelectionDialog extends StatefulWidget {
 
 class _UserSelectionDialogState extends State<UserSelectionDialog> {
   late final List<CustomUser> _newSelectedUsers;
-  final TextEditingController _newUsernameController = TextEditingController();
 
   @override
   void initState() {
     _newSelectedUsers = [...widget.selectedUsers];
     super.initState();
-  }
-
-  void _addNewUser() async {
-    final newUserName = _newUsernameController.text;
-    if (newUserName.isNotEmpty) {
-      final uuid = Uuid();
-      await userRepository.add(CustomUser(uid: uuid.v1(), name: newUserName));
-    }
-    _newUsernameController.clear();
   }
 
   UserRepository get userRepository => context.read<UserRepository>();
@@ -105,17 +95,7 @@ class _UserSelectionDialogState extends State<UserSelectionDialog> {
                 },
               ),
             ),
-            TextField(
-              key: Key('newUser'),
-              controller: _newUsernameController,
-              decoration: InputDecoration(
-                hintText: 'Add new user',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: _addNewUser,
-                ),
-              ),
-            ),
+            NewUserInput(),
           ],
         ),
       ),
