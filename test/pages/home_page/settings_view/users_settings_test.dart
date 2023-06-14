@@ -19,7 +19,6 @@ void main() {
     });
 
     testWidgets('displays available users', (WidgetTester tester) async {
-
       await firestore.collection('users').add(user1.toFirestore());
       await firestore.collection('users').add(user2.toFirestore());
 
