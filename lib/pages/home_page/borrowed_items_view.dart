@@ -5,6 +5,7 @@ import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
+import 'package:spare_parts/widgets/inventory_list_item_loading.dart';
 
 import '../../services/repositories/repositories.dart';
 
@@ -27,7 +28,10 @@ class BorrowedItemsView extends StatelessWidget {
           }
 
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return ListView(
+                  children:
+                      List.generate(10, (index) => InventoryListItemLoading()),
+                );
           }
 
           final items = snapshot.data!;
