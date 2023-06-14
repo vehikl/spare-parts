@@ -37,7 +37,15 @@ class _UserFormState extends State<UserForm> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Edit user'),
-      content: TextField(controller: userNameConstroller),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextFormField(
+            controller: userNameConstroller,
+            decoration: InputDecoration(labelText: 'Name'),
+          ),
+        ],
+      ),
       actions: [
         TextButton(
           child: Text('Cancel'),

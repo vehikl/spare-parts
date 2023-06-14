@@ -64,8 +64,12 @@ void main() {
         firestore: firestore,
       );
 
-      final editButton = find.descendant(
+      final user1Option = find.ancestor(
         of: find.text(user1.name!),
+        matching: find.byType(ListTile),
+      );
+      final editButton = find.descendant(
+        of: user1Option,
         matching: find.byIcon(Icons.edit),
       );
       await tester.tap(editButton);
@@ -75,7 +79,7 @@ void main() {
       await tester.enterTextByLabel('Name', newName);
       await tester.pumpAndSettle();
 
-      final saveButton = find.byIcon(Icons.save);
+      final saveButton = find.text('Save');
       await tester.tap(saveButton);
       await tester.pumpAndSettle();
 
