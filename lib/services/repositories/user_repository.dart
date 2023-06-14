@@ -28,4 +28,10 @@ class UserRepository extends FirestoreService {
     final userDoc = userDocs.docs.first;
     await userDoc.reference.update(user.toFirestore());
   }
+
+  Future<void> delete(CustomUser user) async {
+    final userDocs = await usersCollection.where('uid', isEqualTo: user.uid).get();
+    final userDoc = userDocs.docs.first;
+    await userDoc.reference.delete();
+  }
 }

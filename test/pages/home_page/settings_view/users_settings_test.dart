@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/pages/home_page/settings_view/users_setting/users_setting.dart';
+import 'package:spare_parts/widgets/dialogs/danger_dialog.dart';
 
 import '../../../helpers/test_helpers.dart';
 import '../../../helpers/tester_extension.dart';
@@ -11,9 +12,13 @@ void main() {
   group('UsersSetting', () {
     final user1 = CustomUser(uid: 'user1', name: 'John Doe');
     final user2 = CustomUser(uid: 'user2', name: 'Jane Doe');
+    final firestore = FakeFirebaseFirestore();
+
+    tearDown(() async {
+      await deleteAllData(firestore);
+    });
 
     testWidgets('displays available users', (WidgetTester tester) async {
-      final firestore = FakeFirebaseFirestore();
 
       await firestore.collection('users').add(user1.toFirestore());
       await firestore.collection('users').add(user2.toFirestore());
@@ -53,8 +58,6 @@ void main() {
     });
 
     testWidgets('can edit the name of a user', (tester) async {
-      final firestore = FakeFirebaseFirestore();
-
       await firestore.collection('users').add(user1.toFirestore());
       await firestore.collection('users').add(user2.toFirestore());
 
@@ -90,6 +93,41 @@ void main() {
         ),
         findsOneWidget,
       );
+    });
+
+    testWidgets('can delete a user', (tester) async {
+      await firestore.collection('users').add(user1.toFirestore());
+      await firestore.collection('users').add(user2.toFirestore());
+
+      await pumpPage(
+        Scaffold(body: UsersSetting()),
+        tester,
+        firestore: firestore,
+      );
+
+      final user1Option = find.ancestor(
+        of: find.text(user1.name!),
+        matching: find.byType(ListTile),
+      );
+      final deleteButton = find.descendant(
+        of: user1Option,
+        matching: find.byIcon(Icons.delete),
+      );
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
+
+      final confirmationInput = find.descendant(
+        of: find.byType(DangerDialog),
+        matching: find.byType(TextField),
+      );
+      await tester.enterText(confirmationInput, user1.name!);
+      await tester.pumpAndSettle();
+
+      final deleteConfimationButton = find.text('Confirm');
+      await tester.tap(deleteConfimationButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text(user1.name!), findsNothing);
     });
   });
 }

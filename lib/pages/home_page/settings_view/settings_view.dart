@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spare_parts/pages/home_page/settings_view/borrowing_rules_setting/borrowing_rules_setting.dart';
 import 'package:spare_parts/pages/home_page/settings_view/set_admins_button.dart';
+import 'package:spare_parts/pages/home_page/settings_view/users_setting/users_setting.dart';
 import 'package:spare_parts/widgets/custom_layout_builder.dart';
 
 class SettingsView extends StatelessWidget {
@@ -31,6 +32,7 @@ class SettingsView extends StatelessWidget {
             Divider(),
             BorrowingRulesSetting(),
             Divider(),
+            UsersSetting()
           ],
         ),
       );

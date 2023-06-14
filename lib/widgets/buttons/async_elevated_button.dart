@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class AsyncElevatedButton extends StatefulWidget {
   final String text;
-  final AsyncCallback onPressed;
+  final AsyncCallback? onPressed;
 
   const AsyncElevatedButton({
     super.key,
@@ -21,7 +21,7 @@ class _AsyncElevatedButtonState extends State<AsyncElevatedButton> {
   void _handlePress() async {
     try {
       setState(() => _loading = true);
-      await widget.onPressed();
+      await widget.onPressed!();
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -30,7 +30,11 @@ class _AsyncElevatedButtonState extends State<AsyncElevatedButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: _loading ? () {} : _handlePress,
+      onPressed: _loading
+          ? null
+          : widget.onPressed == null
+              ? null
+              : _handlePress,
       child: _loading
           ? SizedBox(
               height: 20,
