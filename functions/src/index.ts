@@ -1,9 +1,9 @@
 import * as functions from 'firebase-functions'
-import { firebaseApp } from './admin'
-import { associateItemWithExistingUsers } from './associateItemWithExistingUsers'
-import { associateUserWithExistingItems } from './associateUserWithExistingItems'
-import { associateUserWithUserDocument } from './associateUserWithUserDocument'
-import { incrementItemNameIds } from './incrementItemNameId'
+import {firebaseApp} from './admin'
+import {associateItemWithExistingUsers} from './associateItemWithExistingUsers'
+import {associateUserWithExistingItems} from './associateUserWithExistingItems'
+import {associateUserWithUserDocument} from './associateUserWithUserDocument'
+import {incrementItemNameIds} from './incrementItemNameId'
 
 export const deleteIfIncorrectEmail = functions.auth
     .user()
