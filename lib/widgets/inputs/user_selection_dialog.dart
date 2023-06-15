@@ -42,6 +42,7 @@ class _UserSelectionDialogState extends State<UserSelectionDialog> {
         width: 300,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             TextButton(
               onPressed: () => setState(() {
@@ -50,12 +51,15 @@ class _UserSelectionDialogState extends State<UserSelectionDialog> {
               child: Text('Clear'),
             ),
             Divider(),
-            Expanded(
+            Flexible(
               child: StreamBuilder<List<CustomUser>>(
                 stream: userRepository.getAllStream(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [CircularProgressIndicator()],
+                    );
                   }
 
                   final users = snapshot.data!;
@@ -95,6 +99,7 @@ class _UserSelectionDialogState extends State<UserSelectionDialog> {
                 },
               ),
             ),
+            SizedBox(height: 10),
             NewUserInput(),
           ],
         ),
