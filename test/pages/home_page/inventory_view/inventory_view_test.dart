@@ -313,7 +313,7 @@ void main() {
   group('Assigning a borrower', () {
     final user = CustomUser(uid: 'foo', name: 'Foo');
 
-    setUpAll(() async {
+    setUp(() async {
       await firestore.collection('users').add(user.toFirestore());
     });
 
