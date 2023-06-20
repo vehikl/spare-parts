@@ -26,7 +26,8 @@ class SettingsView extends StatelessWidget {
           vertical: 10,
           horizontal: _getPadding(context, layout),
         ),
-        child: Column(
+        child: ListView(
+          shrinkWrap: true,
           children: [
             SetAdminsButton(),
             Divider(),
