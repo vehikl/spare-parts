@@ -10,6 +10,7 @@ import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/widgets/inputs/user_selection_dialog.dart';
 import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
@@ -309,26 +310,21 @@ void main() {
     },
   );
 
-  group('Assigning', () {
+  group('Assigning a borrower', () {
+    final user = CustomUser(uid: 'foo', name: 'Foo');
+
+    setUp(() async {
+      await firestore.collection('users').add(user.toFirestore());
+    });
+
     testWidgets(
       'can set the borrower on an item',
       (WidgetTester tester) async {
-        final authMock = MockFirebaseAuth();
-        final user = UserDto(
-          id: 'foo',
-          name: 'Foo',
-          role: UserRole.user,
-        );
-        final mockCallableService = MockCallableService();
-        when(mockCallableService.getUsers())
-            .thenAnswer((_) => Future.value([user]));
-
         await pumpPage(
           Scaffold(body: InventoryView()),
           tester,
           userRole: UserRole.admin,
           firestore: firestore,
-          auth: authMock,
         );
 
         var chairListItem = find.ancestor(
@@ -347,7 +343,7 @@ void main() {
         await tester.tap(assignButton);
         await tester.pumpAndSettle();
 
-        final userOption = find.text(user.name);
+        final userOption = find.text(user.name!);
         await tester.tap(userOption);
         await tester.pumpAndSettle();
         final selectButton = find.text('Select');
@@ -361,7 +357,7 @@ void main() {
 
         final borrower = find.descendant(
           of: chairListItem,
-          matching: find.text(user.name),
+          matching: find.text(user.name!),
         );
 
         expect(borrower, findsOneWidget);
@@ -371,20 +367,10 @@ void main() {
     testWidgets(
       'can remove the borrower from an item',
       (WidgetTester tester) async {
-        final authMock = MockFirebaseAuth();
-        final user = UserDto(
-          id: 'foo',
-          name: 'Foo',
-          role: UserRole.user,
-        );
-        final mockCallableService = MockCallableService();
-        when(mockCallableService.getUsers())
-            .thenAnswer((_) => Future.value([user]));
-
         final monitorItem = InventoryItem(
           id: 'Monitor#123',
           type: 'Monitor',
-          borrower: user.toCustomUser(),
+          borrower: user,
         );
         await firestore
             .collection('items')
@@ -396,7 +382,6 @@ void main() {
           tester,
           userRole: UserRole.admin,
           firestore: firestore,
-          auth: authMock,
         );
 
         var monitorListItem = find.ancestor(
@@ -416,8 +401,8 @@ void main() {
         await tester.pumpAndSettle();
 
         final userOption = find.descendant(
-          of: find.byType(ValueSelectionDialog),
-          matching: find.text(user.name),
+          of: find.byType(UserSelectionDialog),
+          matching: find.text(user.name!),
         );
         await tester.tap(userOption);
         await tester.pumpAndSettle();
@@ -433,7 +418,7 @@ void main() {
 
         final borrower = find.descendant(
           of: monitorListItem,
-          matching: find.text(user.name),
+          matching: find.text(user.name!),
         );
 
         expect(borrower, findsNothing);
@@ -443,20 +428,10 @@ void main() {
     testWidgets(
       'should not remove the borrower from an item if canceling out from the dialog',
       (WidgetTester tester) async {
-        final authMock = MockFirebaseAuth();
-        final user = UserDto(
-          id: 'foo',
-          name: 'Foo',
-          role: UserRole.user,
-        );
-        final mockCallableService = MockCallableService();
-        when(mockCallableService.getUsers())
-            .thenAnswer((_) => Future.value([user]));
-
         final monitorItem = InventoryItem(
           id: 'Monitor#123',
           type: 'Monitor',
-          borrower: user.toCustomUser(),
+          borrower: user,
         );
         await firestore
             .collection('items')
@@ -468,7 +443,6 @@ void main() {
           tester,
           userRole: UserRole.admin,
           firestore: firestore,
-          auth: authMock,
         );
 
         var monitorListItem = find.ancestor(
@@ -498,7 +472,7 @@ void main() {
 
         final borrower = find.descendant(
           of: monitorListItem,
-          matching: find.text(user.name),
+          matching: find.text(user.name!),
         );
 
         expect(borrower, findsOneWidget);
@@ -508,20 +482,10 @@ void main() {
     testWidgets(
       'shows the current borrower as selected',
       (WidgetTester tester) async {
-        final authMock = MockFirebaseAuth();
-        final user = UserDto(
-          id: 'foo',
-          name: 'Foo',
-          role: UserRole.user,
-        );
-        final mockCallableService = MockCallableService();
-        when(mockCallableService.getUsers())
-            .thenAnswer((_) => Future.value([user]));
-
         final monitorItem = InventoryItem(
           id: 'Monitor#123',
           type: 'Monitor',
-          borrower: user.toCustomUser(),
+          borrower: user,
         );
         await firestore
             .collection('items')
@@ -533,7 +497,6 @@ void main() {
           tester,
           userRole: UserRole.admin,
           firestore: firestore,
-          auth: authMock,
         );
 
         var monitorListItem = find.ancestor(
@@ -553,14 +516,77 @@ void main() {
         await tester.pumpAndSettle();
 
         final userOptionFinder = find.descendant(
-          of: find.byType(ValueSelectionDialog),
+          of: find.byType(UserSelectionDialog),
           matching: find.ancestor(
-            of: find.text(user.name),
+            of: find.text(user.name!),
             matching: find.byType(ListTile),
           ),
         );
         final userOption = tester.firstWidget(userOptionFinder) as ListTile;
         expect(userOption.selected, isTrue);
+      },
+    );
+
+    testWidgets(
+      'can add a user to the list',
+      (WidgetTester tester) async {
+        await pumpPage(
+          Scaffold(body: InventoryView()),
+          tester,
+          userRole: UserRole.admin,
+          firestore: firestore,
+        );
+
+        var chairListItem = find.ancestor(
+          of: find.text(chairItem.name),
+          matching: find.byType(ListTile),
+        );
+
+        final optionsButton = find.descendant(
+          of: chairListItem,
+          matching: find.byIcon(Icons.more_vert),
+        );
+        await tester.tap(optionsButton);
+        await tester.pumpAndSettle();
+
+        final assignButton = find.text('Assign');
+        await tester.tap(assignButton);
+        await tester.pumpAndSettle();
+
+        var customName = 'Jane Doe';
+        var newUserNameInput = find.descendant(
+          of: find.byType(UserSelectionDialog),
+          matching: find.byType(TextField),
+        );
+        await tester.enterText(newUserNameInput, customName);
+        await tester.pumpAndSettle();
+
+        final newUserAddButton = find.byIcon(Icons.add);
+        await tester.tap(newUserAddButton);
+        await tester.pumpAndSettle();
+
+        final userOption = find.descendant(
+          of: find.byType(UserSelectionDialog),
+          matching: find.text(customName),
+        );
+        await tester.tap(userOption);
+
+        await tester.pumpAndSettle();
+        final selectButton = find.text('Select');
+        await tester.tap(selectButton);
+        await tester.pumpAndSettle();
+
+        chairListItem = find.ancestor(
+          of: find.text(chairItem.name),
+          matching: find.byType(ListTile),
+        );
+
+        final borrower = find.descendant(
+          of: chairListItem,
+          matching: find.text(customName),
+        );
+
+        expect(borrower, findsOneWidget);
       },
     );
   });

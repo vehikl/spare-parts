@@ -2,9 +2,9 @@ library print_dialog_web;
 
 import 'package:flutter/material.dart';
 import 'package:spare_parts/services/print_service.dart';
-import 'package:spare_parts/widgets/print_dialog/print_dialog_body.dart';
+import 'package:spare_parts/widgets/dialogs/print_dialog/print_dialog_body.dart';
 
-import '../../services/dymo_service.dart';
+import '../../../services/dymo_service.dart';
 
 class PrintDialog extends StatefulWidget {
   final String itemId;

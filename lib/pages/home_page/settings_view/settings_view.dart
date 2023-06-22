@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spare_parts/pages/home_page/settings_view/borrowing_rules_setting/borrowing_rules_setting.dart';
 import 'package:spare_parts/pages/home_page/settings_view/set_admins_button.dart';
+import 'package:spare_parts/pages/home_page/settings_view/users_setting/users_setting.dart';
 import 'package:spare_parts/widgets/custom_layout_builder.dart';
 
 class SettingsView extends StatelessWidget {
@@ -25,13 +26,25 @@ class SettingsView extends StatelessWidget {
           vertical: 10,
           horizontal: _getPadding(context, layout),
         ),
-        child: Column(
-          children: [
-            SetAdminsButton(),
-            Divider(),
-            BorrowingRulesSetting(),
-            Divider(),
-          ],
+        // TODO: reorder into multiple tabs
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              SetAdminsButton(),
+              ScrollConfiguration(
+                behavior:
+                    ScrollConfiguration.of(context).copyWith(scrollbars: true),
+                child: BorrowingRulesSetting(),
+              ),
+              ScrollConfiguration(
+                behavior:
+                    ScrollConfiguration.of(context).copyWith(scrollbars: true),
+                child: UsersSetting(),
+              ),
+            ],
+          ),
         ),
       );
     });

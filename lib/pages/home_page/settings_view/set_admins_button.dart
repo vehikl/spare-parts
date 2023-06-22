@@ -71,15 +71,19 @@ class _SetAdminsButtonState extends State<SetAdminsButton> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return CircularProgressIndicator();
-
     return Column(
       children: [
         TitleText('Manage Administrators'),
-        ElevatedButton(
-          onPressed: () => _handleSetAdmins(context),
-          child: Text('Set Admins'),
-        ),
+        if (_loading)
+          Center(child: CircularProgressIndicator())
+        else
+          ListTile(
+            title: Text('Decide which users have the Admin role'),
+            trailing: ElevatedButton(
+              onPressed: () => _handleSetAdmins(context),
+              child: Text('Set Admins'),
+            ),
+          ),
       ],
     );
   }

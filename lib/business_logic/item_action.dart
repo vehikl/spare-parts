@@ -8,15 +8,13 @@ import 'package:spare_parts/business_logic/borrowing_request_dialog.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
-import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
-import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
+import 'package:spare_parts/widgets/inputs/user_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
-import 'package:spare_parts/widgets/print_dialog/print_dialog_mobile.dart'
-    if (dart.library.html) 'package:spare_parts/widgets/print_dialog/print_dialog_web.dart';
-import 'package:spare_parts/widgets/user_avatar.dart';
+import 'package:spare_parts/widgets/dialogs/print_dialog/print_dialog_mobile.dart'
+    if (dart.library.html) 'package:spare_parts/widgets/dialogs/print_dialog/print_dialog_web.dart';
 
 import '../services/repositories/repositories.dart';
 
@@ -91,36 +89,21 @@ class AssignItemAction extends ItemAction {
   @override
   handle(BuildContext context, InventoryItem item) {
     final inventoryItemRepository = context.read<InventoryItemRepository>();
-    final callableService = context.read<CallableService>();
 
     commonHandle(
       () async {
-        final users = await callableService.getUsers();
-
-        final userIds = await showDialog<List<String>?>(
+        final users = await showDialog<List<CustomUser>?>(
           context: context,
-          builder: (context) => ValueSelectionDialog(
-            isSingleSelection: true,
+          builder: (context) => UserSelectionDialog(
             title: 'Select user',
-            values: users.map((u) => u.id).toList(),
-            selectedValues: users
-                .where((user) => user.id == item.borrower?.uid)
-                .map((user) => user.id)
-                .toList(),
-            labelBuilder: (uid) =>
-                users.singleWhere((user) => user.id == uid).name,
-            leadingBuilder: (uid) {
-              final user = users.singleWhere((user) => user.id == uid);
-              return UserAvatar(photoUrl: user.photoUrl);
-            },
+            isSingleSelection: true,
+            selectedUsers: item.borrower == null ? [] : [item.borrower!],
           ),
         );
 
-        if (userIds == null) return false;
+        if (users == null) return false;
 
-        item.borrower = userIds.isEmpty
-            ? null
-            : users.firstWhere((u) => u.id == userIds.first).toCustomUser();
+        item.borrower = users.firstOrNull;
         await inventoryItemRepository.update(item);
         return true;
       },
@@ -145,7 +128,8 @@ class BorrowItemAction extends ItemAction {
     final firestoreService = context.read<FirestoreService>();
     final inventoryItemRepository = context.read<InventoryItemRepository>();
     final borrowingRuleRepository = context.read<BorrowingRuleRepository>();
-        final borrowingRequestRepository = context.read<BorrowingRequestRepository>();
+    final borrowingRequestRepository =
+        context.read<BorrowingRequestRepository>();
     final auth = context.read<FirebaseAuth>();
 
     commonHandle(
@@ -157,7 +141,8 @@ class BorrowItemAction extends ItemAction {
             await borrowingRuleRepository.getForItemType(item.type);
 
         if (borrowingRule != null) {
-          final borrowingCount = await borrowingRuleRepository.getBorrowingCount(
+          final borrowingCount =
+              await borrowingRuleRepository.getBorrowingCount(
             item.type,
             auth.currentUser!.uid,
           );

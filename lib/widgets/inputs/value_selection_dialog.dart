@@ -52,34 +52,36 @@ class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
             Expanded(
               child: ListView(
                 shrinkWrap: true,
-                children: widget.values
-                    .map((value) => ListTile(
-                          title: Text(widget.labelBuilder == null
-                              ? value
-                              : widget.labelBuilder!(value)),
-                          leading: widget.leadingBuilder == null
-                              ? null
-                              : widget.leadingBuilder!(value),
-                          selected: _newSelectedValues.contains(value),
-                          selectedTileColor:
-                              Theme.of(context).colorScheme.primary,
-                          selectedColor:
-                              Theme.of(context).colorScheme.onPrimary,
-                          enabled: !widget.disabledValues.contains(value),
-                          onTap: () {
-                            setState(() {
-                              if (_newSelectedValues.contains(value)) {
-                                _newSelectedValues.remove(value);
-                              } else {
-                                if (widget.isSingleSelection) {
-                                  _newSelectedValues.clear();
+                children: [
+                  ...widget.values
+                      .map((value) => ListTile(
+                            title: Text(widget.labelBuilder == null
+                                ? value
+                                : widget.labelBuilder!(value)),
+                            leading: widget.leadingBuilder == null
+                                ? null
+                                : widget.leadingBuilder!(value),
+                            selected: _newSelectedValues.contains(value),
+                            selectedTileColor:
+                                Theme.of(context).colorScheme.primary,
+                            selectedColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            enabled: !widget.disabledValues.contains(value),
+                            onTap: () {
+                              setState(() {
+                                if (_newSelectedValues.contains(value)) {
+                                  _newSelectedValues.remove(value);
+                                } else {
+                                  if (widget.isSingleSelection) {
+                                    _newSelectedValues.clear();
+                                  }
+                                  _newSelectedValues.add(value);
                                 }
-                                _newSelectedValues.add(value);
-                              }
-                            });
-                          },
-                        ))
-                    .toList(),
+                              });
+                            },
+                          ))
+                      .toList(),
+                ],
               ),
             ),
           ],
