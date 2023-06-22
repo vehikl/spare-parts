@@ -18,8 +18,7 @@ class UsersSetting extends StatelessWidget {
     return Column(
       children: [
         TitleText('Users'),
-        SizedBox(
-          height: 200,
+        Expanded(
           child: StreamBuilder<List<CustomUser>>(
             stream: userRepository.getAllStream(),
             builder: (context, snapshot) {

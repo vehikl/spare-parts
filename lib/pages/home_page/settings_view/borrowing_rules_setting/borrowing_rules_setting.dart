@@ -61,62 +61,53 @@ class BorrowingRulesSetting extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         TitleText('Borrowing Rules'),
-        StreamBuilder<List<BorrowingRule>>(
-          stream: borrowingRuleRepository.borrowingRulesStream(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return ErrorContainer(error: snapshot.error.toString());
-            }
+        Expanded(
+          child: StreamBuilder<List<BorrowingRule>>(
+            stream: borrowingRuleRepository.borrowingRulesStream(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return ErrorContainer(error: snapshot.error.toString());
+              }
 
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
-            }
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-            final rules =
-                snapshot.data!.where((rule) => rule.createdAt != null).toList();
-            rules.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+              final rules = snapshot.data!
+                  .where((rule) => rule.createdAt != null)
+                  .toList();
+              rules.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (rules.isEmpty) ...[
-                  EmptyListState(
-                    message: "No borrowing rules configured yet...",
-                  ),
-                  SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.center,
-                    child: NewRuleButton(rules: rules),
-                  ),
-                ] else
-                  SizedBox(
-                    height: 300,
-                    child: Theme(
-                      data: Theme.of(context).copyWith(
-                        scrollbarTheme: ScrollbarThemeData(
-                          thumbVisibility: MaterialStatePropertyAll(true),
-                        ),
-                      ),
-                      child: SingleChildScrollView(
-                        child: DataTable(
-                          columns: [
-                            DataColumn(
-                              label: NewRuleButton(rules: rules, isIcon: true),
-                            ),
-                            DataColumn(label: Text('Type')),
-                            DataColumn(label: Text('Max Count'), numeric: true),
-                          ],
-                          rows: rules
-                              .map((rule) => _buildRuleRow(rule, rules))
-                              .toList(),
-                        ),
-                      ),
+              return ListView(
+                shrinkWrap: true,
+                children: [
+                  if (rules.isEmpty) ...[
+                    EmptyListState(
+                      message: "No borrowing rules configured yet...",
                     ),
-                  ),
-              ],
-            );
-          },
+                    SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.center,
+                      child: NewRuleButton(rules: rules),
+                    ),
+                  ] else
+                    DataTable(
+                      
+                      columns: [
+                        DataColumn(
+                          label: NewRuleButton(rules: rules, isIcon: true),
+                        ),
+                        DataColumn(label: Text('Type')),
+                        DataColumn(label: Text('Max Count'), numeric: true),
+                      ],
+                      rows: rules
+                          .map((rule) => _buildRuleRow(rule, rules))
+                          .toList(),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ],
     );
