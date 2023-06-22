@@ -26,15 +26,25 @@ class SettingsView extends StatelessWidget {
           vertical: 10,
           horizontal: _getPadding(context, layout),
         ),
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            SetAdminsButton(),
-            Divider(),
-            BorrowingRulesSetting(),
-            Divider(),
-            UsersSetting()
-          ],
+        // TODO: reorder into multiple tabs
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              SetAdminsButton(),
+              ScrollConfiguration(
+                behavior:
+                    ScrollConfiguration.of(context).copyWith(scrollbars: true),
+                child: BorrowingRulesSetting(),
+              ),
+              ScrollConfiguration(
+                behavior:
+                    ScrollConfiguration.of(context).copyWith(scrollbars: true),
+                child: UsersSetting(),
+              ),
+            ],
+          ),
         ),
       );
     });

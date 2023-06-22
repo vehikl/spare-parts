@@ -7,8 +7,16 @@ class UserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (photoUrl == null || photoUrl == '') return Icon(Icons.person);
+    if (photoUrl == null || photoUrl == '') {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Icon(Icons.person, size: 30),
+      );
+    }
 
-    return CircleAvatar(foregroundImage: NetworkImage(photoUrl!));
+    return CircleAvatar(
+      foregroundImage: NetworkImage(photoUrl!),
+      radius: 20,
+    );
   }
 }

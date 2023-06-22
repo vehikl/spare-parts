@@ -7,9 +7,11 @@ class UserRepository extends FirestoreService {
   UserRepository(super.firestore);
 
   Stream<List<CustomUser>> getAllStream() {
-    return usersCollection.snapshots().map((snapshot) => snapshot.docs
-        .map((e) => CustomUser.fromFirestore(e.data() as Map<String, dynamic>))
-        .toList());
+    return usersCollection.orderBy('name').snapshots().map((snapshot) =>
+        snapshot.docs
+            .map((e) =>
+                CustomUser.fromFirestore(e.data() as Map<String, dynamic>))
+            .toList());
   }
 
   Future<List<CustomUser>> getAll() async {
@@ -24,13 +26,15 @@ class UserRepository extends FirestoreService {
   }
 
   Future<void> update(String originalUid, CustomUser user) async {
-    final userDocs = await usersCollection.where('uid', isEqualTo: originalUid).get();
+    final userDocs =
+        await usersCollection.where('uid', isEqualTo: originalUid).get();
     final userDoc = userDocs.docs.first;
     await userDoc.reference.update(user.toFirestore());
   }
 
   Future<void> delete(CustomUser user) async {
-    final userDocs = await usersCollection.where('uid', isEqualTo: user.uid).get();
+    final userDocs =
+        await usersCollection.where('uid', isEqualTo: user.uid).get();
     final userDoc = userDocs.docs.first;
     await userDoc.reference.delete();
   }
