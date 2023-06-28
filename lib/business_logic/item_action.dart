@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/borrowing_request_dialog.dart';
 import 'package:spare_parts/entities/custom_user.dart';
-import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
@@ -172,13 +171,7 @@ class BorrowItemAction extends ItemAction {
           CustomUser.fromUser(user),
         );
 
-        final event = Event(
-          issuerId: user.uid,
-          issuerName: user.displayName ?? 'anonymous',
-          type: 'Borrow',
-          createdAt: DateTime.now(),
-        );
-        await eventRepository.addEvent(item.id, event);
+        await eventRepository.add(item.id, eventType: 'Borrow');
 
         return true;
       },
@@ -202,17 +195,10 @@ class ReleaseItemAction extends ItemAction {
   handle(BuildContext context, InventoryItem item) {
     final eventRepository = context.read<EventRepository>();
     final inventoryItemRepository = context.read<InventoryItemRepository>();
-    final auth = context.read<FirebaseAuth>();
 
     commonHandle(
       () async {
-        final event = Event(
-          issuerId: auth.currentUser?.uid ?? '',
-          issuerName: auth.currentUser?.displayName ?? '',
-          type: 'Release',
-          createdAt: DateTime.now(),
-        );
-        await eventRepository.addEvent(item.id, event);
+        await eventRepository.add(item.id, eventType: 'Release');
         await inventoryItemRepository.release(item);
 
         return true;

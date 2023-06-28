@@ -139,8 +139,12 @@ void main() {
     testWidgets('Saves year information after editing a Laptop',
         (WidgetTester tester) async {
       String newYear = '2020';
-      await pumpPage(Scaffold(body: ItemPage(itemId: laptop.id)), tester,
-          firestore: firestore, userRole: UserRole.admin);
+      await pumpPage(
+        Scaffold(body: ItemPage(itemId: laptop.id)),
+        tester,
+        firestore: firestore,
+        userRole: UserRole.admin,
+      );
 
       final optionsButton = find.byIcon(Icons.more_vert);
       await tester.tap(optionsButton);
