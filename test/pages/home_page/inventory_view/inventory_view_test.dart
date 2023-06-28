@@ -93,6 +93,14 @@ void main() {
   testWidgets(
     'Adds new item to inventory list',
     (WidgetTester tester) async {
+      final authMock = MockFirebaseAuth();
+      final userMock = MockUser();
+      const userName = 'name';
+
+      when(authMock.currentUser).thenReturn(userMock);
+      when(userMock.uid).thenReturn('foo');
+      when(userMock.displayName).thenReturn(userName);
+
       const itemName = 'Table #3';
       const itemType = 'Desk';
       const itemStorageLocation = 'Waterloo';
@@ -104,6 +112,7 @@ void main() {
         tester,
         userRole: UserRole.admin,
         firestore: firestore,
+        auth: authMock,
       );
 
       final fab = find.byIcon(Icons.add);

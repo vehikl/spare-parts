@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
-import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
@@ -49,7 +48,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
 
   Future<void> _handleSave() async {
     final inventoryItemRepository = context.read<InventoryItemRepository>();
-    final firestoreService = context.read<FirestoreService>();
+    final eventRepository = context.read<EventRepository>();
     final auth = context.read<FirebaseAuth>();
 
     if (_formKey.currentState!.validate()) {
@@ -63,7 +62,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
             type: 'Create',
             createdAt: DateTime.now(),
           );
-          await firestoreService.addEvent(newItemId, event);
+          await eventRepository.addEvent(newItemId, event);
         } else {
           await inventoryItemRepository.update(_newItem);
         }

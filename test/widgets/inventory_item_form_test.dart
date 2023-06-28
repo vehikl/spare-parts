@@ -8,6 +8,7 @@ import 'package:spare_parts/services/repositories/inventory_item_repository.mock
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 
+import '../helpers/mocks/mocks.dart';
 import '../helpers/test_helpers.dart';
 import '../helpers/tester_extension.dart';
 
@@ -31,6 +32,14 @@ void main() {
     });
 
     group('when generating item name', () {
+        final authMock = MockFirebaseAuth();
+        final userMock = MockUser();
+        const userName = 'name';
+
+        when(authMock.currentUser).thenReturn(userMock);
+        when(userMock.uid).thenReturn('foo');
+        when(userMock.displayName).thenReturn(userName);
+
       testWidgets('generates new name', (WidgetTester tester) async {
         final inventoryItemRepository = MockInventoryItemRepository();
         await pumpPage(
@@ -38,6 +47,7 @@ void main() {
           tester,
           userRole: UserRole.admin,
           inventoryItemRepository: inventoryItemRepository,
+          auth: authMock,
         );
 
         final generateNameButton = find.byIcon(Icons.autorenew);
@@ -62,6 +72,7 @@ void main() {
           tester,
           userRole: UserRole.admin,
           inventoryItemRepository: inventoryItemRepository,
+          auth: authMock,
         );
 
         const newItemType = 'Chair';
@@ -103,6 +114,7 @@ void main() {
           userRole: UserRole.admin,
           inventoryItemRepository: inventoryItemRepository,
           firestore: firestore,
+          auth: authMock,
         );
 
         final generateNameButton = find.byIcon(Icons.autorenew);

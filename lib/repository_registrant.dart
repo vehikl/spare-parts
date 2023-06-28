@@ -29,6 +29,7 @@ class RepositoryRegistrant extends StatelessWidget {
         ),
         Provider<MetaRepository>(create: (_) => MetaRepository(firestore)),
         Provider<UserRepository>(create: (_) => UserRepository(firestore)),
+        Provider<EventRepository>(create: (_) => EventRepository(firestore)),
       ],
       child: child,
     );
