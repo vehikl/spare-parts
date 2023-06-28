@@ -58,13 +58,21 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
 
           final event = Event(
             issuerId: auth.currentUser!.uid,
-            issuerName: auth.currentUser!.displayName ?? 'anonymous',
+            issuerName: auth.currentUser?.displayName ?? 'anonymous',
             type: 'Create',
             createdAt: DateTime.now(),
           );
           await eventRepository.addEvent(newItemId, event);
         } else {
           await inventoryItemRepository.update(_newItem);
+
+          final event = Event(
+            issuerId: auth.currentUser!.uid,
+            issuerName: auth.currentUser?.displayName ?? 'anonymous',
+            type: 'Update',
+            createdAt: DateTime.now(),
+          );
+          await eventRepository.addEvent(_newItem.id, event);
         }
         Navigator.of(context).pop();
       } catch (e) {

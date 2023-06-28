@@ -13,12 +13,19 @@ import '../helpers/tester_extension.dart';
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
   final testItem = InventoryItem(id: 'Chair#123', type: 'Chair');
+  final authMock = MockFirebaseAuth();
+  final userMock = MockUser();
+  const userName = 'name';
 
   setUp(() async {
     await firestore
         .collection('items')
         .doc(testItem.id)
         .set(testItem.toFirestore());
+
+    when(authMock.currentUser).thenReturn(userMock);
+    when(userMock.uid).thenReturn('foo');
+    when(userMock.displayName).thenReturn(userName);
   });
 
   tearDown(() async {
@@ -28,14 +35,6 @@ void main() {
   testWidgets(
     'Displays events after borrowing and releasing',
     (WidgetTester tester) async {
-      final authMock = MockFirebaseAuth();
-      final userMock = MockUser();
-      const userName = 'name';
-
-      when(authMock.currentUser).thenReturn(userMock);
-      when(userMock.uid).thenReturn('foo');
-      when(userMock.displayName).thenReturn(userName);
-
       await pumpPage(
         HomePage(),
         tester,
@@ -99,16 +98,9 @@ void main() {
   );
 
   testWidgets(
-    'Displays an "Created" event after adding a new item',
+    'Displays an "Create" event after adding a new item',
     (WidgetTester tester) async {
-      final authMock = MockFirebaseAuth();
-      final userMock = MockUser();
-      const userName = 'name';
       const deskName = 'Desk#123';
-
-      when(authMock.currentUser).thenReturn(userMock);
-      when(userMock.uid).thenReturn('foo');
-      when(userMock.displayName).thenReturn(userName);
 
       await pumpPage(
         HomePage(),
@@ -129,6 +121,46 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Create'), findsOneWidget);
+      expect(find.text(userName), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Displays an "Update" event after updating an item',
+    (WidgetTester tester) async {
+      await pumpPage(
+        HomePage(),
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+        auth: authMock,
+      );
+
+      var chairListItem = find.ancestor(
+        of: find.text(testItem.id),
+        matching: find.byType(ListTile),
+      );
+      var optionsButton = find.descendant(
+        of: chairListItem,
+        matching: find.byIcon(Icons.more_vert),
+      );
+
+      await tester.tap(optionsButton);
+      await tester.pumpAndSettle();
+
+      final editButton = find.text('Edit');
+      await tester.tap(editButton);
+      await tester.pumpAndSettle();
+
+      const newName = 'NewName';
+      await tester.enterTextByLabel('Name', newName);
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(newName));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Update'), findsOneWidget);
       expect(find.text(userName), findsOneWidget);
     },
   );
