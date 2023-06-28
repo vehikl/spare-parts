@@ -8,6 +8,7 @@ import 'package:spare_parts/utilities/constants.dart';
 
 import '../helpers/mocks/mocks.dart';
 import '../helpers/test_helpers.dart';
+import '../helpers/tester_extension.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
@@ -94,6 +95,41 @@ void main() {
       expect(find.text('Borrow'), findsOneWidget);
       expect(find.text('Release'), findsOneWidget);
       expect(find.text(userName), findsNWidgets(2));
+    },
+  );
+
+  testWidgets(
+    'Displays an "Created" event after adding a new item',
+    (WidgetTester tester) async {
+      final authMock = MockFirebaseAuth();
+      final userMock = MockUser();
+      const userName = 'name';
+      const deskName = 'Desk#123';
+
+      when(authMock.currentUser).thenReturn(userMock);
+      when(userMock.uid).thenReturn('foo');
+      when(userMock.displayName).thenReturn(userName);
+
+      await pumpPage(
+        HomePage(),
+        tester,
+        userRole: UserRole.admin,
+        firestore: firestore,
+        auth: authMock,
+      );
+
+      await tester.tap(find.byIcon(Icons.add));
+      await tester.pumpAndSettle();
+
+      await tester.enterTextByLabel('Name', deskName);
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(deskName));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Create'), findsOneWidget);
+      expect(find.text(userName), findsOneWidget);
     },
   );
 }

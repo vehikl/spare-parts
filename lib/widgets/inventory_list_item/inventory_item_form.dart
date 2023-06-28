@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
+import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
@@ -46,11 +49,21 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
 
   Future<void> _handleSave() async {
     final inventoryItemRepository = context.read<InventoryItemRepository>();
+    final firestoreService = context.read<FirestoreService>();
+    final auth = context.read<FirebaseAuth>();
 
     if (_formKey.currentState!.validate()) {
       try {
         if (widget.formState == InventoryFormState.add) {
-          await inventoryItemRepository.add(_newItem);
+          final newItemId = await inventoryItemRepository.add(_newItem);
+
+          final event = Event(
+            issuerId: auth.currentUser!.uid,
+            issuerName: auth.currentUser!.displayName ?? 'anonymous',
+            type: 'Create',
+            createdAt: DateTime.now(),
+          );
+          await firestoreService.addEvent(newItemId, event);
         } else {
           await inventoryItemRepository.update(_newItem);
         }

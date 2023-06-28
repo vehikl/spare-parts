@@ -73,8 +73,9 @@ class InventoryItemRepository extends FirestoreService {
     });
   }
 
-  Future<void> add(InventoryItem item) async {
-    await itemsCollection.doc().set(item.toFirestore());
+  Future<String> add(InventoryItem item) async {
+    final docRef = await itemsCollection.add(item.toFirestore());
+    return docRef.id;
   }
 
   Future<void> update(InventoryItem item) async {
