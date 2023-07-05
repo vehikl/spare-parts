@@ -1,7 +1,6 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:spare_parts/entities/borrowing_request.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/entities/custom_user.dart';
@@ -9,8 +8,6 @@ import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
-import '../helpers/mocks/mock_firebase_auth.dart';
-import '../helpers/mocks/mock_user.dart';
 import '../helpers/test_helpers.dart';
 
 void main() {
@@ -69,16 +66,11 @@ void main() {
 
   group('when borrowing', () {
     group('if a borrowing rule is broken', () {
-      late MockFirebaseAuth mockFirebaseAuth;
+      final currentUser = CustomUser(uid: 'foo');
+      final mockFirebaseAuth = createAuth(uid: currentUser.uid);
       late InventoryItem availableItem;
 
       setUp(() async {
-        final currentUser = CustomUser(uid: 'foo');
-        mockFirebaseAuth = MockFirebaseAuth();
-        final mockUser = MockUser();
-        when(mockUser.uid).thenReturn(currentUser.uid);
-        when(mockFirebaseAuth.currentUser).thenReturn(mockUser);
-
         final borrowedItem =
             InventoryItem(id: '#first', type: 'Chair', borrower: currentUser);
         availableItem = InventoryItem(id: '#second', type: 'Chair');

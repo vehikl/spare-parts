@@ -9,7 +9,6 @@ import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/borrowing_requests_view/borrowing_requests_view.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
-import '../../../helpers/mocks/mocks.dart';
 import '../../../helpers/test_helpers.dart';
 
 class MockUser extends Mock implements User {
@@ -21,10 +20,8 @@ class MockUser extends Mock implements User {
 void main() {
   group('Borrowing Request View', () {
     final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
-    final authMock = MockFirebaseAuth();
-    final userMock = MockUser();
-
     const user = CustomUser(uid: 'qwe123', name: 'John Doe');
+    final authMock = createAuth(uid: user.uid, userName: user.name!);
 
     final chairItem = InventoryItem(id: 'Chair#123', type: 'Chair');
     final deskItem = InventoryItem(id: 'Desk#321', type: 'Desk');
@@ -58,9 +55,6 @@ void main() {
       await firestore
           .collection('borrowingRequests')
           .add(deskBorrowingRequest.toFirestore());
-
-      when(userMock.uid).thenReturn(user.uid);
-      when(authMock.currentUser).thenReturn(userMock);
     });
 
     testWidgets(

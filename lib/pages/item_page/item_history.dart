@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/event.dart';
-import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 
@@ -13,7 +13,7 @@ class ItemHistory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firestoreService = context.watch<FirestoreService>();
+    final eventRepository = context.watch<EventRepository>();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -23,7 +23,7 @@ class ItemHistory extends StatelessWidget {
           child: Text('Interaction History', style: TextStyle(fontSize: 18)),
         ),
         StreamBuilder<List<Event>>(
-          stream: firestoreService.getEventsStream(itemId),
+          stream: eventRepository.getEventsStream(itemId),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return ErrorContainer(error: snapshot.error.toString());

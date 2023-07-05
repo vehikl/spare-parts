@@ -46,13 +46,16 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
 
   Future<void> _handleSave() async {
     final inventoryItemRepository = context.read<InventoryItemRepository>();
+    final eventRepository = context.read<EventRepository>();
 
     if (_formKey.currentState!.validate()) {
       try {
         if (widget.formState == InventoryFormState.add) {
-          await inventoryItemRepository.add(_newItem);
+          final newItemId = await inventoryItemRepository.add(_newItem);
+          await eventRepository.add(newItemId, eventType: 'Create');
         } else {
           await inventoryItemRepository.update(_newItem);
+          await eventRepository.add(_newItem.id, eventType: 'Update');
         }
         Navigator.of(context).pop();
       } catch (e) {

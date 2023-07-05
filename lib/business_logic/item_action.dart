@@ -6,15 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/business_logic/borrowing_request_dialog.dart';
 import 'package:spare_parts/entities/custom_user.dart';
-import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
-import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
-import 'package:spare_parts/widgets/inputs/user_selection_dialog.dart';
-import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 import 'package:spare_parts/widgets/dialogs/print_dialog/print_dialog_mobile.dart'
     if (dart.library.html) 'package:spare_parts/widgets/dialogs/print_dialog/print_dialog_web.dart';
+import 'package:spare_parts/widgets/inputs/user_selection_dialog.dart';
+import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 
 import '../services/repositories/repositories.dart';
 
@@ -125,9 +123,9 @@ class BorrowItemAction extends ItemAction {
 
   @override
   handle(BuildContext context, InventoryItem item) {
-    final firestoreService = context.read<FirestoreService>();
     final inventoryItemRepository = context.read<InventoryItemRepository>();
     final borrowingRuleRepository = context.read<BorrowingRuleRepository>();
+    final eventRepository = context.read<EventRepository>();
     final borrowingRequestRepository =
         context.read<BorrowingRequestRepository>();
     final auth = context.read<FirebaseAuth>();
@@ -173,13 +171,7 @@ class BorrowItemAction extends ItemAction {
           CustomUser.fromUser(user),
         );
 
-        final event = Event(
-          issuerId: user.uid,
-          issuerName: user.displayName ?? 'anonymous',
-          type: 'Borrow',
-          createdAt: DateTime.now(),
-        );
-        await firestoreService.addEvent(item.id, event);
+        await eventRepository.add(item.id, eventType: 'Borrow');
 
         return true;
       },
@@ -201,19 +193,12 @@ class ReleaseItemAction extends ItemAction {
 
   @override
   handle(BuildContext context, InventoryItem item) {
-    final firestoreService = context.read<FirestoreService>();
+    final eventRepository = context.read<EventRepository>();
     final inventoryItemRepository = context.read<InventoryItemRepository>();
-    final auth = context.read<FirebaseAuth>();
 
     commonHandle(
       () async {
-        final event = Event(
-          issuerId: auth.currentUser?.uid ?? '',
-          issuerName: auth.currentUser?.displayName ?? '',
-          type: 'Release',
-          createdAt: DateTime.now(),
-        );
-        await firestoreService.addEvent(item.id, event);
+        await eventRepository.add(item.id, eventType: 'Release');
         await inventoryItemRepository.release(item);
 
         return true;

@@ -15,7 +15,6 @@ import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 
-import '../../../helpers/mocks/mocks.dart';
 import '../../../helpers/test_helpers.dart';
 import '../../../helpers/tester_extension.dart';
 
@@ -189,7 +188,13 @@ void main() {
         await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
 
-        expect(find.text(newItemName), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byType(ListTile),
+            matching: find.text(newItemName),
+          ),
+          findsOneWidget,
+        );
         expect(find.text(oldItemName), findsNothing);
         final newItemTypeIcon = find.descendant(
           of: find.byType(InventoryListItem),
@@ -203,7 +208,6 @@ void main() {
       'Saves the initial value of the item id if not updated',
       (WidgetTester tester) async {
         final oldItemName = chairItem.name;
-
         await pumpPage(
           Scaffold(body: InventoryView()),
           tester,
@@ -275,18 +279,11 @@ void main() {
   testWidgets(
     'User can borrow an item from the list',
     (WidgetTester tester) async {
-      final authMock = MockFirebaseAuth();
-      final userMock = MockUser();
-
-      when(authMock.currentUser).thenReturn(userMock);
-      when(userMock.uid).thenReturn('foo');
-
       await pumpPage(
         Scaffold(body: InventoryView()),
         tester,
         userRole: UserRole.user,
         firestore: firestore,
-        auth: authMock,
       );
 
       final chairListItem = find.ancestor(

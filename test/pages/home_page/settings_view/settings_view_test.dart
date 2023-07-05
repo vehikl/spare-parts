@@ -6,8 +6,6 @@ import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
-import '../../../helpers/mocks/mock_firebase_auth.dart';
-import '../../../helpers/mocks/mock_user.dart';
 import '../../../helpers/test_helpers.dart';
 
 void main() {
@@ -26,10 +24,7 @@ void main() {
       testWidgets(
         'excluding the current user',
         (WidgetTester tester) async {
-          final mockFirebaseAuth = MockFirebaseAuth();
-          final mockUser = MockUser();
-          when(mockUser.uid).thenReturn(user1.id);
-          when(mockFirebaseAuth.currentUser).thenReturn(mockUser);
+          final mockFirebaseAuth = createAuth(uid: user1.id);
 
           await pumpPage(
             Scaffold(body: SettingsView()),

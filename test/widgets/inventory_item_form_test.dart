@@ -31,6 +31,9 @@ void main() {
     });
 
     group('when generating item name', () {
+      const userName = 'name';
+      final authMock = createAuth(userName: userName);
+
       testWidgets('generates new name', (WidgetTester tester) async {
         final inventoryItemRepository = MockInventoryItemRepository();
         await pumpPage(
@@ -38,6 +41,7 @@ void main() {
           tester,
           userRole: UserRole.admin,
           inventoryItemRepository: inventoryItemRepository,
+          auth: authMock,
         );
 
         final generateNameButton = find.byIcon(Icons.autorenew);
@@ -62,6 +66,7 @@ void main() {
           tester,
           userRole: UserRole.admin,
           inventoryItemRepository: inventoryItemRepository,
+          auth: authMock,
         );
 
         const newItemType = 'Chair';
@@ -103,6 +108,7 @@ void main() {
           userRole: UserRole.admin,
           inventoryItemRepository: inventoryItemRepository,
           firestore: firestore,
+          auth: authMock,
         );
 
         final generateNameButton = find.byIcon(Icons.autorenew);
