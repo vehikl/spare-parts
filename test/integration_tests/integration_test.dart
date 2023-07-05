@@ -1,31 +1,24 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
-import '../helpers/mocks/mocks.dart';
 import '../helpers/test_helpers.dart';
 import '../helpers/tester_extension.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
   final testItem = InventoryItem(id: 'Chair#123', type: 'Chair');
-  final authMock = MockFirebaseAuth();
-  final userMock = MockUser();
   const userName = 'name';
+  final authMock = createAuth(userName: userName);
 
   setUp(() async {
     await firestore
         .collection('items')
         .doc(testItem.id)
         .set(testItem.toFirestore());
-
-    when(authMock.currentUser).thenReturn(userMock);
-    when(userMock.uid).thenReturn('foo');
-    when(userMock.displayName).thenReturn(userName);
   });
 
   tearDown(() async {

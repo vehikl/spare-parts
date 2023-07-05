@@ -15,7 +15,6 @@ import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 
-import '../../../helpers/mocks/mocks.dart';
 import '../../../helpers/test_helpers.dart';
 import '../../../helpers/tester_extension.dart';
 
@@ -93,14 +92,6 @@ void main() {
   testWidgets(
     'Adds new item to inventory list',
     (WidgetTester tester) async {
-      final authMock = MockFirebaseAuth();
-      final userMock = MockUser();
-      const userName = 'name';
-
-      when(authMock.currentUser).thenReturn(userMock);
-      when(userMock.uid).thenReturn('foo');
-      when(userMock.displayName).thenReturn(userName);
-
       const itemName = 'Table #3';
       const itemType = 'Desk';
       const itemStorageLocation = 'Waterloo';
@@ -112,7 +103,6 @@ void main() {
         tester,
         userRole: UserRole.admin,
         firestore: firestore,
-        auth: authMock,
       );
 
       final fab = find.byIcon(Icons.add);
@@ -218,19 +208,11 @@ void main() {
       'Saves the initial value of the item id if not updated',
       (WidgetTester tester) async {
         final oldItemName = chairItem.name;
-
-        final authMock = MockFirebaseAuth();
-        final userMock = MockUser();
-
-        when(authMock.currentUser).thenReturn(userMock);
-        when(userMock.uid).thenReturn('foo');
-
         await pumpPage(
           Scaffold(body: InventoryView()),
           tester,
           userRole: UserRole.admin,
           firestore: firestore,
-          auth: authMock,
         );
 
         final chairListItem = find.ancestor(
@@ -297,18 +279,11 @@ void main() {
   testWidgets(
     'User can borrow an item from the list',
     (WidgetTester tester) async {
-      final authMock = MockFirebaseAuth();
-      final userMock = MockUser();
-
-      when(authMock.currentUser).thenReturn(userMock);
-      when(userMock.uid).thenReturn('foo');
-
       await pumpPage(
         Scaffold(body: InventoryView()),
         tester,
         userRole: UserRole.user,
         firestore: firestore,
-        auth: authMock,
       );
 
       final chairListItem = find.ancestor(

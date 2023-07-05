@@ -1,31 +1,23 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:spare_parts/business_logic/borrowing_request_dialog.dart';
 import 'package:spare_parts/entities/borrowing_request.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
-import '../helpers/mocks/mock_firebase_auth.dart';
-import '../helpers/mocks/mock_user.dart';
 import '../helpers/test_helpers.dart';
 
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
-  final mockFirebaseAuth = MockFirebaseAuth();
+  const userId = 'user123';
+  final mockFirebaseAuth = createAuth(uid: userId);
 
   testWidgets(
     'when submitting a borrowing request shows a confirmation message and creates a db record',
     (WidgetTester tester) async {
-      const userId = 'user123';
       final item = InventoryItem(id: 'foo', type: 'Desk');
       const maxCount = 145;
-
-      final userMock = MockUser();
-
-      when(userMock.uid).thenReturn(userId);
-      when(mockFirebaseAuth.currentUser).thenReturn(userMock);
 
       await pumpPage(
         Scaffold(

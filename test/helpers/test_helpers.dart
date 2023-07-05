@@ -27,7 +27,7 @@ Future<void> pumpPage(
 }) async {
   final mockCallableService = MockCallableService();
   final firestoreInstance = firestore ?? FakeFirebaseFirestore();
-  final authInstance = auth ?? MockFirebaseAuth();
+  final authInstance = auth ?? createAuth();
 
   when(mockCallableService.getUsers()).thenAnswer((_) =>
       Future.value([UserDto(id: 'foo', name: 'Foo', role: UserRole.admin)]));
@@ -55,6 +55,19 @@ Future<void> pumpPage(
 
   await tester.idle();
   await tester.pump();
+}
+
+MockFirebaseAuth createAuth({
+  String userName = 'Jane Doe',
+  String uid = 'foo-bar-baz',
+}) {
+  final authMock = MockFirebaseAuth();
+  final userMock = MockUser();
+
+  when(authMock.currentUser).thenReturn(userMock);
+  when(userMock.uid).thenReturn(uid);
+  when(userMock.displayName).thenReturn(userName);
+  return authMock;
 }
 
 Future<void> deleteAllData(FirebaseFirestore firestore) async {
