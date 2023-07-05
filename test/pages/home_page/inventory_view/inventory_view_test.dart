@@ -198,7 +198,13 @@ void main() {
         await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
 
-        expect(find.text(newItemName), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byType(ListTile),
+            matching: find.text(newItemName),
+          ),
+          findsOneWidget,
+        );
         expect(find.text(oldItemName), findsNothing);
         final newItemTypeIcon = find.descendant(
           of: find.byType(InventoryListItem),
@@ -213,11 +219,18 @@ void main() {
       (WidgetTester tester) async {
         final oldItemName = chairItem.name;
 
+        final authMock = MockFirebaseAuth();
+        final userMock = MockUser();
+
+        when(authMock.currentUser).thenReturn(userMock);
+        when(userMock.uid).thenReturn('foo');
+
         await pumpPage(
           Scaffold(body: InventoryView()),
           tester,
           userRole: UserRole.admin,
           firestore: firestore,
+          auth: authMock,
         );
 
         final chairListItem = find.ancestor(

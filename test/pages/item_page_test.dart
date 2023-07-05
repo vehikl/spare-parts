@@ -1,12 +1,15 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 import 'package:spare_parts/entities/event.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 
+import '../helpers/mocks/mock_firebase_auth.dart';
+import '../helpers/mocks/mock_user.dart';
 import '../helpers/test_helpers.dart';
 import '../helpers/tester_extension.dart';
 
@@ -139,11 +142,19 @@ void main() {
     testWidgets('Saves year information after editing a Laptop',
         (WidgetTester tester) async {
       String newYear = '2020';
+
+      final authMock = MockFirebaseAuth();
+      final userMock = MockUser();
+
+      when(authMock.currentUser).thenReturn(userMock);
+      when(userMock.uid).thenReturn('foo');
+
       await pumpPage(
         Scaffold(body: ItemPage(itemId: laptop.id)),
         tester,
         firestore: firestore,
         userRole: UserRole.admin,
+        auth: authMock,
       );
 
       final optionsButton = find.byIcon(Icons.more_vert);
