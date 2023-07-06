@@ -81,7 +81,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  label: Text('Name'),
+                  label: Text('Name *'),
                   suffixIcon: NameGenerationButton(
                     itemType: _newItem.type,
                     onGenerate: (newName) {

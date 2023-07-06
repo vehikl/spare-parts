@@ -178,7 +178,7 @@ void main() {
         userRole: UserRole.admin,
       );
 
-      expect(find.text('Serial Number'), findsOneWidget);
+      expect(find.text('Serial Number *'), findsOneWidget);
       expect(find.text(laptop.serial), findsOneWidget);
       expect(find.text('Purchase Date'), findsOneWidget);
       expect(find.text(laptop.formattedPurchaseDate), findsOneWidget);

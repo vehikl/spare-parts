@@ -25,7 +25,7 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
       children: [
         TextFormField(
           initialValue: widget.laptop.serial,
-          decoration: const InputDecoration(label: Text('Serial Number')),
+          decoration: const InputDecoration(label: Text('Serial Number *')),
           onChanged: (String newValue) {
             setState(() {
               widget.laptop.serial = newValue;

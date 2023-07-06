@@ -110,7 +110,7 @@ void main() {
       await tester.tap(fab);
       await tester.pumpAndSettle();
 
-      await tester.enterTextByLabel('Name', itemName);
+      await tester.enterTextByLabel('Name *', itemName);
       await tester.enterTextByLabel('Description', itemDescription);
       await tester.selectDropdownOption('Item Type', itemType);
       await tester.selectDropdownOption(
@@ -181,7 +181,7 @@ void main() {
         await tester.tap(editButton);
         await tester.pumpAndSettle();
 
-        await tester.enterTextByLabel('Name', newItemName);
+        await tester.enterTextByLabel('Name *', newItemName);
         const newType = 'Desk';
         await tester.selectDropdownOption('Item Type', newType);
 
