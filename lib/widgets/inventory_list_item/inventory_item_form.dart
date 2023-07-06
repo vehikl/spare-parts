@@ -26,6 +26,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
   final _formKey = GlobalKey<FormState>();
   late InventoryItem _newItem;
   final _nameController = TextEditingController();
+  final _fieldSpacing = 10.0;
 
   @override
   void initState() {
@@ -78,6 +79,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
           child: ListView(
             shrinkWrap: true,
             children: [
+              SizedBox(height: _fieldSpacing),
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
@@ -104,6 +106,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                   return null;
                 },
               ),
+              SizedBox(height: _fieldSpacing),
               DropdownButtonFormField<String>(
                 value: _newItem.type,
                 decoration: InputDecoration(label: Text('Item Type')),
@@ -125,8 +128,13 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                   });
                 },
               ),
+              SizedBox(height: _fieldSpacing),
               if (_newItem is Laptop)
-                LaptopFormFields(laptop: _newItem as Laptop),
+                LaptopFormFields(
+                  laptop: _newItem as Laptop,
+                  spacing: _fieldSpacing,
+                ),
+              SizedBox(height: _fieldSpacing),
               DropdownButtonFormField<String>(
                 value: _newItem.storageLocation,
                 decoration: InputDecoration(label: Text('Storage Location')),
@@ -148,6 +156,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                   });
                 },
               ),
+              SizedBox(height: _fieldSpacing),
               TextFormField(
                 initialValue: _newItem.description,
                 decoration: const InputDecoration(labelText: 'Description'),
@@ -159,6 +168,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                   });
                 },
               ),
+              SizedBox(height: _fieldSpacing),
               SwitchListTile(
                 title: const Text('Only visible to admins'),
                 value: _newItem.isPrivate,

@@ -4,7 +4,13 @@ import 'package:spare_parts/widgets/inputs/numeric_form_field.dart';
 
 class LaptopFormFields extends StatefulWidget {
   final Laptop laptop;
-  const LaptopFormFields({super.key, required this.laptop});
+  final double spacing;
+
+  const LaptopFormFields({
+    super.key,
+    required this.laptop,
+    required this.spacing,
+  });
 
   @override
   State<LaptopFormFields> createState() => _LaptopFormFieldsState();
@@ -38,6 +44,7 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             return null;
           },
         ),
+        SizedBox(height: widget.spacing),
         TextFormField(
           controller: _purchaseDateController,
           decoration: const InputDecoration(
@@ -58,6 +65,7 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             });
           },
         ),
+        SizedBox(height: widget.spacing),
         NumericFormField(
           initValue: widget.laptop.year,
           label: 'Year',
@@ -67,6 +75,7 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             });
           },
         ),
+        SizedBox(height: widget.spacing),
         NumericFormField(
           initValue: widget.laptop.size,
           label: 'Size (In.)',
@@ -76,6 +85,7 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             });
           },
         ),
+        SizedBox(height: widget.spacing),
         TextFormField(
           initialValue: widget.laptop.model,
           decoration: const InputDecoration(label: Text('Model')),
@@ -85,6 +95,7 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             });
           },
         ),
+        SizedBox(height: widget.spacing),
         TextFormField(
           initialValue: widget.laptop.colour,
           decoration: const InputDecoration(label: Text('Colour')),
@@ -94,6 +105,7 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             });
           },
         ),
+        SizedBox(height: widget.spacing),
         TextFormField(
           initialValue: widget.laptop.build,
           decoration: const InputDecoration(label: Text('Build')),
@@ -103,6 +115,7 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             });
           },
         ),
+        SizedBox(height: widget.spacing),
         NumericFormField(
           initValue: widget.laptop.ram,
           label: 'RAM (GB)',
@@ -112,6 +125,7 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             });
           },
         ),
+        SizedBox(height: widget.spacing),
         TextFormField(
           initialValue: widget.laptop.disk,
           decoration: const InputDecoration(label: Text('Disk')),
@@ -121,6 +135,7 @@ class _LaptopFormFieldsState extends State<LaptopFormFields> {
             });
           },
         ),
+        SizedBox(height: widget.spacing),
         TextFormField(
           initialValue: widget.laptop.warranty,
           decoration: const InputDecoration(label: Text('Warranty')),
