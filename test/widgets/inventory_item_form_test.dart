@@ -126,7 +126,7 @@ void main() {
       });
     });
 
-    testWidgets('Fills all the inputs when editing an item',
+    testWidgets('fills all the inputs when editing an item',
         (WidgetTester tester) async {
       final item = InventoryItem(
         id: '#145',
@@ -153,7 +153,7 @@ void main() {
       expect(item.isPrivate, isPrivateSwitchValue);
     });
 
-    testWidgets('Allows editing extra data if an item is a Laptop',
+    testWidgets('allows editing extra data if an item is a Laptop',
         (WidgetTester tester) async {
       final laptop = Laptop(
         id: '#145',
@@ -198,6 +198,41 @@ void main() {
       expect(find.text(laptop.disk!), findsOneWidget);
       expect(find.text('Warranty'), findsOneWidget);
       expect(find.text(laptop.warranty!), findsOneWidget);
+    });
+
+    testWidgets('allows unselecting location', (WidgetTester tester) async {
+      const location = 'Waterloo';
+      final inventoryItemRepository = MockInventoryItemRepository();
+      when(inventoryItemRepository.update(any)).thenAnswer((_) async {});
+
+      final item = InventoryItem(
+        id: '#145',
+        type: 'Desk',
+        storageLocation: location,
+      );
+      await pumpPage(
+        InventoryItemForm(formState: InventoryFormState.edit, item: item),
+        tester,
+        userRole: UserRole.admin,
+        inventoryItemRepository: inventoryItemRepository,
+      );
+
+      final locationDropdown = find.text(location);
+      await tester.tap(locationDropdown);
+      await tester.pumpAndSettle();
+
+      final noLocation = find.text('-- no location --');
+      await tester.tap(noLocation);
+      await tester.pumpAndSettle();
+
+      final saveButton = find.text('Save');
+      await tester.tap(saveButton);
+      await tester.pumpAndSettle();
+
+      final savedItem = verify(inventoryItemRepository.update(captureAny))
+          .captured
+          .single as InventoryItem;
+      expect(savedItem.storageLocation, isNull);
     });
   });
 }
