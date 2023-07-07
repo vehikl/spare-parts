@@ -2,9 +2,11 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
 import 'package:spare_parts/services/repositories/inventory_item_repository.mocks.dart';
+import 'package:spare_parts/services/repositories/user_repository.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 
@@ -233,6 +235,49 @@ void main() {
           .captured
           .single as InventoryItem;
       expect(savedItem.storageLocation, isNull);
+    });
+
+    testWidgets('allows selecting a borrower', (WidgetTester tester) async {
+      final inventoryItemRepository = MockInventoryItemRepository();
+      when(inventoryItemRepository.add(any)).thenAnswer((_) async => "");
+
+      final user = CustomUser(uid: 'asd', name: 'Jane Doe');
+      final userRepository = MockUserRepository();
+      when(userRepository.getAllStream())
+          .thenAnswer((_) => Stream.fromIterable([
+                [user]
+              ]));
+
+      await pumpPage(
+        InventoryItemForm(formState: InventoryFormState.add),
+        tester,
+        userRole: UserRole.admin,
+        inventoryItemRepository: inventoryItemRepository,
+        userRepository: userRepository,
+      );
+
+      await tester.enterTextByLabel('Name *', 'New item');
+
+      final borrowerButton = find.text('Current Borrower');
+      await tester.tap(borrowerButton);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(user.name!));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Select'));
+      await tester.pumpAndSettle();
+
+      final saveButton = find.text('Save');
+      await tester.tap(saveButton);
+      await tester.pumpAndSettle();
+
+      final savedItem = verify(inventoryItemRepository.add(captureAny))
+          .captured
+          .single as InventoryItem;
+      expect(savedItem.borrower, isNotNull);
+      expect(savedItem.borrower!.uid, user.uid);
+      expect(savedItem.borrower!.name, user.name);
     });
   });
 }

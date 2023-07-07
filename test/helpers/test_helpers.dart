@@ -24,6 +24,7 @@ Future<void> pumpPage(
   FirestoreService? firestoreService,
   InventoryItemRepository? inventoryItemRepository,
   CallableService? callableService,
+  UserRepository? userRepository,
 }) async {
   final mockCallableService = MockCallableService();
   final firestoreInstance = firestore ?? FakeFirebaseFirestore();
@@ -48,6 +49,7 @@ Future<void> pumpPage(
       child: RepositoryRegistrant(
         firestore: firestoreInstance,
         inventoryItemRepository: inventoryItemRepository,
+        userRepository: userRepository,
         child: MaterialApp(home: page),
       ),
     ),

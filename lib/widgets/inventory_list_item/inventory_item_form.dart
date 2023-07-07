@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/buttons/async_elevated_button.dart';
+import 'package:spare_parts/widgets/inputs/user_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item/laptop_form_fields.dart';
 import 'package:spare_parts/widgets/inventory_list_item/name_generation_button.dart';
+import 'package:spare_parts/widgets/user_avatar.dart';
 
 enum InventoryFormState { edit, add }
 
@@ -125,6 +128,35 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                       _newItem = InventoryItem.fromInventoryItem(_newItem);
                     }
                     _newItem.type = newValue!;
+                  });
+                },
+              ),
+              ListTile(
+                leading: _newItem.borrower == null
+                    ? null
+                    : UserAvatar(photoUrl: _newItem.borrower?.photoURL),
+                title: Text('Current Borrower'),
+                subtitle: Text(_newItem.borrower?.name ?? '-- no borrower --'),
+                onTap: () async {
+                  final selectedUsers = await showDialog<List<CustomUser>>(
+                      context: context,
+                      builder: (context) {
+                        return UserSelectionDialog(
+                          isSingleSelection: true,
+                          selectedUsers: _newItem.borrower == null
+                              ? []
+                              : [_newItem.borrower!],
+                          title: 'Select a Borrower',
+                        );
+                      });
+
+                  if (selectedUsers == null || selectedUsers.isEmpty) {
+                    return;
+                  }
+
+                  final newBorrower = selectedUsers.first;
+                  setState(() {
+                    _newItem.borrower = newBorrower;
                   });
                 },
               ),
