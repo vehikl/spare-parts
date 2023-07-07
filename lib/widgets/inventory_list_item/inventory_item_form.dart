@@ -7,6 +7,7 @@ import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/buttons/async_elevated_button.dart';
+import 'package:spare_parts/widgets/inputs/borrower_input.dart';
 import 'package:spare_parts/widgets/inputs/user_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item/laptop_form_fields.dart';
 import 'package:spare_parts/widgets/inventory_list_item/name_generation_button.dart';
@@ -80,6 +81,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
         child: SizedBox(
           width: 500,
           child: ListView(
+            key: Key('input_list'),
             shrinkWrap: true,
             children: [
               SizedBox(height: _fieldSpacing),
@@ -131,32 +133,12 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                   });
                 },
               ),
-              ListTile(
-                leading: _newItem.borrower == null
-                    ? null
-                    : UserAvatar(photoUrl: _newItem.borrower?.photoURL),
-                title: Text('Current Borrower'),
-                subtitle: Text(_newItem.borrower?.name ?? '-- no borrower --'),
-                onTap: () async {
-                  final selectedUsers = await showDialog<List<CustomUser>>(
-                      context: context,
-                      builder: (context) {
-                        return UserSelectionDialog(
-                          isSingleSelection: true,
-                          selectedUsers: _newItem.borrower == null
-                              ? []
-                              : [_newItem.borrower!],
-                          title: 'Select a Borrower',
-                        );
-                      });
-
-                  if (selectedUsers == null || selectedUsers.isEmpty) {
-                    return;
-                  }
-
-                  final newBorrower = selectedUsers.first;
+              SizedBox(height: _fieldSpacing),
+              BorrowerInput(
+                borrower: _newItem.borrower,
+                onSelected: (CustomUser? user) {
                   setState(() {
-                    _newItem.borrower = newBorrower;
+                    _newItem.borrower = user;
                   });
                 },
               ),

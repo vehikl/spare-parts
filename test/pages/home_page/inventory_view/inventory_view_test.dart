@@ -92,6 +92,8 @@ void main() {
   testWidgets(
     'Adds new item to inventory list',
     (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(Size(800, 1000));
+
       const itemName = 'Table #3';
       const itemType = 'Desk';
       const itemStorageLocation = 'Waterloo';
@@ -118,6 +120,8 @@ void main() {
         itemStorageLocation,
       );
       if (isPrivate) {
+        // TODO: there is an issue where this switch is not found due to the height of the form.
+        // Scrolling down to the switch did not work.
         await tester
             .tap(find.widgetWithText(SwitchListTile, 'Only visible to admins'));
       }
