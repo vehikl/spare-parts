@@ -8,12 +8,14 @@ class RepositoryRegistrant extends StatelessWidget {
   final Widget child;
   final FirebaseFirestore firestore;
   final InventoryItemRepository? inventoryItemRepository;
+  final UserRepository? userRepository;
 
   const RepositoryRegistrant({
     super.key,
     required this.child,
     required this.firestore,
     this.inventoryItemRepository,
+    this.userRepository,
   });
 
   @override
@@ -31,8 +33,10 @@ class RepositoryRegistrant extends StatelessWidget {
           create: (_) => BorrowingRequestRepository(firestore),
         ),
         Provider<MetaRepository>(create: (_) => MetaRepository(firestore)),
-        Provider<UserRepository>(create: (_) => UserRepository(firestore)),
-        Provider<EventRepository>(create: (_) => EventRepository(firestore, auth)),
+        Provider<UserRepository>(
+            create: (_) => userRepository ?? UserRepository(firestore)),
+        Provider<EventRepository>(
+            create: (_) => EventRepository(firestore, auth)),
       ],
       child: child,
     );

@@ -106,7 +106,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.add));
       await tester.pumpAndSettle();
 
-      await tester.enterTextByLabel('Name', deskName);
+      await tester.enterTextByLabel('Name *', deskName);
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 
@@ -146,7 +146,7 @@ void main() {
       await tester.pumpAndSettle();
 
       const newName = 'NewName';
-      await tester.enterTextByLabel('Name', newName);
+      await tester.enterTextByLabel('Name *', newName);
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
 

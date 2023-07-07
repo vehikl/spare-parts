@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/buttons/async_elevated_button.dart';
+import 'package:spare_parts/widgets/inputs/borrower_input.dart';
+import 'package:spare_parts/widgets/inputs/user_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item/laptop_form_fields.dart';
 import 'package:spare_parts/widgets/inventory_list_item/name_generation_button.dart';
+import 'package:spare_parts/widgets/user_avatar.dart';
 
 enum InventoryFormState { edit, add }
 
@@ -26,6 +30,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
   final _formKey = GlobalKey<FormState>();
   late InventoryItem _newItem;
   final _nameController = TextEditingController();
+  final _fieldSpacing = 10.0;
 
   @override
   void initState() {
@@ -76,12 +81,14 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
         child: SizedBox(
           width: 500,
           child: ListView(
+            key: Key('input_list'),
             shrinkWrap: true,
             children: [
+              SizedBox(height: _fieldSpacing),
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  label: Text('Name'),
+                  label: Text('Name *'),
                   suffixIcon: NameGenerationButton(
                     itemType: _newItem.type,
                     onGenerate: (newName) {
@@ -104,6 +111,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                   return null;
                 },
               ),
+              SizedBox(height: _fieldSpacing),
               DropdownButtonFormField<String>(
                 value: _newItem.type,
                 decoration: InputDecoration(label: Text('Item Type')),
@@ -125,23 +133,44 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                   });
                 },
               ),
-              if (_newItem is Laptop)
-                LaptopFormFields(laptop: _newItem as Laptop),
-              DropdownButtonFormField<String>(
-                value: _newItem.storageLocation,
-                decoration: InputDecoration(label: Text('Storage Location')),
-                items: ['Waterloo', 'London'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
+              SizedBox(height: _fieldSpacing),
+              BorrowerInput(
+                borrower: _newItem.borrower,
+                onSelected: (CustomUser? user) {
                   setState(() {
-                    _newItem.storageLocation = newValue!;
+                    _newItem.borrower = user;
                   });
                 },
               ),
+              SizedBox(height: _fieldSpacing),
+              if (_newItem is Laptop)
+                LaptopFormFields(
+                  laptop: _newItem as Laptop,
+                  spacing: _fieldSpacing,
+                ),
+              SizedBox(height: _fieldSpacing),
+              DropdownButtonFormField<String>(
+                value: _newItem.storageLocation,
+                decoration: InputDecoration(label: Text('Storage Location')),
+                items: [
+                  DropdownMenuItem<String>(
+                    value: null,
+                    child: Text('-- no location --'),
+                  ),
+                  ...['Waterloo', 'London'].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  })
+                ],
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _newItem.storageLocation = newValue;
+                  });
+                },
+              ),
+              SizedBox(height: _fieldSpacing),
               TextFormField(
                 initialValue: _newItem.description,
                 decoration: const InputDecoration(labelText: 'Description'),
@@ -153,6 +182,7 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                   });
                 },
               ),
+              SizedBox(height: _fieldSpacing),
               SwitchListTile(
                 title: const Text('Only visible to admins'),
                 value: _newItem.isPrivate,

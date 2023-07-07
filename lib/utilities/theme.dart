@@ -81,5 +81,10 @@ ThemeData buildTheme(ColorScheme colorScheme) {
         fontWeight: FontWeight.bold,
       ),
     ),
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
   );
 }
