@@ -16,17 +16,15 @@ class ItemActionsButton extends StatelessWidget {
     final auth = context.read<FirebaseAuth>();
 
     final allActions = [
-      if (item.borrower == null)
-        BorrowItemAction()
-      else if (item.borrower?.uid == auth.currentUser?.uid)
-        ReleaseItemAction(),
+      BorrowItemAction(),
+      ReleaseItemAction(),
       EditItemAction(),
       DeleteItemAction(),
       AssignItemAction(),
       PrintAction()
     ];
-    final allowedActions =
-        allActions.where((action) => action.allowedRoles.contains(userRole));
+    final allowedActions = allActions.where((action) =>
+        action.isVisibleForUser(item, auth.currentUser!.uid, userRole));
 
     return PopupMenuButton<ItemAction>(
       child: Padding(
