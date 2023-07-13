@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
 
-class InventoryItem {
+class InventoryItem implements Comparable<InventoryItem> {
   String id;
   String name;
   String? description;
@@ -68,5 +68,10 @@ class InventoryItem {
       borrower: item.borrower,
       isPrivate: item.isPrivate,
     );
+  }
+
+  @override
+  int compareTo(InventoryItem other) {
+    return name.toLowerCase().compareTo(other.name.toLowerCase());
   }
 }

@@ -29,9 +29,9 @@ class BorrowedItemsView extends StatelessWidget {
 
           if (!snapshot.hasData) {
             return ListView(
-                  children:
-                      List.generate(10, (index) => InventoryListItemLoading()),
-                );
+              children:
+                  List.generate(10, (index) => InventoryListItemLoading()),
+            );
           }
 
           final items = snapshot.data!;
@@ -40,6 +40,8 @@ class BorrowedItemsView extends StatelessWidget {
             return EmptyListState(
                 message: "You don't have any borrowed items yet...");
           }
+
+          items.sort();
 
           return ListView.builder(
             itemCount: items.length,

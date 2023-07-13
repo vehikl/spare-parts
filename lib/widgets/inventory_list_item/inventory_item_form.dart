@@ -8,10 +8,8 @@ import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/buttons/async_elevated_button.dart';
 import 'package:spare_parts/widgets/inputs/borrower_input.dart';
-import 'package:spare_parts/widgets/inputs/user_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item/laptop_form_fields.dart';
 import 'package:spare_parts/widgets/inventory_list_item/name_generation_button.dart';
-import 'package:spare_parts/widgets/user_avatar.dart';
 
 enum InventoryFormState { edit, add }
 
