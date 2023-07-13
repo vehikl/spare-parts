@@ -119,10 +119,10 @@ class _InventoryViewState extends State<InventoryView> {
 
               if (!snapshot.hasData) {
                 return ListView(
-                  children:
-                      List.generate(10, (index) => InventoryListItemLoading(
-                  hasAuthor: isAdmin,
-                      )),
+                  children: List.generate(
+                    10,
+                    (index) => InventoryListItemLoading(hasAuthor: isAdmin),
+                  ),
                 );
               }
 
@@ -140,7 +140,9 @@ class _InventoryViewState extends State<InventoryView> {
                     (property) => property!
                         .toLowerCase()
                         .contains(_searchQuery.toLowerCase()));
-              });
+              }).toList();
+
+              filteredItems.sort();
 
               return ListView(
                 children: filteredItems
