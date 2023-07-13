@@ -21,7 +21,11 @@ enum ItemActionType { delete, edit, borrow, release, assign, print }
 abstract class ItemAction {
   ItemActionType get actionType;
   IconData get icon;
-  List<UserRole> get allowedRoles;
+  List<UserRole> get allowedRoles => [];
+
+  bool isVisibleForUser(InventoryItem item, String uid, UserRole role) {
+    return allowedRoles.contains(role);
+  }
 
   handle(BuildContext context, InventoryItem item);
 
@@ -182,6 +186,11 @@ class BorrowItemAction extends ItemAction {
 
   @override
   List<UserRole> get allowedRoles => [UserRole.admin, UserRole.user];
+
+  @override
+  bool isVisibleForUser(InventoryItem item, String uid, UserRole role) {
+    return item.borrower == null;
+  }
 }
 
 class ReleaseItemAction extends ItemAction {
@@ -210,6 +219,13 @@ class ReleaseItemAction extends ItemAction {
 
   @override
   List<UserRole> get allowedRoles => [UserRole.admin, UserRole.user];
+
+  @override
+  bool isVisibleForUser(InventoryItem item, String uid, UserRole role) {
+    if (role == UserRole.admin) return true;
+
+    return item.borrower?.uid == uid;
+  }
 }
 
 class EditItemAction extends ItemAction {

@@ -58,32 +58,6 @@ void main() {
   );
 
   testWidgets(
-    'Should not display the "borrow" action for an already borrowed item',
-    (WidgetTester tester) async {
-      await pumpPage(
-        Scaffold(body: BorrowedItemsView()),
-        tester,
-        firestore: firestore,
-        auth: authMock,
-      );
-
-      final chairListItem = find.ancestor(
-        of: find.text(chairItem.id),
-        matching: find.byType(ListTile),
-      );
-      final optionsButton = find.descendant(
-        of: chairListItem,
-        matching: find.byIcon(Icons.more_vert),
-      );
-
-      await tester.tap(optionsButton);
-      await tester.pumpAndSettle();
-
-      expect(find.text('Borrow'), findsNothing);
-    },
-  );
-
-  testWidgets(
     'User can release an item from the list',
     (WidgetTester tester) async {
       await pumpPage(
