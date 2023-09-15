@@ -1,12 +1,13 @@
+import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/dymo_service.dart';
 
 class PrintService {
-  static void printQRCode(String printerName, String itemId) {
-    final label = openLabelXml(_getLabelXml(itemId));
+  static void printQRCode(String printerName, InventoryItem item) {
+    final label = openLabelXml(_getLabelXml(item));
     label.print(printerName);
   }
 
-  static String _getLabelXml(String itemId) {
+  static String _getLabelXml(InventoryItem item) {
     return '''<?xml version="1.0" encoding="utf-8"?>
       <DieCutLabel Version="8.0" Units="twips">
           <PaperOrientation>Landscape</PaperOrientation>
@@ -21,7 +22,7 @@ class PrintService {
                   <Rotation>Rotation0</Rotation>
                   <IsMirrored>False</IsMirrored>
                   <IsVariable>False</IsVariable>
-                  <Text>$itemId</Text>
+                  <Text>${item.id}</Text>
                   <Type>QRCode</Type>
                   <Size>Large</Size>
                   <TextPosition>None</TextPosition>
@@ -50,6 +51,32 @@ class PrintService {
                 <Verticalized>False</Verticalized>
                 <StyledText>
                     <Element>
+                        <String>${item.name}</String>
+                        <Attributes>
+                            <Font Family="Arial" Size="6" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+                            <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+                        </Attributes>
+                    </Element>
+                </StyledText>
+            </TextObject>
+            <Bounds X="0" Y="1050" Width="1200" Height="400" />
+          </ObjectInfo>
+          <ObjectInfo>
+            <TextObject>
+                <Name>Text</Name>
+                <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+                <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+                <LinkedObjectName></LinkedObjectName>
+                <Rotation>Rotation0</Rotation>
+                <IsMirrored>False</IsMirrored>
+                <IsVariable>True</IsVariable>
+                <HorizontalAlignment>Center</HorizontalAlignment>
+                <VerticalAlignment>Middle</VerticalAlignment>
+                <TextFitMode>ShrinkToFit</TextFitMode>
+                <UseFullFontHeight>True</UseFullFontHeight>
+                <Verticalized>False</Verticalized>
+                <StyledText>
+                    <Element>
                         <String>Property of Vehikl Inc.</String>
                         <Attributes>
                             <Font Family="Arial" Size="6" Bold="False" Italic="False" Underline="False" Strikeout="False" />
@@ -58,7 +85,7 @@ class PrintService {
                     </Element>
                 </StyledText>
             </TextObject>
-            <Bounds X="0" Y="1200" Width="1200" Height="400" />
+            <Bounds X="0" Y="1300" Width="1200" Height="400" />
           </ObjectInfo>
       </DieCutLabel>''';
   }
