@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/entities/inventory_items/laptop.dart';
+import 'package:spare_parts/services/firestore_service.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
@@ -10,6 +11,7 @@ import 'package:spare_parts/widgets/buttons/async_elevated_button.dart';
 import 'package:spare_parts/widgets/inputs/borrower_input.dart';
 import 'package:spare_parts/widgets/inventory_list_item/laptop_form_fields.dart';
 import 'package:spare_parts/widgets/inventory_list_item/name_generation_button.dart';
+import 'package:uuid/uuid.dart';
 
 enum InventoryFormState { edit, add }
 
@@ -50,11 +52,18 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
   Future<void> _handleSave() async {
     final inventoryItemRepository = context.read<InventoryItemRepository>();
     final eventRepository = context.read<EventRepository>();
+    final firestoreService = context.read<FirestoreService>();
 
     if (_formKey.currentState!.validate()) {
       try {
         if (widget.formState == InventoryFormState.add) {
-          final newItemId = await inventoryItemRepository.add(_newItem);
+          final batch = firestoreService.createBatch();
+
+          inventoryItemRepository.useBatch(batch);
+          inventoryItemRepository.addItem(_newItem);
+
+          final newEventId = Uuid().v1();
+          final eventDocRef = itemDocRef.collection('events').doc(newEventId);
           await eventRepository.add(newItemId, eventType: 'Create');
         } else {
           await inventoryItemRepository.update(_newItem);

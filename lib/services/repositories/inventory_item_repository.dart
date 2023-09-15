@@ -3,13 +3,19 @@ import 'package:mockito/annotations.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/services/repositories/repository.dart';
 
 @GenerateNiceMocks([MockSpec<InventoryItemRepository>()])
-class InventoryItemRepository extends FirestoreService {
-  InventoryItemRepository(super.firestore);
+class InventoryItemRepository extends Repository {
+  final FirestoreService firestoreService;
+
+  InventoryItemRepository({ required this.firestoreService});
+
+  @override
+  CollectionReference<Map<String, dynamic>> get collection => firestoreService.itemsCollection;
 
   DocumentReference getItemDocumentReference(String? itemId) {
-    return itemsCollection.doc(itemId);
+    return collection.doc(itemId);
   }
 
   Stream<InventoryItem> getItemStream(String? itemId) {
@@ -30,29 +36,29 @@ class InventoryItemRepository extends FirestoreService {
     Query<Object?>? query;
 
     if (withNoBorrower != null && withNoBorrower) {
-      query = itemsCollection.where('borrower', isNull: true);
+      query = collection.where('borrower', isNull: true);
     }
 
     if (whereBorrowerIs != null) {
-      query = itemsCollection.where('borrower.uid', isEqualTo: whereBorrowerIs);
+      query = collection.where('borrower.uid', isEqualTo: whereBorrowerIs);
     }
 
     if (whereBorrowerIn != null) {
-      query = (query ?? itemsCollection).where(
+      query = (query ?? collection).where(
         'borrower.uid',
         whereIn: whereBorrowerIn,
       );
     }
 
     if (whereTypeIn != null) {
-      query = (query ?? itemsCollection).where('type', whereIn: whereTypeIn);
+      query = (query ?? collection).where('type', whereIn: whereTypeIn);
     }
 
     if (excludePrivates) {
-      query = (query ?? itemsCollection).where('isPrivate', isEqualTo: false);
+      query = (query ?? collection).where('isPrivate', isEqualTo: false);
     }
 
-    return (query ?? itemsCollection)
+    return (query ?? collection)
         .snapshots()
         .map(_mapQuerySnapshotToInventoryItems);
   }
@@ -73,13 +79,12 @@ class InventoryItemRepository extends FirestoreService {
     });
   }
 
-  Future<String> add(InventoryItem item) async {
-    final docRef = await itemsCollection.add(item.toFirestore());
-    return docRef.id;
+  Future<String> addItem(InventoryItem item) async {
+    return await super.add(item.toFirestore());
   }
 
   Future<void> update(InventoryItem item) async {
-    await itemsCollection.doc(item.id).update(item.toFirestore());
+    await collection.doc(item.id).update(item.toFirestore());
   }
 
   List<InventoryItem> _mapQuerySnapshotToInventoryItems(
