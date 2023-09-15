@@ -14,6 +14,32 @@ class PrintService {
           <Id>NameBadgeTag</Id>
           <PaperName>30252 Address</PaperName>
           <ObjectInfo>
+            <TextObject>
+                <Name>Text</Name>
+                <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+                <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+                <LinkedObjectName></LinkedObjectName>
+                <Rotation>Rotation0</Rotation>
+                <IsMirrored>False</IsMirrored>
+                <IsVariable>True</IsVariable>
+                <HorizontalAlignment>Center</HorizontalAlignment>
+                <VerticalAlignment>Middle</VerticalAlignment>
+                <TextFitMode>ShrinkToFit</TextFitMode>
+                <UseFullFontHeight>True</UseFullFontHeight>
+                <Verticalized>False</Verticalized>
+                <StyledText>
+                    <Element>
+                        <String>Property of Vehikl Inc.</String>
+                        <Attributes>
+                            <Font Family="Arial" Size="6" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+                            <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+                        </Attributes>
+                    </Element>
+                </StyledText>
+            </TextObject>
+            <Bounds X="0" Y="200" Width="1200" Height="200" />
+          </ObjectInfo>
+          <ObjectInfo>
               <BarcodeObject>
                   <Name>QRBarcode</Name>
                   <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
@@ -33,7 +59,7 @@ class PrintService {
                   <HorizontalAlignment>Center</HorizontalAlignment>
                   <QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" />
               </BarcodeObject>
-              <Bounds X="0" Y="0" Width="1200" Height="1600" />
+              <Bounds X="0" Y="200" Width="1200" Height="1400" />
           </ObjectInfo>
           <ObjectInfo>
             <TextObject>
@@ -59,33 +85,7 @@ class PrintService {
                     </Element>
                 </StyledText>
             </TextObject>
-            <Bounds X="0" Y="1050" Width="1200" Height="400" />
-          </ObjectInfo>
-          <ObjectInfo>
-            <TextObject>
-                <Name>Text</Name>
-                <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
-                <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
-                <LinkedObjectName></LinkedObjectName>
-                <Rotation>Rotation0</Rotation>
-                <IsMirrored>False</IsMirrored>
-                <IsVariable>True</IsVariable>
-                <HorizontalAlignment>Center</HorizontalAlignment>
-                <VerticalAlignment>Middle</VerticalAlignment>
-                <TextFitMode>ShrinkToFit</TextFitMode>
-                <UseFullFontHeight>True</UseFullFontHeight>
-                <Verticalized>False</Verticalized>
-                <StyledText>
-                    <Element>
-                        <String>Property of Vehikl Inc.</String>
-                        <Attributes>
-                            <Font Family="Arial" Size="6" Bold="False" Italic="False" Underline="False" Strikeout="False" />
-                            <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
-                        </Attributes>
-                    </Element>
-                </StyledText>
-            </TextObject>
-            <Bounds X="0" Y="1300" Width="1200" Height="400" />
+            <Bounds X="0" Y="1300" Width="1200" Height="100" />
           </ObjectInfo>
       </DieCutLabel>''';
   }
