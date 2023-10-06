@@ -21,6 +21,10 @@ class InventoryItem implements Comparable<InventoryItem> {
     this.isPrivate = false,
   }) : name = name ?? id;
 
+  String get nameForPrinting => name.length < 20
+      ? name
+      : "${name.substring(0, 8)}...${name.substring(name.length - 8, name.length)}";
+
   static InventoryItem fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> doc,
   ) {

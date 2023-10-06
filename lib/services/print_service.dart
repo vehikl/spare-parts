@@ -15,7 +15,7 @@ class PrintService {
           <PaperName>30252 Address</PaperName>
           <ObjectInfo>
             <TextObject>
-                <Name>Text</Name>
+                <Name>Signature</Name>
                 <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
                 <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
                 <LinkedObjectName></LinkedObjectName>
@@ -41,7 +41,7 @@ class PrintService {
           </ObjectInfo>
           <ObjectInfo>
               <BarcodeObject>
-                  <Name>QRBarcode</Name>
+                  <Name>QRCode</Name>
                   <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
                   <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
                   <LinkedObjectName></LinkedObjectName>
@@ -63,7 +63,7 @@ class PrintService {
           </ObjectInfo>
           <ObjectInfo>
             <TextObject>
-                <Name>Text</Name>
+                <Name>Name</Name>
                 <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
                 <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
                 <LinkedObjectName></LinkedObjectName>
@@ -77,15 +77,15 @@ class PrintService {
                 <Verticalized>False</Verticalized>
                 <StyledText>
                     <Element>
-                        <String>${item.name}</String>
+                        <String>${item.nameForPrinting}</String>
                         <Attributes>
-                            <Font Family="Arial" Size="6" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+                            <Font Family="Monospace" Size="6" Bold="False" Italic="False" Underline="False" Strikeout="False" />
                             <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
                         </Attributes>
                     </Element>
                 </StyledText>
             </TextObject>
-            <Bounds X="0" Y="1300" Width="1200" Height="100" />
+            <Bounds X="0" Y="1300" Width="800" Height="100" />
           </ObjectInfo>
       </DieCutLabel>''';
   }
