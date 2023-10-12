@@ -79,13 +79,13 @@ class PrintService {
                     <Element>
                         <String>${item.nameForPrinting}</String>
                         <Attributes>
-                            <Font Family="Monospace" Size="6" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+                            <Font Family="Courier New" Size="6" Bold="True" Italic="False" Underline="False" Strikeout="False" />
                             <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
                         </Attributes>
                     </Element>
                 </StyledText>
             </TextObject>
-            <Bounds X="0" Y="1300" Width="800" Height="100" />
+            <Bounds X="0" Y="1300" Width="1200" Height="100" />
           </ObjectInfo>
       </DieCutLabel>''';
   }
