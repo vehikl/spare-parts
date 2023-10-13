@@ -83,6 +83,28 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
             shrinkWrap: true,
             children: [
               SizedBox(height: _fieldSpacing),
+              DropdownButtonFormField<String>(
+                value: _newItem.type,
+                decoration: InputDecoration(label: Text('Item Type')),
+                items: itemTypes.keys
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    if (newValue == 'Laptop') {
+                      _newItem = Laptop.fromInventoryItem(_newItem);
+                    } else {
+                      _newItem = InventoryItem.fromInventoryItem(_newItem);
+                    }
+                    _newItem.type = newValue!;
+                  });
+                },
+              ),
+              SizedBox(height: _fieldSpacing),
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
@@ -107,28 +129,6 @@ class _InventoryItemFormState extends State<InventoryItemForm> {
                     return 'You must set a name';
                   }
                   return null;
-                },
-              ),
-              SizedBox(height: _fieldSpacing),
-              DropdownButtonFormField<String>(
-                value: _newItem.type,
-                decoration: InputDecoration(label: Text('Item Type')),
-                items: itemTypes.keys
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    if (newValue == 'Laptop') {
-                      _newItem = Laptop.fromInventoryItem(_newItem);
-                    } else {
-                      _newItem = InventoryItem.fromInventoryItem(_newItem);
-                    }
-                    _newItem.type = newValue!;
-                  });
                 },
               ),
               SizedBox(height: _fieldSpacing),

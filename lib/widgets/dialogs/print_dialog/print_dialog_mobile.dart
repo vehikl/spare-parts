@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:spare_parts/entities/inventory_item.dart';
 
 class PrintDialog extends StatelessWidget {
-  final String itemId;
-  const PrintDialog({super.key, required this.itemId});
+  final InventoryItem item;
+  
+  const PrintDialog({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {

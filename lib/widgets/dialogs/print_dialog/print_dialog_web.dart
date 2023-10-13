@@ -1,14 +1,15 @@
 library print_dialog_web;
 
 import 'package:flutter/material.dart';
+import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/print_service.dart';
 import 'package:spare_parts/widgets/dialogs/print_dialog/print_dialog_body.dart';
 
 import '../../../services/dymo_service.dart';
 
 class PrintDialog extends StatefulWidget {
-  final String itemId;
-  const PrintDialog({super.key, required this.itemId});
+  final InventoryItem item;
+  const PrintDialog({super.key, required this.item});
 
   @override
   State<PrintDialog> createState() => _PrintDialogState();
@@ -56,7 +57,7 @@ class _PrintDialogState extends State<PrintDialog> {
               ? null
               : () => PrintService.printQRCode(
                     selectedPrinter!.name,
-                    widget.itemId,
+                    widget.item,
                   ),
           child: const Text('Print'),
         ),
