@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mockito/annotations.dart';
-import 'package:spare_parts/entities/event.dart';
 
 @GenerateNiceMocks([MockSpec<FirestoreService>()])
 class FirestoreService {
@@ -10,7 +9,7 @@ class FirestoreService {
     _firestore = firestore;
   }
 
-  CollectionReference get itemsCollection => _firestore.collection('items');
+  CollectionReference<Map<String, dynamic>> get itemsCollection => _firestore.collection('items');
   CollectionReference get borrowingRulesCollection =>
       _firestore.collection('borrowingRules');
 
@@ -20,4 +19,12 @@ class FirestoreService {
   CollectionReference get metaCollection => _firestore.collection('meta');
 
   CollectionReference get usersCollection => _firestore.collection('users');
+
+  WriteBatch createBatch() {
+    return _firestore.batch();
+  }
+
+  void runTransaction(TransactionHandler transactionHandler) {
+    _firestore.runTransaction(transactionHandler);
+  }
 }
