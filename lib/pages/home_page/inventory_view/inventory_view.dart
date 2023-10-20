@@ -162,7 +162,7 @@ class _InventoryViewState extends State<InventoryView> {
                           showBorrower: true,
                           selectable: _selectedItemIds.isNotEmpty,
                           selected: _selectedItemIds.contains(item.id),
-                          onLongPress: _handleSelectItem,
+                          onSelected: _handleSelectItem,
                         ))
                     .toList(),
               );

@@ -13,7 +13,7 @@ class InventoryListItem extends StatelessWidget {
   final InventoryItem item;
   final bool selectable;
   final bool selected;
-  final void Function(String itemId)? onLongPress;
+  final void Function(String itemId)? onSelected;
 
   const InventoryListItem({
     Key? key,
@@ -21,7 +21,7 @@ class InventoryListItem extends StatelessWidget {
     this.showBorrower = false,
     this.selectable = false,
     this.selected = false,
-    this.onLongPress,
+    this.onSelected,
   }) : super(key: key);
 
   @override
@@ -45,8 +45,7 @@ class InventoryListItem extends StatelessWidget {
         return Provider.value(
           value: userRole,
           child: ListTile(
-            onLongPress:
-                onLongPress == null ? null : () => onLongPress!(item.id),
+            onLongPress: onSelected == null ? null : () => onSelected!(item.id),
             leading: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -64,7 +63,7 @@ class InventoryListItem extends StatelessWidget {
             subtitle: !showBorrower || item.borrower?.name == null
                 ? null
                 : Text(item.borrower!.name!),
-            onTap: openContainer,
+            onTap: selectable ? () => onSelected!(item.id) : openContainer,
             trailing: ItemActionsButton(item: item),
           ),
         );
