@@ -4,6 +4,7 @@ import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/available_items_filter.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/search_field.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/user_filter.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/selection_actions.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
@@ -28,6 +29,8 @@ class _InventoryViewState extends State<InventoryView> {
   final searchFieldController = TextEditingController();
 
   bool get isAdmin => context.read<UserRole>() == UserRole.admin;
+
+  bool get _inSelectionMode => _selectedItemIds.isNotEmpty;
 
   @override
   void initState() {
@@ -80,6 +83,8 @@ class _InventoryViewState extends State<InventoryView> {
             ),
           ],
         ),
+        _inSelectionMode ?
+          SelectionActions() :
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
@@ -160,7 +165,7 @@ class _InventoryViewState extends State<InventoryView> {
                     .map((item) => InventoryListItem(
                           item: item,
                           showBorrower: true,
-                          selectable: _selectedItemIds.isNotEmpty,
+                          selectable: _inSelectionMode,
                           selected: _selectedItemIds.contains(item.id),
                           onSelected: _handleSelectItem,
                         ))
