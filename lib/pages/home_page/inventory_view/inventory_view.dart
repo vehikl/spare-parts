@@ -24,6 +24,7 @@ class _InventoryViewState extends State<InventoryView> {
   List<String> _selectedBorrowers = [];
   late bool _showOnlyAvailableItems;
   String _searchQuery = '';
+  final List<String> _selectedItemIds = [];
   final searchFieldController = TextEditingController();
 
   bool get isAdmin => context.read<UserRole>() == UserRole.admin;
@@ -45,6 +46,16 @@ class _InventoryViewState extends State<InventoryView> {
 
   void _handleAvailableItemsFilterChanged() {
     setState(() => _showOnlyAvailableItems = !_showOnlyAvailableItems);
+  }
+
+  void _handleSelectItem(String itemId) {
+    setState(() {
+      if (_selectedItemIds.contains(itemId)) {
+        _selectedItemIds.remove(itemId);
+      } else {
+        _selectedItemIds.add(itemId);
+      }
+    });
   }
 
   @override
@@ -146,8 +157,13 @@ class _InventoryViewState extends State<InventoryView> {
 
               return ListView(
                 children: filteredItems
-                    .map((item) =>
-                        InventoryListItem(item: item, showBorrower: true))
+                    .map((item) => InventoryListItem(
+                          item: item,
+                          showBorrower: true,
+                          selectable: _selectedItemIds.isNotEmpty,
+                          selected: _selectedItemIds.contains(item.id),
+                          onLongPress: _handleSelectItem,
+                        ))
                     .toList(),
               );
             },

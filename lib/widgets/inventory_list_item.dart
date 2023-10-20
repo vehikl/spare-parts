@@ -11,11 +11,17 @@ import 'package:spare_parts/widgets/item_icon.dart';
 class InventoryListItem extends StatelessWidget {
   final bool showBorrower;
   final InventoryItem item;
+  final bool selectable;
+  final bool selected;
+  final void Function(String itemId)? onLongPress;
 
   const InventoryListItem({
     Key? key,
     required this.item,
     this.showBorrower = false,
+    this.selectable = false,
+    this.selected = false,
+    this.onLongPress,
   }) : super(key: key);
 
   @override
@@ -39,7 +45,21 @@ class InventoryListItem extends StatelessWidget {
         return Provider.value(
           value: userRole,
           child: ListTile(
-            leading: ItemIcon(item: item),
+            onLongPress:
+                onLongPress == null ? null : () => onLongPress!(item.id),
+            leading: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (selectable) ...[
+                  if (selected)
+                    Icon(Icons.check_box)
+                  else
+                    Icon(Icons.check_box_outline_blank),
+                  SizedBox(width: 8),
+                ],
+                ItemIcon(item: item),
+              ],
+            ),
             title: Text(item.name),
             subtitle: !showBorrower || item.borrower?.name == null
                 ? null
