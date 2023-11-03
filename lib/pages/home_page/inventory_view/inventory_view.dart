@@ -61,6 +61,14 @@ class _InventoryViewState extends State<InventoryView> {
     });
   }
 
+  void _handleOnSelectAll() {}
+
+  void _handleOnDeselectAll() {
+    setState(() {
+      _selectedItemIds.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final inventoryItemRepository = context.read<InventoryItemRepository>();
@@ -83,37 +91,40 @@ class _InventoryViewState extends State<InventoryView> {
             ),
           ],
         ),
-        _inSelectionMode ?
-          SelectionActions() :
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              MultiselectButton(
-                buttonLabel: 'Item Types',
-                values: itemTypes.keys.toList(),
-                selectedValues: _selectedItemTypes,
-                icon: Icons.filter_list,
-                leadingBuilder: (itemType) =>
-                    Icon(itemTypes[itemType] ?? itemTypes['Other']!),
-                onConfirm: _handleTypesFilterChanged,
+        _inSelectionMode
+            ? SelectionActions(
+                onSelectAll: _handleOnSelectAll,
+                onDeselectAll: _handleOnDeselectAll,
+              )
+            : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    MultiselectButton(
+                      buttonLabel: 'Item Types',
+                      values: itemTypes.keys.toList(),
+                      selectedValues: _selectedItemTypes,
+                      icon: Icons.filter_list,
+                      leadingBuilder: (itemType) =>
+                          Icon(itemTypes[itemType] ?? itemTypes['Other']!),
+                      onConfirm: _handleTypesFilterChanged,
+                    ),
+                    if (isAdmin) ...[
+                      SizedBox(width: 10),
+                      UserFilter(
+                        icon: Icons.filter_list,
+                        selectedUsers: _selectedBorrowers,
+                        onChanged: _handleBorrowersFilterChanged,
+                      ),
+                      SizedBox(width: 10),
+                      AvailableItemsFilter(
+                        value: _showOnlyAvailableItems,
+                        onPressed: _handleAvailableItemsFilterChanged,
+                      ),
+                    ],
+                  ],
+                ),
               ),
-              if (isAdmin) ...[
-                SizedBox(width: 10),
-                UserFilter(
-                  icon: Icons.filter_list,
-                  selectedUsers: _selectedBorrowers,
-                  onChanged: _handleBorrowersFilterChanged,
-                ),
-                SizedBox(width: 10),
-                AvailableItemsFilter(
-                  value: _showOnlyAvailableItems,
-                  onPressed: _handleAvailableItemsFilterChanged,
-                ),
-              ],
-            ],
-          ),
-        ),
         Divider(),
         Expanded(
           child: StreamBuilder<List<InventoryItem>>(

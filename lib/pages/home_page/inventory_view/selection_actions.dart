@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 
 class SelectionActions extends StatelessWidget {
-  const SelectionActions({super.key});
+  final void Function() onSelectAll;
+  final void Function() onDeselectAll;
+
+  const SelectionActions({
+    Key? key,
+    required this.onSelectAll,
+    required this.onDeselectAll,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        TextButton(onPressed: () {}, child: Text('Select All')),
+        TextButton(onPressed: onSelectAll, child: Text('Select All')),
         SizedBox(width: 8),
-        TextButton(onPressed: () {}, child: Text('Deselect All')),
+        TextButton(onPressed: onDeselectAll, child: Text('Deselect All')),
         Spacer(),
         ElevatedButton(onPressed: () {}, child: Text('Print Labels')),
       ],
