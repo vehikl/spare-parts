@@ -4,13 +4,11 @@ import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/available_items_filter.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/search_field.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/user_filter.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/selection_actions.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/inventory_view_list.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/error_container.dart';
 import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
-import 'package:spare_parts/widgets/inventory_list_item.dart';
 import 'package:spare_parts/widgets/inventory_list_item_loading.dart';
 
 class InventoryView extends StatefulWidget {
@@ -25,12 +23,10 @@ class _InventoryViewState extends State<InventoryView> {
   List<String> _selectedBorrowers = [];
   late bool _showOnlyAvailableItems;
   String _searchQuery = '';
-  final List<String> _selectedItemIds = [];
   final searchFieldController = TextEditingController();
+  bool _inSelectionMode = false;
 
   bool get isAdmin => context.read<UserRole>() == UserRole.admin;
-
-  bool get _inSelectionMode => _selectedItemIds.isNotEmpty;
 
   @override
   void initState() {
@@ -51,22 +47,8 @@ class _InventoryViewState extends State<InventoryView> {
     setState(() => _showOnlyAvailableItems = !_showOnlyAvailableItems);
   }
 
-  void _handleSelectItem(String itemId) {
-    setState(() {
-      if (_selectedItemIds.contains(itemId)) {
-        _selectedItemIds.remove(itemId);
-      } else {
-        _selectedItemIds.add(itemId);
-      }
-    });
-  }
-
-  void _handleOnSelectAll() {}
-
-  void _handleOnDeselectAll() {
-    setState(() {
-      _selectedItemIds.clear();
-    });
+  void _handleSelectionModeChanged(bool inSelectionMode) {
+    setState(() => _inSelectionMode = inSelectionMode);
   }
 
   @override
@@ -83,49 +65,49 @@ class _InventoryViewState extends State<InventoryView> {
                 padding: const EdgeInsets.all(8.0),
                 child: SearchField(
                   searchFieldController: searchFieldController,
-                  onChanged: (value) => setState(() {
-                    _searchQuery = value;
-                  }),
+                  onChanged: _inSelectionMode
+                      ? null
+                      : (value) => setState(() {
+                            _searchQuery = value;
+                          }),
                 ),
               ),
             ),
           ],
         ),
-        _inSelectionMode
-            ? SelectionActions(
-                onSelectAll: _handleOnSelectAll,
-                onDeselectAll: _handleOnDeselectAll,
-              )
-            : SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    MultiselectButton(
-                      buttonLabel: 'Item Types',
-                      values: itemTypes.keys.toList(),
-                      selectedValues: _selectedItemTypes,
-                      icon: Icons.filter_list,
-                      leadingBuilder: (itemType) =>
-                          Icon(itemTypes[itemType] ?? itemTypes['Other']!),
-                      onConfirm: _handleTypesFilterChanged,
-                    ),
-                    if (isAdmin) ...[
-                      SizedBox(width: 10),
-                      UserFilter(
-                        icon: Icons.filter_list,
-                        selectedUsers: _selectedBorrowers,
-                        onChanged: _handleBorrowersFilterChanged,
-                      ),
-                      SizedBox(width: 10),
-                      AvailableItemsFilter(
-                        value: _showOnlyAvailableItems,
-                        onPressed: _handleAvailableItemsFilterChanged,
-                      ),
-                    ],
-                  ],
+        if (!_inSelectionMode)
+        ...[
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                MultiselectButton(
+                  buttonLabel: 'Item Types',
+                  values: itemTypes.keys.toList(),
+                  selectedValues: _selectedItemTypes,
+                  icon: Icons.filter_list,
+                  leadingBuilder: (itemType) =>
+                      Icon(itemTypes[itemType] ?? itemTypes['Other']!),
+                  onConfirm: _handleTypesFilterChanged,
                 ),
-              ),
+                if (isAdmin) ...[
+                  SizedBox(width: 10),
+                  UserFilter(
+                    icon: Icons.filter_list,
+                    selectedUsers: _selectedBorrowers,
+                    onChanged: _handleBorrowersFilterChanged,
+                  ),
+                  SizedBox(width: 10),
+                  AvailableItemsFilter(
+                    value: _showOnlyAvailableItems,
+                    onPressed: _handleAvailableItemsFilterChanged,
+                  ),
+                ],
+              ],
+            ),
+          ),
         Divider(),
+      ],
         Expanded(
           child: StreamBuilder<List<InventoryItem>>(
             stream: inventoryItemRepository.getItemsStream(
@@ -155,32 +137,10 @@ class _InventoryViewState extends State<InventoryView> {
 
               final items = snapshot.data!;
 
-              if (items.isEmpty) {
-                return EmptyListState(
-                  message: "No inventory items to display...",
-                );
-              }
-
-              final filteredItems = items.where((item) {
-                List<String?> properties = [item.name, item.borrower?.name];
-                return properties.where((property) => property != null).any(
-                    (property) => property!
-                        .toLowerCase()
-                        .contains(_searchQuery.toLowerCase()));
-              }).toList();
-
-              filteredItems.sort();
-
-              return ListView(
-                children: filteredItems
-                    .map((item) => InventoryListItem(
-                          item: item,
-                          showBorrower: true,
-                          selectable: _inSelectionMode,
-                          selected: _selectedItemIds.contains(item.id),
-                          onSelected: _handleSelectItem,
-                        ))
-                    .toList(),
+              return InventoryViewList(
+                items: items,
+                searchQuery: _searchQuery,
+                onSelectionModeChanged: _handleSelectionModeChanged,
               );
             },
           ),
