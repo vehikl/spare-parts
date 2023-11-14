@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/selection_actions.dart';
+import 'package:spare_parts/widgets/dialogs/print_dialog/print_dialog_web.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
@@ -52,6 +53,16 @@ class _InventoryViewListState extends State<InventoryViewList> {
     widget.onSelectionModeChanged?.call(false);
   }
 
+  void _handlePrintAll() {
+    final selectedItems = widget.items
+        .where((item) => _selectedItemIds.contains(item.id))
+        .toList();
+    showDialog(
+      context: context,
+      builder: (_) => PrintDialog(items: selectedItems),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.items.isEmpty) {
@@ -75,6 +86,7 @@ class _InventoryViewListState extends State<InventoryViewList> {
           SelectionActions(
             onSelectAll: _handleOnSelectAll,
             onDeselectAll: _handleOnDeselectAll,
+            onPrintAll: _handlePrintAll,
           ),
           Divider(),
         ],
