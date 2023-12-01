@@ -24,6 +24,13 @@ class InventoryListItem extends StatelessWidget {
     this.onSelected,
   }) : super(key: key);
 
+  void _handleLongPress(BuildContext context, InventoryItem item) {
+    final isAdmin = context.read<UserRole>() == UserRole.admin;
+    if (!isAdmin) return;
+
+    onSelected?.call(item.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     final userRole = context.read<UserRole>();
@@ -45,7 +52,7 @@ class InventoryListItem extends StatelessWidget {
         return Provider.value(
           value: userRole,
           child: ListTile(
-            onLongPress: onSelected == null ? null : () => onSelected!(item.id),
+            onLongPress: () => _handleLongPress(context, item),
             leading: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

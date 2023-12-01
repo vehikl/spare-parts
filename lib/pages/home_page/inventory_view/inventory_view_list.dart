@@ -25,7 +25,7 @@ class InventoryViewList extends StatefulWidget {
 class _InventoryViewListState extends State<InventoryViewList> {
   final List<String> _selectedItemIds = [];
   bool get _inSelectionMode => _selectedItemIds.isNotEmpty;
-
+  
   void _handleSelectItem(String itemId) {
     final previousListEmpty = _selectedItemIds.isEmpty;
     setState(() {
