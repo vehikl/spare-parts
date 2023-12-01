@@ -976,4 +976,33 @@ void main() {
       expect(listItems, findsOneWidget);
     });
   });
+
+  group('Selecting items', () {
+    testWidgets('disables search', (WidgetTester tester) async {
+      final deskItem = InventoryItem(id: 'Desk#145', type: 'Desk');
+      await firestore
+          .collection('items')
+          .doc(deskItem.id)
+          .set(deskItem.toFirestore());
+
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.user,
+        firestore: firestore,
+      );
+
+      final searchField = find.byKey(Key('search'));
+
+      final deskListTile = find.ancestor(
+        of: find.text(deskItem.name),
+        matching: find.byType(ListTile),
+      );
+
+      await tester.longPress(deskListTile);
+      await tester.pumpAndSettle();
+
+      expect(tester.widget<TextField>(searchField).enabled, isFalse);
+    });
+  });
 }

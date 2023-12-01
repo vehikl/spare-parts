@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/selection_actions.dart';
-import 'package:spare_parts/widgets/dialogs/print_dialog/print_dialog_web.dart';
+import 'package:spare_parts/widgets/dialogs/print_dialog/print_dialog_mobile.dart'
+    if (dart.library.html) 'package:spare_parts/widgets/dialogs/print_dialog/print_dialog_web.dart';
 import 'package:spare_parts/widgets/empty_list_state.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 
 class InventoryViewList extends StatefulWidget {
   final List<InventoryItem> items;
-  final String searchQuery;
+  final String? searchQuery;
   final void Function(bool)? onSelectionModeChanged;
 
   const InventoryViewList({
     super.key,
     required this.items,
-    required this.searchQuery,
+    this.searchQuery,
     this.onSelectionModeChanged,
   });
 
@@ -39,14 +40,14 @@ class _InventoryViewListState extends State<InventoryViewList> {
     }
   }
 
-  void _handleOnSelectAll() {
+  void _handleSelectAll() {
     setState(() {
       _selectedItemIds.clear();
       _selectedItemIds.addAll(widget.items.map((item) => item.id));
     });
   }
 
-  void _handleOnDeselectAll() {
+  void _handleDeselectAll() {
     setState(() {
       _selectedItemIds.clear();
     });
@@ -72,9 +73,13 @@ class _InventoryViewListState extends State<InventoryViewList> {
     }
 
     final filteredItems = widget.items.where((item) {
+      if (widget.searchQuery == null) {
+        return true;
+      }
+
       List<String?> properties = [item.name, item.borrower?.name];
       return properties.where((property) => property != null).any((property) =>
-          property!.toLowerCase().contains(widget.searchQuery.toLowerCase()));
+          property!.toLowerCase().contains(widget.searchQuery!.toLowerCase()));
     }).toList();
 
     filteredItems.sort();
@@ -84,8 +89,8 @@ class _InventoryViewListState extends State<InventoryViewList> {
       children: [
         if (_inSelectionMode) ...[
           SelectionActions(
-            onSelectAll: _handleOnSelectAll,
-            onDeselectAll: _handleOnDeselectAll,
+            onSelectAll: _handleSelectAll,
+            onDeselectAll: _handleDeselectAll,
             onPrintAll: _handlePrintAll,
           ),
           Divider(),

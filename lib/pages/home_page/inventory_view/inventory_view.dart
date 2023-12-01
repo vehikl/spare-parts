@@ -75,8 +75,7 @@ class _InventoryViewState extends State<InventoryView> {
             ),
           ],
         ),
-        if (!_inSelectionMode)
-        ...[
+        if (!_inSelectionMode) ...[
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -106,8 +105,8 @@ class _InventoryViewState extends State<InventoryView> {
               ],
             ),
           ),
-        Divider(),
-      ],
+          Divider(),
+        ],
         Expanded(
           child: StreamBuilder<List<InventoryItem>>(
             stream: inventoryItemRepository.getItemsStream(
