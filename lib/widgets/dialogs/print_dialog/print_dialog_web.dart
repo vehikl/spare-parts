@@ -59,12 +59,28 @@ class _PrintDialogState extends State<PrintDialog> {
                   TitleText('Printing labels for ${widget.items.length} items'),
                 ConstrainedBox(
                   constraints: BoxConstraints(maxHeight: 225),
-                  child: ListView(
-                    shrinkWrap: true,
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 20,
+                    crossAxisSpacing: 20,
                     children: widget.items
-                        .map((item) => ListTile(
-                              title: Text(item.name),
-                              subtitle: Text(item.id),
+                        .map((item) => Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                border: Border.all(color: Colors.white),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text('Property of Vehikl Inc.'),
+                                    Icon(Icons.qr_code_2, size: 128),
+                                    Text(item.nameForPrinting),
+                                  ],
+                                ),
+                              ),
                             ))
                         .toList(),
                   ),
