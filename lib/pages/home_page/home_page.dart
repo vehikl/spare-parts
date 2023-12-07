@@ -1,14 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
 import 'package:spare_parts/pages/home_page/borrowing_requests_view/borrowing_requests_view.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
-import 'package:spare_parts/pages/item_page/item_page.dart';
-import 'package:spare_parts/services/repositories/repositories.dart';
+import 'package:spare_parts/pages/qr_scan_page.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/add_inventory_item_button.dart';
 import 'package:spare_parts/widgets/custom_layout_builder.dart';
@@ -54,64 +52,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleScan() {
-    final inventoryItemRepository = context.read<InventoryItemRepository>();
-    final userRole = context.read<UserRole>();
-
-    var scanning = true;
-
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          appBar: AppBar(title: const Text('Mobile Scanner')),
-          body: MobileScanner(
-            fit: BoxFit.contain,
-            onDetect: (capture) async {
-              if (!scanning) return;
-
-              final List<Barcode> barcodes = capture.barcodes;
-
-              if (barcodes.isNotEmpty) {
-                try {
-                  scanning = false;
-                  final barcodeValue = barcodes.first.rawValue;
-                  print("IDDD: $barcodeValue");
-
-                  final itemRef = await inventoryItemRepository
-                      .getItemDocumentReference(barcodeValue)
-                      .get();
-
-                  if (itemRef.exists) {
-                    await Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Provider.value(
-                          value: userRole,
-                          child: ItemPage(
-                            itemId: itemRef.id,
-                          ),
-                        ),
-                      ),
-                    );
-                  } else {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Invalid QR Code: $barcodeValue'),
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                    ));
-                  }
-                } catch (e) {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('An error occured while scanning QR Code'),
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                  ));
-                }
-              }
-            },
-          ),
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => QRScanPage()),
     );
   }
 
@@ -160,13 +103,11 @@ class _HomePageState extends State<HomePage> {
             centerTitle: true,
             title: Text(_pageTitle),
             actions: [
-              if (defaultTargetPlatform == TargetPlatform.iOS ||
-                  defaultTargetPlatform == TargetPlatform.android)
-                IconButton(
-                  icon: const Icon(Icons.qr_code_scanner),
-                  onPressed: _handleScan,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+              IconButton(
+                icon: const Icon(Icons.qr_code_scanner),
+                onPressed: _handleScan,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               if (layout == LayoutType.desktop && isAdmin)
                 TextButton.icon(
                   label: Text('Settings'),
