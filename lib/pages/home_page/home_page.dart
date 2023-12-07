@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
@@ -7,6 +6,7 @@ import 'package:spare_parts/pages/home_page/borrowing_requests_view/borrowing_re
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
 import 'package:spare_parts/pages/qr_scan_page.dart';
+import 'package:spare_parts/services/repositories/inventory_item_repository.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/add_inventory_item_button.dart';
 import 'package:spare_parts/widgets/custom_layout_builder.dart';
@@ -54,7 +54,15 @@ class _HomePageState extends State<HomePage> {
   void _handleScan() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => QRScanPage()),
+      MaterialPageRoute(
+        builder: (_) => MultiProvider(
+          providers: [
+            Provider.value(value: context.read<UserRole>()),
+            Provider.value(value: context.read<InventoryItemRepository>()),
+          ],
+          child: QRScanPage(),
+        ),
+      ),
     );
   }
 
