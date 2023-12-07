@@ -25,7 +25,7 @@ dependencies:
   dynamic_color: ^1.6.0
   bluetooth_print: ^4.3.0
   google_sign_in: ^5.4.4
-  mobile_scanner: ^3.0.0
+  mobile_scanner: ^3.5.5
   js: ^0.6.5
   uuid: ^3.0.7
   flutter_animate: ^4.1.1+1
