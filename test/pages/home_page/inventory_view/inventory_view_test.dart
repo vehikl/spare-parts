@@ -988,7 +988,7 @@ void main() {
       await pumpPage(
         Scaffold(body: InventoryView()),
         tester,
-        userRole: UserRole.user,
+        userRole: UserRole.admin,
         firestore: firestore,
       );
 
