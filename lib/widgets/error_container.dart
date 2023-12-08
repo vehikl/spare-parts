@@ -12,7 +12,7 @@ class ErrorContainer extends StatelessWidget {
         color: Theme.of(context).colorScheme.error,
       ),
       padding: const EdgeInsets.all(16),
-      child: Text(error),
+      child: SelectableText(error),
     );
   }
 }

@@ -11,12 +11,25 @@ import 'package:spare_parts/widgets/item_icon.dart';
 class InventoryListItem extends StatelessWidget {
   final bool showBorrower;
   final InventoryItem item;
+  final bool selectable;
+  final bool selected;
+  final void Function(String itemId)? onSelected;
 
   const InventoryListItem({
     Key? key,
     required this.item,
     this.showBorrower = false,
+    this.selectable = false,
+    this.selected = false,
+    this.onSelected,
   }) : super(key: key);
+
+  void _handleLongPress(BuildContext context, InventoryItem item) {
+    final isAdmin = context.read<UserRole>() == UserRole.admin;
+    if (!isAdmin) return;
+
+    onSelected?.call(item.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +52,25 @@ class InventoryListItem extends StatelessWidget {
         return Provider.value(
           value: userRole,
           child: ListTile(
-            leading: ItemIcon(item: item),
+            onLongPress: () => _handleLongPress(context, item),
+            leading: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (selectable) ...[
+                  if (selected)
+                    Icon(Icons.check_box)
+                  else
+                    Icon(Icons.check_box_outline_blank),
+                  SizedBox(width: 8),
+                ],
+                ItemIcon(item: item),
+              ],
+            ),
             title: Text(item.name),
             subtitle: !showBorrower || item.borrower?.name == null
                 ? null
                 : Text(item.borrower!.name!),
-            onTap: openContainer,
+            onTap: selectable ? () => onSelected!(item.id) : openContainer,
             trailing: ItemActionsButton(item: item),
           ),
         );

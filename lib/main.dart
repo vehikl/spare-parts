@@ -58,9 +58,9 @@ class _MyAppState extends State<MyApp> {
             stream: _authStream,
             builder: (context, snapshot) {
               final user = snapshot.data;
-      
+
               var userEmailValid = user?.email?.endsWith('vehikl.com') ?? false;
-      
+
               if (!userEmailValid) {
                 return SignInPage(
                   error: user == null
@@ -68,15 +68,16 @@ class _MyAppState extends State<MyApp> {
                       : 'Please log in with your Vehikl email',
                 );
               }
-      
+
               return FutureBuilder<IdTokenResult>(
                 future: user!.getIdTokenResult(true),
                 builder: (context, snap) {
                   if (!snap.hasData) return Scaffold(body: Container());
-      
+
                   final isAdmin = snap.data?.claims?['role'] == 'admin';
                   return Provider<UserRole>(
-                    create: (context) => isAdmin ? UserRole.admin : UserRole.user,
+                    create: (context) =>
+                        isAdmin ? UserRole.admin : UserRole.user,
                     child: HomePage(),
                   );
                 },

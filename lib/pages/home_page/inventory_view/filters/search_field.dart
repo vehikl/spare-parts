@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SearchField extends StatelessWidget {
-  final void Function(String) onChanged;
+  final void Function(String)? onChanged;
   final TextEditingController searchFieldController;
 
   const SearchField({
@@ -24,12 +24,13 @@ class SearchField extends StatelessWidget {
           icon: Icon(
               searchFieldController.text.isEmpty ? Icons.search : Icons.clear),
           onPressed: () {
-            onChanged('');
+            onChanged?.call('');
             searchFieldController.clear();
           },
         ),
       ),
       onChanged: onChanged,
+      enabled: onChanged != null,
     );
   }
 }

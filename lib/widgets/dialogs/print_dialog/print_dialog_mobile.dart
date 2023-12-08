@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 
 class PrintDialog extends StatelessWidget {
-  final InventoryItem item;
-  
-  const PrintDialog({super.key, required this.item});
+  final List<InventoryItem> items;
+
+  const PrintDialog({super.key, required this.items});
 
   @override
   Widget build(BuildContext context) {

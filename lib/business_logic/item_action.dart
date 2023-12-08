@@ -263,7 +263,7 @@ class PrintAction extends ItemAction {
   handle(BuildContext context, InventoryItem item) {
     showDialog(
       context: context,
-      builder: (context) => PrintDialog(item: item),
+      builder: (context) => PrintDialog(items: [item]),
     );
   }
 
