@@ -24,6 +24,27 @@ flutter pub global activate derry
 
 #### Local
 
+<details style="border: 2px solid gray; padding: 10px;">
+  <summary><b>First-time Setup</b></summary>
+
+1. Install dependencies for running firebase functions and build them:
+```shell
+cd functions
+npm install
+npm run build
+```
+
+2. Authenticate with Firebase:
+```
+firebase login
+```
+
+3. Fetch Firebase configuration files (`google-services.json` and `flutter_options.dart`):
+```
+flutterfire configure
+```
+</details>
+
 1. Start the Firebase emulators and seed data from `/emulator_data`:
 ```
 firebase emulators:start --import ./emulator_data
@@ -31,7 +52,7 @@ firebase emulators:start --import ./emulator_data
 
 2. Run the app:
 ```
-flutter run -d <device>
+flutter run -d <device> --dart-define=USE_EMULATORS=true
 ``` 
 or run it through your favourite IDE.
 
@@ -39,17 +60,7 @@ or run it through your favourite IDE.
 
 If you want to run the production app, make sure you have access to the production Spare Parts Firebase project.
 
-1. Authenticate with Firebase:
-```
-firebase login
-```
-
-2. Fetch Firebase configuration files (`google-services.json` and `flutter_options.dart`):
-```
-flutterfire configure
-```
-
-3. Run the app:
+1. Run the app:
 ```
 flutter run -d <device>
 ``` 
