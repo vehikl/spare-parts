@@ -17,7 +17,8 @@ service cloud.firestore {
     }
 
     function isVehikalian() {
-      return request.auth.token.email.matches('.*@vehikl[.]com$');
+      return true;
+      // return request.auth.token.email.matches('.*@vehikl[.]com$');
     }
 
     function isPublic() {
