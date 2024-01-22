@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          floatingActionButton: AddInventoryItemButton(),
+          floatingActionButton: isAdmin ? AddInventoryItemButton() : null,
           body: layout == LayoutType.desktop
               ? SizedBox(
                   child: Row(
