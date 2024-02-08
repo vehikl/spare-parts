@@ -90,7 +90,7 @@ void main() {
   });
 
   group('adding a new item', () {
-    testWidgets('is diabled for users', (WidgetTester tester) async {
+    testWidgets('is disabled for users', (WidgetTester tester) async {
       await pumpPage(
         HomePage(),
         tester,
