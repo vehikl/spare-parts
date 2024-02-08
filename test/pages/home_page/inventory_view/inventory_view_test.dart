@@ -89,71 +89,85 @@ void main() {
     });
   });
 
-  testWidgets(
-    'Adds new item to inventory list',
-    (WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(Size(800, 1000));
-
-      const itemName = 'Table #3';
-      const itemType = 'Desk';
-      const itemStorageLocation = 'Waterloo';
-      const itemDescription = 'Lorem ipsum';
-      const isPrivate = true;
-
+  group('adding a new item', () {
+    testWidgets('is disabled for users', (WidgetTester tester) async {
       await pumpPage(
         HomePage(),
         tester,
-        userRole: UserRole.admin,
+        userRole: UserRole.user,
         firestore: firestore,
       );
 
       final fab = find.byIcon(Icons.add);
+      expect(fab, findsNothing);
+    });
 
-      await tester.tap(fab);
-      await tester.pumpAndSettle();
+    testWidgets(
+      'adds a new item to inventory list',
+      (WidgetTester tester) async {
+        await tester.binding.setSurfaceSize(Size(800, 1000));
 
-      await tester.enterTextByLabel('Name *', itemName);
-      await tester.enterTextByLabel('Description', itemDescription);
-      await tester.selectDropdownOption('Item Type', itemType);
-      await tester.selectDropdownOption(
-        'Storage Location',
-        itemStorageLocation,
-      );
-      if (isPrivate) {
-        // TODO: there is an issue where this switch is not found due to the height of the form.
-        // Scrolling down to the switch did not work.
-        await tester
-            .tap(find.widgetWithText(SwitchListTile, 'Only visible to admins'));
-      }
+        const itemName = 'Table #3';
+        const itemType = 'Desk';
+        const itemStorageLocation = 'Waterloo';
+        const itemDescription = 'Lorem ipsum';
+        const isPrivate = true;
 
-      await tester.tap(find.text('Save'));
-      await tester.pumpAndSettle();
+        await pumpPage(
+          HomePage(),
+          tester,
+          userRole: UserRole.admin,
+          firestore: firestore,
+        );
 
-      final newItemListItem = find.text(itemName);
-      expect(newItemListItem, findsOneWidget);
+        final fab = find.byIcon(Icons.add);
 
-      await tester.tap(newItemListItem);
-      await tester.pumpAndSettle();
+        await tester.tap(fab);
+        await tester.pumpAndSettle();
 
-      expect(
-        find.descendant(
-          of: find.byType(Card),
-          matching: find.textContaining(itemName),
-        ),
-        findsOneWidget,
-      );
-      expect(find.text(itemDescription), findsOneWidget);
-      expect(
-        find.descendant(
-          of: find.byType(ItemPage),
-          matching: find.byIcon(itemTypes[itemType]!),
-        ),
-        findsOneWidget,
-      );
-      expect(find.textContaining(itemStorageLocation), findsOneWidget);
-      expect(find.byIcon(Icons.visibility_off), findsOneWidget);
-    },
-  );
+        await tester.enterTextByLabel('Name *', itemName);
+        await tester.enterTextByLabel('Description', itemDescription);
+        await tester.selectDropdownOption('Item Type', itemType);
+        await tester.selectDropdownOption(
+          'Storage Location',
+          itemStorageLocation,
+        );
+        if (isPrivate) {
+          // TODO: there is an issue where this switch is not found due to the height of the form.
+          // Scrolling down to the switch did not work.
+          await tester.tap(
+              find.widgetWithText(SwitchListTile, 'Only visible to admins'));
+        }
+
+        await tester.tap(find.text('Save'));
+        await tester.pumpAndSettle();
+
+        final newItemListItem = find.text(itemName);
+        expect(newItemListItem, findsOneWidget);
+
+        await tester.tap(newItemListItem);
+        await tester.pumpAndSettle();
+
+        expect(
+          find.descendant(
+            of: find.byType(Card),
+            matching: find.textContaining(itemName),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text(itemDescription), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byType(ItemPage),
+            matching: find.byIcon(itemTypes[itemType]!),
+          ),
+          findsOneWidget,
+        );
+        expect(find.textContaining(itemStorageLocation), findsOneWidget);
+        expect(find.byIcon(Icons.visibility_off), findsOneWidget);
+      },
+    );
+  });
 
   group('Editing an item', () {
     testWidgets(
