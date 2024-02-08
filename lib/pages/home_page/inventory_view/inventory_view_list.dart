@@ -95,17 +95,19 @@ class _InventoryViewListState extends State<InventoryViewList> {
           ),
           Divider(),
         ],
-        ListView(
-          shrinkWrap: true,
-          children: filteredItems
-              .map((item) => InventoryListItem(
-                    item: item,
-                    showBorrower: true,
-                    selectable: _inSelectionMode,
-                    selected: _selectedItemIds.contains(item.id),
-                    onSelected: _handleSelectItem,
-                  ))
-              .toList(),
+        Expanded(
+          child: ListView(
+            shrinkWrap: true,
+            children: filteredItems
+                .map((item) => InventoryListItem(
+                      item: item,
+                      showBorrower: true,
+                      selectable: _inSelectionMode,
+                      selected: _selectedItemIds.contains(item.id),
+                      onSelected: _handleSelectItem,
+                    ))
+                .toList(),
+          ),
         ),
       ],
     );
