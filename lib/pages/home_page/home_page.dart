@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
       _selectedBottomNavItemIndex = index;
       switch (index) {
         case 1:
-          _pageTitle = 'Borrowed Items';
+          _pageTitle = 'My Items';
           break;
         case 2:
           _pageTitle = 'Borrowing Requests';
@@ -146,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                       Expanded(
                         child: Column(
                           children: const [
-                            TitleText('Borrowed Items'),
+                            TitleText('My Items'),
                             Expanded(child: BorrowedItemsView())
                           ],
                         ),
@@ -186,7 +186,7 @@ class _HomePageState extends State<HomePage> {
                     BottomNavigationBarItem(
                       icon: Icon(Icons.backpack_outlined),
                       activeIcon: Icon(Icons.backpack),
-                      label: 'Borrowed Items',
+                      label: 'My Items',
                     ),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.waving_hand_outlined),
