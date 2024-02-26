@@ -21,8 +21,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedBottomNavItemIndex = 0;
-  String _pageTitle = 'Spare Parts';
+  late String _pageTitle;
   final PageController pageController = PageController();
+
+  @override
+  void initState() {
+    _pageTitle = isAdmin ? 'Inventory' : 'My Items';
+    super.initState();
+  }
 
   void _handleSignOut() {
     final auth = context.read<FirebaseAuth>();
@@ -76,8 +82,11 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedBottomNavItemIndex = index;
       switch (index) {
+        case 0:
+          _pageTitle = isAdmin ? 'Inventory' : 'My Items';
+          break;
         case 1:
-          _pageTitle = 'My Items';
+          _pageTitle = isAdmin ? 'My Items' : 'Inventory';
           break;
         case 2:
           _pageTitle = 'Borrowing Requests';
@@ -85,8 +94,6 @@ class _HomePageState extends State<HomePage> {
         case 3:
           _pageTitle = 'Settings';
           break;
-        default:
-          _pageTitle = 'Spare Parts';
       }
     });
   }
@@ -167,8 +174,8 @@ class _HomePageState extends State<HomePage> {
                   controller: pageController,
                   onPageChanged: _onPageChanged,
                   children: [
-                    InventoryView(),
-                    BorrowedItemsView(),
+                    isAdmin ? InventoryView() : BorrowedItemsView(),
+                    isAdmin ? BorrowedItemsView() : InventoryView(),
                     BorrowingRequestsView(),
                     if (isAdmin) SettingsView()
                   ],
@@ -178,16 +185,31 @@ class _HomePageState extends State<HomePage> {
               : BottomNavigationBar(
                   type: BottomNavigationBarType.fixed,
                   items: [
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.home_outlined),
-                      activeIcon: Icon(Icons.home),
-                      label: 'Inventory',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.backpack_outlined),
-                      activeIcon: Icon(Icons.backpack),
-                      label: 'My Items',
-                    ),
+                    ...(isAdmin
+                        ? [
+                            BottomNavigationBarItem(
+                              icon: Icon(Icons.home_outlined),
+                              activeIcon: Icon(Icons.home),
+                              label: 'Inventory',
+                            ),
+                            BottomNavigationBarItem(
+                              icon: Icon(Icons.backpack_outlined),
+                              activeIcon: Icon(Icons.backpack),
+                              label: 'My Items',
+                            )
+                          ]
+                        : [
+                            BottomNavigationBarItem(
+                              icon: Icon(Icons.backpack_outlined),
+                              activeIcon: Icon(Icons.backpack),
+                              label: 'My Items',
+                            ),
+                            BottomNavigationBarItem(
+                              icon: Icon(Icons.home_outlined),
+                              activeIcon: Icon(Icons.home),
+                              label: 'Inventory',
+                            )
+                          ]),
                     BottomNavigationBarItem(
                       icon: Icon(Icons.waving_hand_outlined),
                       activeIcon: Icon(Icons.waving_hand),
