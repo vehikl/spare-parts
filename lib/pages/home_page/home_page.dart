@@ -1,9 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
-import 'package:spare_parts/pages/home_page/borrowing_requests_view/borrowing_requests_view.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
 import 'package:spare_parts/pages/home_page/tab_factory.dart';
 import 'package:spare_parts/pages/qr_scan_page.dart';
@@ -11,7 +8,6 @@ import 'package:spare_parts/services/repositories/inventory_item_repository.dart
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/add_inventory_item_button.dart';
 import 'package:spare_parts/widgets/custom_layout_builder.dart';
-import 'package:spare_parts/widgets/title_text.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -128,34 +124,7 @@ class _HomePageState extends State<HomePage> {
           body: layout == LayoutType.desktop
               ? SizedBox(
                   child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: const [
-                            TitleText('Inventory'),
-                            Expanded(child: InventoryView()),
-                          ],
-                        ),
-                      ),
-                      VerticalDivider(),
-                      Expanded(
-                        child: Column(
-                          children: const [
-                            TitleText('My Items'),
-                            Expanded(child: BorrowedItemsView())
-                          ],
-                        ),
-                      ),
-                      VerticalDivider(),
-                      Expanded(
-                        child: Column(
-                          children: const [
-                            TitleText('Borrowing Requests'),
-                            Expanded(child: BorrowingRequestsView())
-                          ],
-                        ),
-                      )
-                    ],
+                    children: TabFactory.getDesktopPages(),
                   ),
                 )
               : PageView(

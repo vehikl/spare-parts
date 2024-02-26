@@ -3,6 +3,7 @@ import 'package:spare_parts/pages/home_page/borrowed_items_view.dart';
 import 'package:spare_parts/pages/home_page/borrowing_requests_view/borrowing_requests_view.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
+import 'package:spare_parts/widgets/title_text.dart';
 
 class TabFactory {
   static List<BottomNavigationBarItem> getBottomNavBarItems(bool isAdmin) {
@@ -64,6 +65,37 @@ class TabFactory {
       BorrowedItemsView(),
       InventoryView(),
       BorrowingRequestsView(),
+    ];
+  }
+
+  static List<Widget> getDesktopPages() {
+    return [
+      Expanded(
+        child: Column(
+          children: const [
+            TitleText('Inventory'),
+            Expanded(child: InventoryView()),
+          ],
+        ),
+      ),
+      VerticalDivider(),
+      Expanded(
+        child: Column(
+          children: const [
+            TitleText('My Items'),
+            Expanded(child: BorrowedItemsView())
+          ],
+        ),
+      ),
+      VerticalDivider(),
+      Expanded(
+        child: Column(
+          children: const [
+            TitleText('Borrowing Requests'),
+            Expanded(child: BorrowingRequestsView())
+          ],
+        ),
+      )
     ];
   }
 
