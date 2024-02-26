@@ -66,4 +66,12 @@ class TabFactory {
       BorrowingRequestsView(),
     ];
   }
+
+  static List<String> getPageTitles(bool isAdmin) {
+    if (isAdmin) {
+      return ['Inventory', 'My Items', 'Borrowing Requests', 'Settings'];
+    }
+
+    return ['My Items', 'Inventory', 'Borrowing Requests'];
+  }
 }

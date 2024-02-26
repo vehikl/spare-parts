@@ -82,20 +82,7 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _selectedBottomNavItemIndex = index;
-      switch (index) {
-        case 0:
-          _pageTitle = isAdmin ? 'Inventory' : 'My Items';
-          break;
-        case 1:
-          _pageTitle = isAdmin ? 'My Items' : 'Inventory';
-          break;
-        case 2:
-          _pageTitle = 'Borrowing Requests';
-          break;
-        case 3:
-          _pageTitle = 'Settings';
-          break;
-      }
+      _pageTitle = TabFactory.getPageTitles(isAdmin)[index];
     });
   }
 
