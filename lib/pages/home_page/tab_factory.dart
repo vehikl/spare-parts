@@ -6,104 +6,111 @@ import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
 import 'package:spare_parts/widgets/title_text.dart';
 
 class TabFactory {
-  static List<BottomNavigationBarItem> getBottomNavBarItems(bool isAdmin) {
-    if (isAdmin) {
-      return [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          activeIcon: Icon(Icons.home),
-          label: 'Inventory',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.backpack_outlined),
-          activeIcon: Icon(Icons.backpack),
-          label: 'My Items',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.waving_hand_outlined),
-          activeIcon: Icon(Icons.waving_hand),
-          label: 'Borrowing Requests',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.settings_outlined),
-          activeIcon: Icon(Icons.settings),
-          label: 'Settings',
-        ),
-      ];
-    }
+  bool isAdmin;
+  bool isDesktop;
 
-    return [
-      BottomNavigationBarItem(
-        icon: Icon(Icons.backpack_outlined),
-        activeIcon: Icon(Icons.backpack),
-        label: 'My Items',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.home_outlined),
-        activeIcon: Icon(Icons.home),
-        label: 'Inventory',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.waving_hand_outlined),
-        activeIcon: Icon(Icons.waving_hand),
-        label: 'Borrowing Requests',
-      ),
-    ];
+  TabFactory({required this.isAdmin, required this.isDesktop});
+
+  List<BottomNavigationBarItem> getBottomNavBarItems() {
+    return getTabs()
+        .map(
+          (tab) => BottomNavigationBarItem(
+            icon: Icon(tab.activeIcon),
+            activeIcon: Icon(tab.inactiveIcon),
+            label: tab.title,
+          ),
+        )
+        .toList();
   }
 
-  static List<Widget> getPages(bool isAdmin) {
-    if (isAdmin) {
-      return [
-        InventoryView(),
-        BorrowedItemsView(),
-        BorrowingRequestsView(),
-        SettingsView()
-      ];
-    }
-
-    return [
-      BorrowedItemsView(),
-      InventoryView(),
-      BorrowingRequestsView(),
-    ];
+  List<Widget> getPages() {
+    return getTabs().map((tab) => tab.widget).toList();
   }
 
-  static List<Widget> getDesktopPages() {
-    return [
-      Expanded(
+  List<Widget> getDesktopPages() {
+    final List<Widget> pages = [];
+    final tabs = getTabs();
+
+    for (var i = 0; i < tabs.length; i++) {
+      pages.add(Expanded(
         child: Column(
-          children: const [
-            TitleText('Inventory'),
-            Expanded(child: InventoryView()),
+          children: [
+            TitleText(tabs[i].title),
+            Expanded(child: tabs[i].widget),
           ],
         ),
-      ),
-      VerticalDivider(),
-      Expanded(
-        child: Column(
-          children: const [
-            TitleText('My Items'),
-            Expanded(child: BorrowedItemsView())
-          ],
-        ),
-      ),
-      VerticalDivider(),
-      Expanded(
-        child: Column(
-          children: const [
-            TitleText('Borrowing Requests'),
-            Expanded(child: BorrowingRequestsView())
-          ],
-        ),
-      )
-    ];
-  }
-
-  static List<String> getPageTitles(bool isAdmin) {
-    if (isAdmin) {
-      return ['Inventory', 'My Items', 'Borrowing Requests', 'Settings'];
+      ));
+      
+      if (i != tabs.length - 1) {
+        pages.add(VerticalDivider());
+      }
     }
 
-    return ['My Items', 'Inventory', 'Borrowing Requests'];
+    return pages;
   }
+
+  List<String> getPageTitles() {
+    return getTabs().map((tab) => tab.title).toList();
+  }
+
+  List<TabInfo> getTabs() {
+    final tabs = [
+      TabInfo(
+        title: 'Inventory',
+        activeIcon: Icons.home_outlined,
+        inactiveIcon: Icons.home,
+        widget: InventoryView(),
+        ordinal: isDesktop
+            ? 1
+            : isAdmin
+                ? 1
+                : 2,
+      ),
+      TabInfo(
+        title: 'My Items',
+        activeIcon: Icons.backpack_outlined,
+        inactiveIcon: Icons.backpack,
+        widget: BorrowedItemsView(),
+        ordinal: isDesktop
+            ? 2
+            : isAdmin
+                ? 2
+                : 1,
+      ),
+      TabInfo(
+        title: 'Borrowing Requests',
+        activeIcon: Icons.waving_hand_outlined,
+        inactiveIcon: Icons.waving_hand,
+        widget: BorrowingRequestsView(),
+        ordinal: 3,
+      ),
+      TabInfo(
+        title: 'Settings',
+        activeIcon: Icons.settings_outlined,
+        inactiveIcon: Icons.settings,
+        widget: SettingsView(),
+        ordinal: isDesktop ? -1 : 4,
+      ),
+    ];
+
+    final activeTabs = tabs.where((tab) => tab.ordinal != -1).toList();
+    activeTabs.sort((tab1, tab2) => tab1.ordinal - tab2.ordinal);
+    return activeTabs;
+  }
+}
+
+class TabInfo {
+  final String title;
+  final IconData activeIcon;
+  final IconData inactiveIcon;
+  final int ordinal;
+  Widget widget;
+
+  TabInfo({
+    required this.title,
+    required this.activeIcon,
+    required this.inactiveIcon,
+    required this.widget,
+    required this.ordinal,
+  });
 }

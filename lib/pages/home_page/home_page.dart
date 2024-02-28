@@ -20,10 +20,12 @@ class _HomePageState extends State<HomePage> {
   int _selectedBottomNavItemIndex = 0;
   late String _pageTitle;
   final PageController pageController = PageController();
+  late final TabFactory tabFactory;
 
   @override
   void initState() {
     _pageTitle = isAdmin ? 'Inventory' : 'My Items';
+    tabFactory = TabFactory(isAdmin: isAdmin, isDesktop: false);
     super.initState();
   }
 
@@ -78,7 +80,7 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _selectedBottomNavItemIndex = index;
-      _pageTitle = TabFactory.getPageTitles(isAdmin)[index];
+      _pageTitle = tabFactory.getPageTitles()[index];
     });
   }
 
@@ -94,20 +96,22 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return CustomLayoutBuilder(
       builder: (context, layout) {
+        final isDesktop = layout == LayoutType.desktop;
+        tabFactory.isDesktop = isDesktop;
+
         return Scaffold(
-          floatingActionButtonLocation: layout == LayoutType.desktop
-              ? FloatingActionButtonLocation.startFloat
-              : null,
+          floatingActionButtonLocation:
+              isDesktop ? FloatingActionButtonLocation.startFloat : null,
           appBar: AppBar(
             centerTitle: true,
-            title: Text(_pageTitle),
+            title: Text(isDesktop ? 'Spare Parts' : _pageTitle),
             actions: [
               IconButton(
                 icon: const Icon(Icons.qr_code_scanner),
                 onPressed: _handleScan,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              if (layout == LayoutType.desktop && isAdmin)
+              if (isDesktop && isAdmin)
                 TextButton.icon(
                   label: Text('Settings'),
                   onPressed: _handleSettings,
@@ -121,22 +125,20 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           floatingActionButton: isAdmin ? AddInventoryItemButton() : null,
-          body: layout == LayoutType.desktop
+          body: isDesktop
               ? SizedBox(
-                  child: Row(
-                    children: TabFactory.getDesktopPages(),
-                  ),
+                  child: Row(children: tabFactory.getDesktopPages()),
                 )
               : PageView(
                   controller: pageController,
                   onPageChanged: _onPageChanged,
-                  children: TabFactory.getPages(isAdmin),
+                  children: tabFactory.getPages(),
                 ),
-          bottomNavigationBar: layout == LayoutType.desktop
+          bottomNavigationBar: isDesktop
               ? null
               : BottomNavigationBar(
                   type: BottomNavigationBarType.fixed,
-                  items: TabFactory.getBottomNavBarItems(isAdmin),
+                  items: tabFactory.getBottomNavBarItems(),
                   currentIndex: _selectedBottomNavItemIndex,
                   onTap: _onBottomNavItemTapped,
                 ),
