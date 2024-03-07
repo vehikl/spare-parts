@@ -29,11 +29,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  void _handleSignOut() {
-    final auth = context.read<FirebaseAuth>();
-    auth.signOut();
-  }
-
   void _handleSettings() {
     Navigator.push(
       context,
@@ -41,14 +36,6 @@ class _HomePageState extends State<HomePage> {
         builder: (context) => Scaffold(
           appBar: AppBar(
             title: const Text('Settings'),
-            actions: [
-              TextButton.icon(
-                label: Text('Logout'),
-                onPressed: _handleSignOut,
-                icon: const Icon(Icons.logout),
-                style: TextButton.styleFrom(foregroundColor: Colors.white),
-              ),
-            ],
           ),
           body: Center(child: SettingsView()),
         ),
@@ -117,11 +104,6 @@ class _HomePageState extends State<HomePage> {
                   onPressed: _handleSettings,
                   icon: Icon(Icons.settings),
                 ),
-              TextButton.icon(
-                label: Text('Logout'),
-                onPressed: _handleSignOut,
-                icon: const Icon(Icons.logout),
-              ),
             ],
           ),
           floatingActionButton: isAdmin ? AddInventoryItemButton() : null,

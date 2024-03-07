@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:spare_parts/pages/home_page/settings_view/borrowing_rules_setting/borrowing_rules_setting.dart';
 import 'package:spare_parts/pages/home_page/settings_view/set_admins_button.dart';
 import 'package:spare_parts/pages/home_page/settings_view/users_setting/users_setting.dart';
@@ -38,6 +40,12 @@ class _SettingsViewState extends State<SettingsView> {
     }
   }
 
+  void _handleSignOut() async {
+    final auth = context.read<FirebaseAuth>();
+    await auth.signOut();
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomLayoutBuilder(builder: (context, layout) {
@@ -65,10 +73,25 @@ class _SettingsViewState extends State<SettingsView> {
             ],
             selectedIndex: _navigationIndex,
             onDestinationSelected: (index) {
+              if (index == 3) {}
+
               setState(() {
                 _navigationIndex = index;
               });
             },
+            trailing: Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: OutlinedButton.icon(
+                    label: Text('Logout'),
+                    onPressed: _handleSignOut,
+                    icon: const Icon(Icons.logout),
+                  ),
+                ),
+              ),
+            ),
           ),
           Expanded(
             child: Padding(
