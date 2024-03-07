@@ -109,11 +109,16 @@ class _SettingsViewState extends State<SettingsView> {
                   alignment: Alignment.bottomCenter,
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: ElevatedButton.icon(
-                      label: Text('Logout'),
-                      onPressed: _handleSignOut,
-                      icon: const Icon(Icons.logout),
-                    ),
+                    child: layout == LayoutType.mobile
+                        ? IconButton(
+                            onPressed: _handleSignOut,
+                            icon: const Icon(Icons.logout),
+                          )
+                        : ElevatedButton.icon(
+                            label: Text('Logout'),
+                            onPressed: _handleSignOut,
+                            icon: const Icon(Icons.logout),
+                          ),
                   ),
                 ),
               ),
