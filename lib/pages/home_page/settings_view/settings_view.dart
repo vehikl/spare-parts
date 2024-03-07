@@ -54,6 +54,7 @@ class _SettingsViewState extends State<SettingsView> {
           NavigationRail(
             extended:
                 layout == LayoutType.desktop || layout == LayoutType.tablet,
+            elevation: 5,
             destinations: [
               NavigationRailDestination(
                 icon: Icon(Icons.person_outlined),
@@ -84,7 +85,7 @@ class _SettingsViewState extends State<SettingsView> {
                 alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 16),
-                  child: OutlinedButton.icon(
+                  child: ElevatedButton.icon(
                     label: Text('Logout'),
                     onPressed: _handleSignOut,
                     icon: const Icon(Icons.logout),
