@@ -1,10 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/pages/home_page/settings_view/borrowing_rules_setting/borrowing_rules_setting.dart';
 import 'package:spare_parts/pages/home_page/settings_view/set_admins_button.dart';
 import 'package:spare_parts/pages/home_page/settings_view/users_setting/users_setting.dart';
 import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/widgets/buttons/logout_button.dart';
 import 'package:spare_parts/widgets/custom_layout_builder.dart';
 
 class SettingsView extends StatefulWidget {
@@ -43,36 +43,26 @@ class _SettingsViewState extends State<SettingsView> {
     }
   }
 
-  void _handleSignOut() async {
-    final auth = context.read<FirebaseAuth>();
-    await auth.signOut();
-    Navigator.pop(context);
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (!isAdmin) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'More settings coming soon ;)',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton.icon(
-              label: Text('Logout'),
-              onPressed: _handleSignOut,
-              icon: const Icon(Icons.logout),
-            ),
-          ],
-        ),
-      );
-    }
-
     return CustomLayoutBuilder(
       builder: (context, layout) {
+        if (!isAdmin) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'More settings coming soon ;)',
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 10),
+                LogoutButton(popOnSuccess: layout == LayoutType.desktop)
+              ],
+            ),
+          );
+        }
+
         return Row(
           children: [
             NavigationRail(
@@ -109,16 +99,10 @@ class _SettingsViewState extends State<SettingsView> {
                   alignment: Alignment.bottomCenter,
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: layout == LayoutType.mobile
-                        ? IconButton(
-                            onPressed: _handleSignOut,
-                            icon: const Icon(Icons.logout),
-                          )
-                        : ElevatedButton.icon(
-                            label: Text('Logout'),
-                            onPressed: _handleSignOut,
-                            icon: const Icon(Icons.logout),
-                          ),
+                    child: LogoutButton(
+                      iconOnly: layout == LayoutType.mobile,
+                      popOnSuccess: layout == LayoutType.desktop,
+                    ),
                   ),
                 ),
               ),
