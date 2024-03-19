@@ -25,6 +25,7 @@ class _InventoryViewState extends State<InventoryView> {
   String _searchQuery = '';
   final searchFieldController = TextEditingController();
   bool _inSelectionMode = false;
+  int _itemsLimit = kItemsPerPage;
 
   bool get isAdmin => context.read<UserRole>() == UserRole.admin;
 
@@ -49,6 +50,10 @@ class _InventoryViewState extends State<InventoryView> {
 
   void _handleSelectionModeChanged(bool inSelectionMode) {
     setState(() => _inSelectionMode = inSelectionMode);
+  }
+
+  void _loadMoreItems() {
+    setState(() => _itemsLimit += kItemsPerPage);
   }
 
   @override
@@ -117,6 +122,7 @@ class _InventoryViewState extends State<InventoryView> {
               whereBorrowerIn:
                   _selectedBorrowers.isEmpty ? null : _selectedBorrowers,
               excludePrivates: !isAdmin,
+              limit: _itemsLimit,
             ),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -139,7 +145,9 @@ class _InventoryViewState extends State<InventoryView> {
               return InventoryViewList(
                 items: items,
                 searchQuery: _searchQuery,
+                loadedAllItems: items.length < _itemsLimit,
                 onSelectionModeChanged: _handleSelectionModeChanged,
+                onLoadMore: _loadMoreItems,
               );
             },
           ),

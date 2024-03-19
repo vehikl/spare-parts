@@ -107,7 +107,8 @@ void main() {
       expect(find.byIcon(Icons.check_box_outline_blank), findsNothing);
     });
 
-    testWidgets('shows a printing dialog for the selected items', (tester) async {
+    testWidgets('shows a printing dialog for the selected items',
+        (tester) async {
       await pumpPage(
         Scaffold(body: InventoryViewList(items: [chairItem, deskItem])),
         tester,
@@ -137,5 +138,29 @@ void main() {
       // TODO: assert items in the print dialog
       expect(find.byType(PrintDialog), findsOneWidget);
     });
+  });
+
+  testWidgets('can load more items', (tester) async {
+    bool loadedMore = false;
+    await pumpPage(
+      Scaffold(
+        body: InventoryViewList(
+          items: [chairItem, deskItem],
+          loadedAllItems: false,
+          onLoadMore: () {
+            loadedMore = true;
+          },
+        ),
+      ),
+      tester,
+      userRole: UserRole.user,
+    );
+
+    final loadMoreButton = find.text('Load More');
+
+    await tester.tap(loadMoreButton);
+    await tester.pumpAndSettle();
+
+    expect(loadedMore, true);
   });
 }
