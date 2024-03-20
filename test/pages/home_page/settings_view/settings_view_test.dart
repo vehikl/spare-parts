@@ -20,6 +20,17 @@ void main() {
           .thenAnswer((_) async => [user1, user2]);
     });
 
+    testWidgets('is not visible for regular users', (tester) async {
+      await pumpPage(
+        Scaffold(body: SettingsView()),
+        tester,
+        callableService: mockCallableService,
+        userRole: UserRole.user,
+      );
+
+      expect(find.text('Set Admins'), findsNothing);
+    });
+
     group('displays a list of users', () {
       testWidgets(
         'excluding the current user',
@@ -31,6 +42,7 @@ void main() {
             tester,
             callableService: mockCallableService,
             auth: mockFirebaseAuth,
+            userRole: UserRole.admin,
           );
 
           await tester.tap(find.text('Set Admins'));
@@ -48,6 +60,7 @@ void main() {
             Scaffold(body: SettingsView()),
             tester,
             callableService: mockCallableService,
+            userRole: UserRole.admin,
           );
 
           await tester.tap(find.text('Set Admins'));
@@ -75,6 +88,7 @@ void main() {
           Scaffold(body: SettingsView()),
           tester,
           callableService: mockCallableService,
+          userRole: UserRole.admin,
         );
 
         await tester.tap(find.text('Set Admins'));
@@ -97,6 +111,7 @@ void main() {
           Scaffold(body: SettingsView()),
           tester,
           callableService: mockCallableService,
+          userRole: UserRole.admin,
         );
 
         await tester.tap(find.text('Set Admins'));
