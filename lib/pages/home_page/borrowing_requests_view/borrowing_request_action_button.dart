@@ -39,19 +39,23 @@ class _BorrowingRequestActionsButtonState
       if (value == 'delete') {
         await borrowingRequestRepository.delete(widget.borrowingRequest.id);
       } else {
-        final requestedItemDoc = await inventoryItemRepository
-            .getItemDocumentReference(widget.borrowingRequest.item.id)
-            .get();
-        final requestedItem = InventoryItem.fromFirestore(
-          requestedItemDoc as DocumentSnapshot<Map<String, dynamic>>,
-        );
-        requestedItem.borrower = widget.borrowingRequest.issuer;
-        await inventoryItemRepository.update(requestedItem);
+        final isApproved = value == 'approve';
+
+        if (isApproved) {
+          final requestedItemDoc = await inventoryItemRepository
+              .getItemDocumentReference(widget.borrowingRequest.item.id)
+              .get();
+          final requestedItem = InventoryItem.fromFirestore(
+            requestedItemDoc as DocumentSnapshot<Map<String, dynamic>>,
+          );
+          requestedItem.borrower = widget.borrowingRequest.issuer;
+          await inventoryItemRepository.update(requestedItem);
+        }
 
         await borrowingRequestRepository.makeDecision(
           decisionMaker: CustomUser.fromUser(auth.currentUser!),
           borrowingRequest: widget.borrowingRequest,
-          isApproved: value == 'approve',
+          isApproved: isApproved,
         );
       }
     } catch (e) {

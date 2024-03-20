@@ -80,8 +80,7 @@ void main() {
         expect(find.textContaining(user.name!), findsNothing);
       });
 
-      testWidgets('does not display the issuer',
-          (WidgetTester tester) async {
+      testWidgets('does not display the issuer', (WidgetTester tester) async {
         await pumpPage(
           Scaffold(
             body: BorrowingRequestListItem(
@@ -138,7 +137,7 @@ void main() {
         );
         expect(find.text('Denied by ${user.name}'), findsOneWidget);
       });
-    
+
       testWidgets('allows deleting the request', (WidgetTester tester) async {
         await pumpPage(
           Scaffold(
@@ -258,6 +257,11 @@ void main() {
           newChairBorrowingRequestDoc.data()!['response']['approved'],
           isFalse,
         );
+
+        final newChairItemDoc =
+            await firestore.collection('items').doc(chairItem.id).get();
+        final newChairItem = InventoryItem.fromFirestore(newChairItemDoc);
+        expect(newChairItem.borrower, isNull);
       });
     });
   });
