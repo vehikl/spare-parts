@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/pages/home_page/settings_view/settings_view.dart';
@@ -22,6 +21,8 @@ class _HomePageState extends State<HomePage> {
   final PageController pageController = PageController();
   late final TabFactory tabFactory;
 
+  bool get isAdmin => context.read<UserRole>() == UserRole.admin;
+
   @override
   void initState() {
     _pageTitle = isAdmin ? 'Inventory' : 'My Items';
@@ -29,28 +30,20 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  void _handleSignOut() {
-    final auth = context.read<FirebaseAuth>();
-    auth.signOut();
-  }
-
   void _handleSettings() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => Scaffold(
+        builder: (_) => Scaffold(
           appBar: AppBar(
             title: const Text('Settings'),
-            actions: [
-              TextButton.icon(
-                label: Text('Logout'),
-                onPressed: _handleSignOut,
-                icon: const Icon(Icons.logout),
-                style: TextButton.styleFrom(foregroundColor: Colors.white),
-              ),
-            ],
           ),
-          body: Center(child: SettingsView()),
+          body: Center(
+            child: Provider.value(
+              value: context.read<UserRole>(),
+              child: SettingsView(),
+            ),
+          ),
         ),
       ),
     );
@@ -90,8 +83,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  bool get isAdmin => context.read<UserRole>() == UserRole.admin;
-
   @override
   Widget build(BuildContext context) {
     return CustomLayoutBuilder(
@@ -111,17 +102,12 @@ class _HomePageState extends State<HomePage> {
                 onPressed: _handleScan,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              if (isDesktop && isAdmin)
+              if (isDesktop)
                 TextButton.icon(
                   label: Text('Settings'),
                   onPressed: _handleSettings,
                   icon: Icon(Icons.settings),
                 ),
-              TextButton.icon(
-                label: Text('Logout'),
-                onPressed: _handleSignOut,
-                icon: const Icon(Icons.logout),
-              ),
             ],
           ),
           floatingActionButton: isAdmin ? AddInventoryItemButton() : null,
