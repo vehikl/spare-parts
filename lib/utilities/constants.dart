@@ -53,3 +53,5 @@ const TextStyle kEmptyListStyle = TextStyle(
 );
 
 final kBorderRadius = BorderRadius.circular(5);
+
+const kItemsPerPage = 10;

@@ -5,6 +5,7 @@ import 'package:mockito/mockito.dart';
 import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
+import 'package:spare_parts/factories/inventory_item_factory.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
@@ -21,6 +22,11 @@ import '../../../helpers/tester_extension.dart';
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
   late InventoryItem chairItem;
+  final inventoryItemFactory = InventoryItemFactory();
+
+  Future<void> saveItemToFirestore(InventoryItem item) async {
+    await firestore.collection('items').doc(item.id).set(item.toFirestore());
+  }
 
   setUp(() async {
     chairItem = InventoryItem(
@@ -28,10 +34,7 @@ void main() {
       name: 'The Great Chair',
       type: 'Chair',
     );
-    await firestore
-        .collection('items')
-        .doc(chairItem.id)
-        .set(chairItem.toFirestore());
+    await saveItemToFirestore(chairItem);
   });
 
   tearDown(() async {
@@ -89,7 +92,7 @@ void main() {
     });
   });
 
-  group('adding a new item', () {
+  group('Adding a new item', () {
     testWidgets('is disabled for users', (WidgetTester tester) async {
       await pumpPage(
         HomePage(),
@@ -1017,6 +1020,60 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.widget<TextField>(searchField).enabled, isFalse);
+    });
+  });
+
+  group('Loading more items', () {
+    testWidgets('loads more items', (tester) async {
+      tester.binding.setSurfaceSize(Size(1000, 3000));
+
+      final itemsFromFirstBatch =
+          inventoryItemFactory.createMany(kItemsPerPage);
+      for (final item in itemsFromFirstBatch) {
+        await saveItemToFirestore(item);
+      }
+
+      final itemFromNextBatch =
+          inventoryItemFactory.create(name: "ZZZ Last item");
+      await saveItemToFirestore(itemFromNextBatch);
+
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.user,
+        firestore: firestore,
+      );
+
+      expect(find.byType(InventoryListItem), findsNWidgets(kItemsPerPage));
+      expect(find.text(itemFromNextBatch.name), findsNothing);
+
+      await tester.tap(find.text('Load More'));
+      await tester.pumpAndSettle();
+
+      expect(find.text(itemFromNextBatch.name), findsOneWidget);
+    });
+
+    testWidgets('does not allow loading more items when all items were loaded',
+        (tester) async {
+      tester.binding.setSurfaceSize(Size(1000, 3000));
+
+      final itemsFromFirstBatch =
+          inventoryItemFactory.createMany(kItemsPerPage + 1);
+      for (final item in itemsFromFirstBatch) {
+        await saveItemToFirestore(item);
+      }
+
+      await pumpPage(
+        Scaffold(body: InventoryView()),
+        tester,
+        userRole: UserRole.user,
+        firestore: firestore,
+      );
+
+      await tester.tap(find.text('Load More'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Load More'), findsNothing);
     });
   });
 }

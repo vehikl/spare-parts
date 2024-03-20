@@ -3,6 +3,7 @@ import 'package:mockito/annotations.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/services/firestore_service.dart';
+import 'package:spare_parts/utilities/constants.dart';
 
 @GenerateNiceMocks([MockSpec<InventoryItemRepository>()])
 class InventoryItemRepository extends FirestoreService {
@@ -26,6 +27,7 @@ class InventoryItemRepository extends FirestoreService {
     List<String>? whereBorrowerIn,
     List<String>? whereTypeIn,
     bool excludePrivates = false,
+    int limit = kItemsPerPage,
   }) {
     Query<Object?>? query;
 
@@ -53,6 +55,8 @@ class InventoryItemRepository extends FirestoreService {
     }
 
     return (query ?? itemsCollection)
+        .orderBy('name')
+        .limit(limit)
         .snapshots()
         .map(_mapQuerySnapshotToInventoryItems);
   }

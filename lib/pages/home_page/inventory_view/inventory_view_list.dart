@@ -9,13 +9,17 @@ import 'package:spare_parts/widgets/inventory_list_item.dart';
 class InventoryViewList extends StatefulWidget {
   final List<InventoryItem> items;
   final String? searchQuery;
+  final bool loadedAllItems;
   final void Function(bool)? onSelectionModeChanged;
+  final void Function()? onLoadMore;
 
   const InventoryViewList({
     super.key,
     required this.items,
     this.searchQuery,
     this.onSelectionModeChanged,
+    this.onLoadMore,
+    this.loadedAllItems = true,
   });
 
   @override
@@ -25,7 +29,7 @@ class InventoryViewList extends StatefulWidget {
 class _InventoryViewListState extends State<InventoryViewList> {
   final List<String> _selectedItemIds = [];
   bool get _inSelectionMode => _selectedItemIds.isNotEmpty;
-  
+
   void _handleSelectItem(String itemId) {
     final previousListEmpty = _selectedItemIds.isEmpty;
     setState(() {
@@ -96,17 +100,33 @@ class _InventoryViewListState extends State<InventoryViewList> {
           Divider(),
         ],
         Expanded(
-          child: ListView(
+          child: ListView.builder(
+            itemCount: filteredItems.length + 1,
             shrinkWrap: true,
-            children: filteredItems
-                .map((item) => InventoryListItem(
-                      item: item,
-                      showBorrower: true,
-                      selectable: _inSelectionMode,
-                      selected: _selectedItemIds.contains(item.id),
-                      onSelected: _handleSelectItem,
-                    ))
-                .toList(),
+            itemBuilder: (BuildContext context, int index) {
+              if (index == filteredItems.length) {
+                if (widget.loadedAllItems) {
+                  return SizedBox.shrink();
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: widget.onLoadMore,
+                    child: Text('Load More'),
+                  ),
+                );
+              }
+
+              final item = filteredItems[index];
+              return InventoryListItem(
+                item: item,
+                showBorrower: true,
+                selectable: _inSelectionMode,
+                selected: _selectedItemIds.contains(item.id),
+                onSelected: _handleSelectItem,
+              );
+            },
           ),
         ),
       ],

@@ -29,6 +29,7 @@ dependencies:
   js: ^0.6.5
   uuid: ^3.0.7
   flutter_animate: ^4.1.1+1
+  faker: ^2.1.0
 
 dev_dependencies:
   flutter_test:
