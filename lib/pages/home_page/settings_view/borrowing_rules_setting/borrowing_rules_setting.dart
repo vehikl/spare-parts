@@ -40,7 +40,7 @@ class BorrowingRulesSetting extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              if (rule.maxBorrowingCount == 1)
+              if (rule.maxBorrowingCount == 0)
                 DeleteButton(rule: rule)
               else
                 DecreaseButton(rule: rule),
@@ -92,7 +92,6 @@ class BorrowingRulesSetting extends StatelessWidget {
                     ),
                   ] else
                     DataTable(
-                      
                       columns: [
                         DataColumn(
                           label: NewRuleButton(rules: rules, isIcon: true),
