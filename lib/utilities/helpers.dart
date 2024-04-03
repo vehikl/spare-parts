@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 
 void showError({required BuildContext context, required String message}) {
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(message), backgroundColor: Colors.red),
+    SnackBar(content: Text(message), backgroundColor: Theme.of(context).colorScheme.error),
   );
 }
 
