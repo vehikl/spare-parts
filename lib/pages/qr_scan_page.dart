@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/services/repositories/inventory_item_repository.dart';
 import 'package:spare_parts/utilities/constants.dart';
+import 'package:spare_parts/utilities/helpers.dart';
 
 class QRScanPage extends StatefulWidget {
   const QRScanPage({super.key});
@@ -13,24 +14,17 @@ class QRScanPage extends StatefulWidget {
 }
 
 class _QRScanPageState extends State<QRScanPage> {
-  late final ScaffoldMessengerState scaffoldMessenger;
-  bool checkingCapture = false;
-
-  @override
-  void initState() {
-    scaffoldMessenger = ScaffoldMessenger.of(context);
-    super.initState();
-  }
+  bool _checkingCapture = false;
 
   void handleCapture(BarcodeCapture capture) async {
-    if (checkingCapture) return;
+    if (_checkingCapture) return;
 
     setState(() {
-      checkingCapture = true;
+      _checkingCapture = true;
     });
 
-    final inventoryItemRepository = context.watch<InventoryItemRepository>();
-    final userRole = context.watch<UserRole>();
+    final inventoryItemRepository = context.read<InventoryItemRepository>();
+    final userRole = context.read<UserRole>();
 
     final List<Barcode> barcodes = capture.barcodes;
 
@@ -55,21 +49,17 @@ class _QRScanPageState extends State<QRScanPage> {
             ),
           );
         } else {
-          Navigator.pop(context);
-          scaffoldMessenger.showSnackBar(SnackBar(
-            content: Text('Invalid QR Code: $barcodeValue'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ));
+          print('error');
+          showError(
+              context: context, message: 'Invalid QR code: $barcodeValue');
         }
       } catch (e) {
-        Navigator.pop(context);
-        scaffoldMessenger.showSnackBar(SnackBar(
-          content: Text('An error occured while scanning QR Code'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ));
+        showError(
+            context: context,
+            message: 'An error occured while scanning QR Code');
       } finally {
         setState(() {
-          checkingCapture = false;
+          _checkingCapture = false;
         });
       }
     }
@@ -79,11 +69,21 @@ class _QRScanPageState extends State<QRScanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('QR Code Scanner')),
-      body: checkingCapture
+      body: _checkingCapture
           ? Center(child: CircularProgressIndicator())
           : MobileScanner(
               fit: BoxFit.contain,
               onDetect: (capture) => handleCapture(capture),
+              placeholderBuilder: (_, __) =>
+                  Center(child: CircularProgressIndicator()),
+              errorBuilder: (_, error, __) => Padding(
+                padding: EdgeInsets.all(10),
+                child: Center(
+                  child: Text(
+                    'Something went wrong while scanning: (${error.errorCode.name}) ${error.errorDetails?.message}',
+                  ),
+                ),
+              ),
             ),
     );
   }
