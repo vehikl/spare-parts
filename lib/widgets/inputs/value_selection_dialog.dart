@@ -25,10 +25,15 @@ class ValueSelectionDialog extends StatefulWidget {
 }
 
 class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
+  late final List<String> _allValues;
   late final List<String> _newSelectedValues;
 
   @override
   void initState() {
+    _allValues = [...widget.values];
+    _allValues.sort((value1, value2) => widget.labelBuilder == null
+        ? value1.compareTo(value2)
+        : widget.labelBuilder!(value1).compareTo(widget.labelBuilder!(value2)));
     _newSelectedValues = [...widget.selectedValues];
     super.initState();
   }
@@ -52,38 +57,36 @@ class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
             Expanded(
               child: ListView(
                 shrinkWrap: true,
-                children: [
-                  ...widget.values
-                      .map((value) => Material(
-                            child: ListTile(
-                              title: Text(widget.labelBuilder == null
-                                  ? value
-                                  : widget.labelBuilder!(value)),
-                              leading: widget.leadingBuilder == null
-                                  ? null
-                                  : widget.leadingBuilder!(value),
-                              selected: _newSelectedValues.contains(value),
-                              selectedTileColor:
-                                  Theme.of(context).colorScheme.primary,
-                              selectedColor:
-                                  Theme.of(context).colorScheme.onPrimary,
-                              enabled: !widget.disabledValues.contains(value),
-                              onTap: () {
-                                setState(() {
-                                  if (_newSelectedValues.contains(value)) {
-                                    _newSelectedValues.remove(value);
-                                  } else {
-                                    if (widget.isSingleSelection) {
-                                      _newSelectedValues.clear();
-                                    }
-                                    _newSelectedValues.add(value);
+                children: _allValues
+                    .map((value) => Material(
+                          child: ListTile(
+                            title: Text(widget.labelBuilder == null
+                                ? value
+                                : widget.labelBuilder!(value)),
+                            leading: widget.leadingBuilder == null
+                                ? null
+                                : widget.leadingBuilder!(value),
+                            selected: _newSelectedValues.contains(value),
+                            selectedTileColor:
+                                Theme.of(context).colorScheme.primary,
+                            selectedColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            enabled: !widget.disabledValues.contains(value),
+                            onTap: () {
+                              setState(() {
+                                if (_newSelectedValues.contains(value)) {
+                                  _newSelectedValues.remove(value);
+                                } else {
+                                  if (widget.isSingleSelection) {
+                                    _newSelectedValues.clear();
                                   }
-                                });
-                              },
-                            ),
-                          ))
-                      .toList(),
-                ],
+                                  _newSelectedValues.add(value);
+                                }
+                              });
+                            },
+                          ),
+                        ))
+                    .toList(),
               ),
             ),
           ],
