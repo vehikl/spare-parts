@@ -29,32 +29,38 @@ class InventoryItemRepository extends FirestoreService {
     bool excludePrivates = false,
     int limit = kItemsPerPage,
   }) {
-    Query<Object?>? query;
+    List<Filter> filters = [];
 
     if (withNoBorrower != null && withNoBorrower) {
-      query = itemsCollection.where('borrower', isNull: true);
+      filters.add(Filter('borrower', isNull: true));
     }
 
     if (whereBorrowerIs != null) {
-      query = itemsCollection.where('borrower.uid', isEqualTo: whereBorrowerIs);
+      filters.add(Filter('borrower.uid', isEqualTo: whereBorrowerIs));
     }
 
     if (whereBorrowerIn != null) {
-      query = (query ?? itemsCollection).where(
-        'borrower.uid',
-        whereIn: whereBorrowerIn,
-      );
+      filters.add(Filter('borrower.uid', whereIn: whereBorrowerIn));
     }
-
     if (whereTypeIn != null) {
-      query = (query ?? itemsCollection).where('type', whereIn: whereTypeIn);
+      filters.add(Filter('type', whereIn: whereTypeIn));
     }
 
     if (excludePrivates) {
-      query = (query ?? itemsCollection).where('isPrivate', isEqualTo: false);
+      filters.add(Filter('isPrivate', isEqualTo: false));
     }
 
-    return (query ?? itemsCollection)
+    Query<Object?> query = itemsCollection;
+
+    if (filters.isNotEmpty) {
+      Filter andFilter = filters[0];
+      for (int i = 1; i < filters.length; i++) {
+        andFilter = Filter.and(andFilter, filters[i]);
+      }
+      query = itemsCollection.where(andFilter);
+    }
+
+    return query
         .orderBy('name')
         .limit(limit)
         .snapshots()

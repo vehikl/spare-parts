@@ -70,7 +70,7 @@ class _InventoryViewState extends State<InventoryView> {
                 padding: const EdgeInsets.all(8.0),
                 child: SearchField(
                   searchFieldController: searchFieldController,
-                  onChanged: _inSelectionMode
+                  onChanged: _inSelectionMode || true
                       ? null
                       : (value) => setState(() {
                             _searchQuery = value;
@@ -115,8 +115,7 @@ class _InventoryViewState extends State<InventoryView> {
         Expanded(
           child: StreamBuilder<List<InventoryItem>>(
             stream: inventoryItemRepository.getItemsStream(
-              withNoBorrower:
-                  _selectedBorrowers.isEmpty && _showOnlyAvailableItems,
+              withNoBorrower: _showOnlyAvailableItems,
               whereTypeIn:
                   _selectedItemTypes.isEmpty ? null : _selectedItemTypes,
               whereBorrowerIn:
