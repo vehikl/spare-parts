@@ -23,7 +23,6 @@ class _InventoryViewState extends State<InventoryView> {
   List<String> _selectedBorrowers = [];
   late bool _showOnlyAvailableItems;
   String _searchQuery = '';
-  final searchFieldController = TextEditingController();
   bool _inSelectionMode = false;
   int _itemsLimit = kItemsPerPage;
 
@@ -69,7 +68,6 @@ class _InventoryViewState extends State<InventoryView> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SearchField(
-                  searchFieldController: searchFieldController,
                   onChanged: _inSelectionMode || true
                       ? null
                       : (value) => setState(() {

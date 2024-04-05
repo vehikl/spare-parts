@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 
 class SearchField extends StatelessWidget {
   final void Function(String)? onChanged;
-  final TextEditingController searchFieldController;
+  final String value;
+  final TextEditingController searchFieldController = TextEditingController();
 
-  const SearchField({
+  SearchField({
     super.key,
+    this.value = '',
     required this.onChanged,
-    required this.searchFieldController,
   });
 
   @override
   Widget build(BuildContext context) {
+    searchFieldController.text = value;
+
     return TextField(
       key: Key('search'),
       controller: searchFieldController,

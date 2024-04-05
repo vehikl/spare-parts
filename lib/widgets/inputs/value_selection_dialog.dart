@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/filters/search_field.dart';
 
 class ValueSelectionDialog extends StatefulWidget {
   final List<String> selectedValues;
@@ -27,6 +28,7 @@ class ValueSelectionDialog extends StatefulWidget {
 class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
   late final List<String> _allValues;
   late final List<String> _newSelectedValues;
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -40,6 +42,11 @@ class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final filteredValues = _allValues.where((v) =>
+        (widget.labelBuilder?.call(v) ?? v)
+            .toLowerCase()
+            .contains(_searchQuery.toLowerCase()));
+
     return AlertDialog(
       title: Text(widget.title),
       content: SizedBox(
@@ -47,6 +54,13 @@ class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SearchField(
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+            ),
             TextButton(
               onPressed: () => setState(() {
                 _newSelectedValues.clear();
@@ -57,7 +71,7 @@ class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
             Expanded(
               child: ListView(
                 shrinkWrap: true,
-                children: _allValues
+                children: filteredValues
                     .map((value) => Material(
                           child: ListTile(
                             title: Text(widget.labelBuilder == null
