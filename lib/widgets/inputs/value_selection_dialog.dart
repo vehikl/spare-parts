@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/filters/search_field.dart';
+import 'package:spare_parts/widgets/inputs/search_field.dart';
 
 class ValueSelectionDialog extends StatefulWidget {
   final List<String> selectedValues;
@@ -61,11 +61,12 @@ class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
                 });
               },
             ),
+            SizedBox(height: 5),
             TextButton(
               onPressed: () => setState(() {
                 _newSelectedValues.clear();
               }),
-              child: Text('Clear'),
+              child: Text('Clear Selection'),
             ),
             Divider(),
             Expanded(

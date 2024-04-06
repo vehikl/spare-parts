@@ -29,6 +29,49 @@ class InventoryItemRepository extends FirestoreService {
     bool excludePrivates = false,
     int limit = kItemsPerPage,
   }) {
+    Query<Object?>? query;
+
+    if (withNoBorrower != null && withNoBorrower) {
+      query = itemsCollection.where('borrower', isNull: true);
+    }
+
+    if (whereBorrowerIs != null) {
+      query = itemsCollection.where('borrower.uid', isEqualTo: whereBorrowerIs);
+    }
+
+    if (whereBorrowerIn != null) {
+      query = (query ?? itemsCollection).where(
+        'borrower.uid',
+        whereIn: whereBorrowerIn,
+      );
+    }
+
+    if (whereTypeIn != null) {
+      query = (query ?? itemsCollection).where('type', whereIn: whereTypeIn);
+    }
+
+    if (excludePrivates) {
+      query = (query ?? itemsCollection).where('isPrivate', isEqualTo: false);
+    }
+
+    return (query ?? itemsCollection)
+        .orderBy('name')
+        .limit(limit)
+        .snapshots()
+        .map(_mapQuerySnapshotToInventoryItems);
+  }
+
+  /// This is an improved implementation of the method above
+  /// We can't use it right now, because testing `OR` queries with fake_cloud_firestore is hard
+  /// Related issue: https://github.com/atn832/fake_cloud_firestore/issues/293
+  Stream<List<InventoryItem>> getItemsStreamWithFilters({
+    bool? withNoBorrower,
+    String? whereBorrowerIs,
+    List<String>? whereBorrowerIn,
+    List<String>? whereTypeIn,
+    bool excludePrivates = false,
+    int limit = kItemsPerPage,
+  }) {
     List<Filter> filters = [];
 
     if (withNoBorrower != null && withNoBorrower) {
@@ -66,7 +109,6 @@ class InventoryItemRepository extends FirestoreService {
         .snapshots()
         .map(_mapQuerySnapshotToInventoryItems);
   }
-
   Future<void> delete(String? itemId) async {
     await getItemDocumentReference(itemId).delete();
   }

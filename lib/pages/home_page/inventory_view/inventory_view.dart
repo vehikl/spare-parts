@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/available_items_filter.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/filters/search_field.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/user_filter.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view_list.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
@@ -22,7 +21,6 @@ class _InventoryViewState extends State<InventoryView> {
   List<String> _selectedItemTypes = [];
   List<String> _selectedBorrowers = [];
   late bool _showOnlyAvailableItems;
-  String _searchQuery = '';
   bool _inSelectionMode = false;
   int _itemsLimit = kItemsPerPage;
 
@@ -62,22 +60,6 @@ class _InventoryViewState extends State<InventoryView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SearchField(
-                  onChanged: _inSelectionMode || true
-                      ? null
-                      : (value) => setState(() {
-                            _searchQuery = value;
-                          }),
-                ),
-              ),
-            ),
-          ],
-        ),
         if (!_inSelectionMode) ...[
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -141,7 +123,6 @@ class _InventoryViewState extends State<InventoryView> {
 
               return InventoryViewList(
                 items: items,
-                searchQuery: _searchQuery,
                 loadedAllItems: items.length < _itemsLimit,
                 onSelectionModeChanged: _handleSelectionModeChanged,
                 onLoadMore: _loadMoreItems,

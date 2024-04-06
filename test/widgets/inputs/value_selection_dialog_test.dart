@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/filters/search_field.dart';
+import 'package:spare_parts/widgets/inputs/search_field.dart';
 import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 
 import '../../helpers/test_helpers.dart';
