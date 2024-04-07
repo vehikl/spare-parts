@@ -42,6 +42,7 @@ class _SearchFieldState extends State<SearchField> {
       controller: _searchFieldController,
       decoration: InputDecoration(
         hintText: 'Search',
+        isDense: true,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(100)),
         ),

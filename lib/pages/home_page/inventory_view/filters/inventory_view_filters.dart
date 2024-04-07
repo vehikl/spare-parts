@@ -31,6 +31,7 @@ class InventoryViewFilters extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
+          SizedBox(width: 5),
           ItemTypeFilter(
             selectedItemTypes: selectedItemTypes,
             onChanged: handleTypesFilterChanged,

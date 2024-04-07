@@ -26,7 +26,7 @@ class ItemTypeEditButton extends StatelessWidget {
           context: context,
           builder: (context) => ValueSelectionDialog(
             isSingleSelection: true,
-            title: 'Select user',
+            title: 'Select Item Type',
             values: itemTypes.keys.toList(),
             selectedValues:
                 itemTypes.keys.where((type) => type == rule.type).toList(),
