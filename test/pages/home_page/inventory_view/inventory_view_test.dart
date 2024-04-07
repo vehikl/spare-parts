@@ -11,8 +11,8 @@ import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/widgets/inputs/user_selection_dialog.dart';
-import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
+import 'package:spare_parts/widgets/dialogs/user_selection_dialog.dart';
+import 'package:spare_parts/widgets/dialogs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 

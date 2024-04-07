@@ -11,7 +11,7 @@ import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/dialogs/print_dialog/print_dialog_mobile.dart'
     if (dart.library.html) 'package:spare_parts/widgets/dialogs/print_dialog/print_dialog_web.dart';
-import 'package:spare_parts/widgets/inputs/user_selection_dialog.dart';
+import 'package:spare_parts/widgets/dialogs/user_selection_dialog.dart';
 import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 
 import '../services/repositories/repositories.dart';

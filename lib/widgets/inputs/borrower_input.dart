@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spare_parts/entities/custom_user.dart';
-import 'package:spare_parts/widgets/inputs/user_selection_dialog.dart';
+import 'package:spare_parts/widgets/dialogs/user_selection_dialog.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
 
 class BorrowerInput extends StatelessWidget {

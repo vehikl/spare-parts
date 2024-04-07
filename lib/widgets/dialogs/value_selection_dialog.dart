@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spare_parts/widgets/dialogs/dialog_width.dart';
 import 'package:spare_parts/widgets/inputs/search_field.dart';
 
 class ValueSelectionDialog extends StatefulWidget {
@@ -49,8 +50,7 @@ class _ValueSelectionDialogState extends State<ValueSelectionDialog> {
 
     return AlertDialog(
       title: Text(widget.title),
-      content: SizedBox(
-        width: 300,
+      content: DialogWidth(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

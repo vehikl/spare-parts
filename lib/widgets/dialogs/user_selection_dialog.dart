@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/services/repositories/user_repository.dart';
+import 'package:spare_parts/widgets/dialogs/dialog_width.dart';
 import 'package:spare_parts/widgets/inputs/new_user_input.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
 
@@ -38,8 +39,7 @@ class _UserSelectionDialogState extends State<UserSelectionDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(widget.title),
-      content: SizedBox(
-        width: 300,
+      content: DialogWidth(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,

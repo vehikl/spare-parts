@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
+import 'package:spare_parts/widgets/dialogs/value_selection_dialog.dart';
 
 class ItemTypeEditButton extends StatelessWidget {
   final List<BorrowingRule> existingRules;
