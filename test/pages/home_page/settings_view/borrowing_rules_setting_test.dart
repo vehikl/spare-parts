@@ -87,9 +87,9 @@ void main() {
     );
 
     testWidgets(
-      'Shows a delete button if the borrowing limit is 1',
+      'Shows a delete button if the borrowing limit is 0',
       (WidgetTester tester) async {
-        final borrowingRule = BorrowingRule(type: 'Desk', maxBorrowingCount: 2);
+        final borrowingRule = BorrowingRule(type: 'Desk', maxBorrowingCount: 1);
         await firestore
             .collection('borrowingRules')
             .add(borrowingRule.toFirestore());
@@ -159,7 +159,7 @@ void main() {
       'Can delete a borrowing rule',
       (WidgetTester tester) async {
         final borrowingRules = [
-          BorrowingRule(type: 'Desk', maxBorrowingCount: 1),
+          BorrowingRule(type: 'Desk', maxBorrowingCount: 0),
           BorrowingRule(type: 'Chair', maxBorrowingCount: 3),
         ];
         for (final rule in borrowingRules) {
@@ -196,7 +196,7 @@ void main() {
         await tester.tap(find.byIcon(Icons.edit).first);
         await tester.pumpAndSettle();
 
-        const newType = 'Monitor';
+        const newType = 'Chair';
         await tester.tap(find.text(newType));
         await tester.tap(find.text('Select'));
         await tester.pumpAndSettle();
