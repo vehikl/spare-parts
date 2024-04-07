@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/filters/available_items_filter.dart';
-import 'package:spare_parts/pages/home_page/inventory_view/filters/user_filter.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/filters/inventory_view_filters.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view_list.dart';
 import 'package:spare_parts/services/repositories/repositories.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/error_container.dart';
-import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
 import 'package:spare_parts/widgets/inventory_list_item_loading.dart';
 
 class InventoryView extends StatefulWidget {
@@ -61,34 +59,14 @@ class _InventoryViewState extends State<InventoryView> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (!_inSelectionMode) ...[
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                MultiselectButton(
-                  buttonLabel: 'Item Types',
-                  values: itemTypes.keys.toList(),
-                  selectedValues: _selectedItemTypes,
-                  icon: Icons.filter_list,
-                  leadingBuilder: (itemType) =>
-                      Icon(itemTypes[itemType] ?? itemTypes['Other']!),
-                  onConfirm: _handleTypesFilterChanged,
-                ),
-                if (isAdmin) ...[
-                  SizedBox(width: 10),
-                  UserFilter(
-                    icon: Icons.filter_list,
-                    selectedUsers: _selectedBorrowers,
-                    onChanged: _handleBorrowersFilterChanged,
-                  ),
-                  SizedBox(width: 10),
-                  AvailableItemsFilter(
-                    value: _showOnlyAvailableItems,
-                    onPressed: _handleAvailableItemsFilterChanged,
-                  ),
-                ],
-              ],
-            ),
+          InventoryViewFilters(
+            selectedItemTypes: _selectedItemTypes,
+            selectedBorrowers: _selectedBorrowers,
+            showOnlyAvailableItems: _showOnlyAvailableItems,
+            handleTypesFilterChanged: _handleTypesFilterChanged,
+            handleBorrowersFilterChanged: _handleBorrowersFilterChanged,
+            handleAvailableItemsFilterChanged:
+                _handleAvailableItemsFilterChanged,
           ),
           Divider(),
         ],
