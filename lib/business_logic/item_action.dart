@@ -97,7 +97,7 @@ class AssignItemAction extends ItemAction {
         final users = await showDialog<List<CustomUser>?>(
           context: context,
           builder: (context) => UserSelectionDialog(
-            title: 'Select user',
+            title: 'Select User',
             isSingleSelection: true,
             selectedUsers: item.borrower == null ? [] : [item.borrower!],
           ),

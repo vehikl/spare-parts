@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/pages/home_page/settings_view/borrowing_rules_setting/borrowing_rules_setting.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/widgets/dialogs/value_selection_dialog.dart';
 
 import '../../../helpers/test_helpers.dart';
 
@@ -233,7 +232,7 @@ void main() {
 
         final existingType = secondBorrowingRule.type;
         final existingTypeOption = find.descendant(
-          of: find.byType(ValueSelectionDialog),
+          of: find.byType(AlertDialog),
           matching: find.text(existingType),
         );
         await tester.tap(existingTypeOption);

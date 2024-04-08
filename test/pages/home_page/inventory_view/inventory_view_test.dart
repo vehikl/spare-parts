@@ -12,7 +12,7 @@ import 'package:spare_parts/pages/item_page/item_page.dart';
 import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/dialogs/user_selection_dialog.dart';
-import 'package:spare_parts/widgets/dialogs/value_selection_dialog.dart';
+import 'package:spare_parts/widgets/inputs/new_user_input.dart';
 import 'package:spare_parts/widgets/inventory_list_item.dart';
 import 'package:spare_parts/widgets/inventory_list_item/inventory_item_form.dart';
 
@@ -573,7 +573,7 @@ void main() {
 
         var customName = 'Jane Doe';
         var newUserNameInput = find.descendant(
-          of: find.byType(UserSelectionDialog),
+          of: find.byType(NewUserInput),
           matching: find.byType(TextField),
         );
         await tester.enterText(newUserNameInput, customName);
@@ -664,24 +664,11 @@ void main() {
                 [user1, user2].map(UserDto.fromCustomUser).toList(),
               ));
 
-          final deskItem = InventoryItem(
-            id: 'Desk#123',
-            type: 'Desk',
-            borrower: user1,
-          );
-          final monitorItem = InventoryItem(
-            id: 'Monitor#123',
-            type: 'Monitor',
-            borrower: user2,
-          );
-          await firestore
-              .collection('items')
-              .doc(deskItem.id)
-              .set(deskItem.toFirestore());
-          await firestore
-              .collection('items')
-              .doc(monitorItem.id)
-              .set(monitorItem.toFirestore());
+          final item1 = InventoryItemFactory().create(borrower: user1);
+          final item2 = InventoryItemFactory().create(borrower: user2);
+
+          saveItemToFirestore(item1);
+          saveItemToFirestore(item2);
 
           await pumpPage(
             Scaffold(body: InventoryView()),
@@ -695,16 +682,16 @@ void main() {
           await tester.pumpAndSettle();
 
           await tester.tap(find.descendant(
-            of: find.byType(ValueSelectionDialog),
+            of: find.byType(AlertDialog),
             matching: find.text(user1.name!),
           ));
 
           await tester.tap(find.text('Select'));
           await tester.pumpAndSettle();
 
-          expect(find.text(chairItem.id), findsNothing);
-          expect(find.text(deskItem.id), findsOneWidget);
-          expect(find.text(monitorItem.id), findsNothing);
+          expect(find.text(chairItem.name), findsNothing);
+          expect(find.text(item1.name), findsOneWidget);
+          expect(find.text(item2.name), findsNothing);
         },
       );
     });

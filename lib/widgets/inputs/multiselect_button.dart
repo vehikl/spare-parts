@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/dialogs/value_selection_dialog.dart';
 
 class MultiselectButton extends StatelessWidget {
@@ -7,7 +8,7 @@ class MultiselectButton extends StatelessWidget {
   final String buttonLabel;
   final void Function(List<String>) onConfirm;
   final Widget Function(String value)? leadingBuilder;
-  final String Function(String value)? labelBuilder;
+  final String Function(String value) labelBuilder;
   final IconData? icon;
 
   const MultiselectButton({
@@ -16,8 +17,8 @@ class MultiselectButton extends StatelessWidget {
     required this.onConfirm,
     required this.buttonLabel,
     required this.values,
+    this.labelBuilder = stringIdentity,
     this.leadingBuilder,
-    this.labelBuilder,
     this.icon,
   });
 

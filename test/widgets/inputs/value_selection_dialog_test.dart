@@ -12,10 +12,11 @@ void main() {
       const secondValue = 'qwe';
 
       await pumpPage(
-        ValueSelectionDialog(
+        ValueSelectionDialog<String>(
           selectedValues: [],
           title: 'Select value',
           values: [firstValue, secondValue],
+          labelBuilder: (value) => value,
         ),
         tester,
       );

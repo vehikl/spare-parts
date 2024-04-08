@@ -30,7 +30,6 @@ class ItemTypeEditButton extends StatelessWidget {
             values: itemTypes.keys.toList(),
             selectedValues:
                 itemTypes.keys.where((type) => type == rule.type).toList(),
-            labelBuilder: (type) => type,
             disabledValues: existingRules
                 .where((otherRule) => otherRule != rule)
                 .map((rule) => rule.type)

@@ -28,4 +28,14 @@ class CustomUser {
       'photoURL': photoURL,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is CustomUser && other.uid == uid;
+  }
+
+  @override
+  int get hashCode => uid.hashCode;
 }
