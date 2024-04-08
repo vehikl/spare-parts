@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:spare_parts/services/callable_service.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/utilities/helpers.dart';
-import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
+import 'package:spare_parts/widgets/dialogs/value_selection_dialog.dart';
 import 'package:spare_parts/widgets/title_text.dart';
 import 'package:spare_parts/widgets/user_avatar.dart';
 

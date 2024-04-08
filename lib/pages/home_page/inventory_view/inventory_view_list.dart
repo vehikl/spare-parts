@@ -8,7 +8,6 @@ import 'package:spare_parts/widgets/inventory_list_item.dart';
 
 class InventoryViewList extends StatefulWidget {
   final List<InventoryItem> items;
-  final String? searchQuery;
   final bool loadedAllItems;
   final void Function(bool)? onSelectionModeChanged;
   final void Function()? onLoadMore;
@@ -16,7 +15,6 @@ class InventoryViewList extends StatefulWidget {
   const InventoryViewList({
     super.key,
     required this.items,
-    this.searchQuery,
     this.onSelectionModeChanged,
     this.onLoadMore,
     this.loadedAllItems = true,
@@ -76,17 +74,7 @@ class _InventoryViewListState extends State<InventoryViewList> {
       );
     }
 
-    final filteredItems = widget.items.where((item) {
-      if (widget.searchQuery == null) {
-        return true;
-      }
-
-      List<String?> properties = [item.name, item.borrower?.name];
-      return properties.where((property) => property != null).any((property) =>
-          property!.toLowerCase().contains(widget.searchQuery!.toLowerCase()));
-    }).toList();
-
-    filteredItems.sort();
+    widget.items.sort();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -101,10 +89,10 @@ class _InventoryViewListState extends State<InventoryViewList> {
         ],
         Expanded(
           child: ListView.builder(
-            itemCount: filteredItems.length + 1,
+            itemCount: widget.items.length + 1,
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
-              if (index == filteredItems.length) {
+              if (index == widget.items.length) {
                 if (widget.loadedAllItems) {
                   return SizedBox.shrink();
                 }
@@ -118,7 +106,7 @@ class _InventoryViewListState extends State<InventoryViewList> {
                 );
               }
 
-              final item = filteredItems[index];
+              final item = widget.items[index];
               return InventoryListItem(
                 item: item,
                 showBorrower: true,

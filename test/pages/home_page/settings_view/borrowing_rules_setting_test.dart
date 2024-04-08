@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spare_parts/entities/borrowing_rule.dart';
 import 'package:spare_parts/pages/home_page/settings_view/borrowing_rules_setting/borrowing_rules_setting.dart';
 import 'package:spare_parts/utilities/constants.dart';
-import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 
 import '../../../helpers/test_helpers.dart';
 
@@ -87,9 +86,9 @@ void main() {
     );
 
     testWidgets(
-      'Shows a delete button if the borrowing limit is 1',
+      'Shows a delete button if the borrowing limit is 0',
       (WidgetTester tester) async {
-        final borrowingRule = BorrowingRule(type: 'Desk', maxBorrowingCount: 2);
+        final borrowingRule = BorrowingRule(type: 'Desk', maxBorrowingCount: 1);
         await firestore
             .collection('borrowingRules')
             .add(borrowingRule.toFirestore());
@@ -159,7 +158,7 @@ void main() {
       'Can delete a borrowing rule',
       (WidgetTester tester) async {
         final borrowingRules = [
-          BorrowingRule(type: 'Desk', maxBorrowingCount: 1),
+          BorrowingRule(type: 'Desk', maxBorrowingCount: 0),
           BorrowingRule(type: 'Chair', maxBorrowingCount: 3),
         ];
         for (final rule in borrowingRules) {
@@ -196,7 +195,7 @@ void main() {
         await tester.tap(find.byIcon(Icons.edit).first);
         await tester.pumpAndSettle();
 
-        const newType = 'Monitor';
+        const newType = 'Chair';
         await tester.tap(find.text(newType));
         await tester.tap(find.text('Select'));
         await tester.pumpAndSettle();
@@ -233,7 +232,7 @@ void main() {
 
         final existingType = secondBorrowingRule.type;
         final existingTypeOption = find.descendant(
-          of: find.byType(ValueSelectionDialog),
+          of: find.byType(AlertDialog),
           matching: find.text(existingType),
         );
         await tester.tap(existingTypeOption);

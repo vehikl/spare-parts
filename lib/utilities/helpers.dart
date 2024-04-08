@@ -8,7 +8,9 @@ import 'package:intl/intl.dart';
 
 void showError({required BuildContext context, required String message}) {
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(message), backgroundColor: Theme.of(context).colorScheme.error),
+    SnackBar(
+        content: Text(message),
+        backgroundColor: Theme.of(context).colorScheme.error),
   );
 }
 
@@ -40,3 +42,5 @@ String formatDate(DateTime dateTime, {bool withTime = true}) {
   }
   return dateTimeFormat.format(dateTime);
 }
+
+String stringIdentity(dynamic value) => value.toString();

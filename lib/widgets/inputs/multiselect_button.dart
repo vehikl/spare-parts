@@ -1,37 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:spare_parts/widgets/inputs/value_selection_dialog.dart';
 
-class MultiselectButton extends StatelessWidget {
-  final List<String> values;
-  final List<String> selectedValues;
+class MultiselectButton<T> extends StatelessWidget {
+  final bool hasSelection;
   final String buttonLabel;
-  final void Function(List<String>) onConfirm;
-  final Widget Function(String value)? leadingBuilder;
-  final String Function(String value)? labelBuilder;
-  final IconData? icon;
+  final void Function(List<T>) onConfirm;
+  final Widget dialog;
 
   const MultiselectButton({
     super.key,
-    required this.selectedValues,
+    required this.hasSelection,
     required this.onConfirm,
     required this.buttonLabel,
-    required this.values,
-    this.leadingBuilder,
-    this.labelBuilder,
-    this.icon,
+    required this.dialog,
   });
 
   void _handleChangeSelection(BuildContext context) async {
-    final newSelectedValues = await showDialog<List<String>?>(
-      context: context,
-      builder: (context) => ValueSelectionDialog(
-        title: 'Pick $buttonLabel',
-        values: values,
-        selectedValues: selectedValues,
-        leadingBuilder: leadingBuilder,
-        labelBuilder: labelBuilder,
-      ),
-    );
+    final newSelectedValues = await showDialog<List<T>?>(
+        context: context, builder: (context) => dialog);
 
     if (newSelectedValues != null) {
       onConfirm(newSelectedValues);
@@ -41,21 +26,13 @@ class MultiselectButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final buttonStyle = TextButton.styleFrom(
-      foregroundColor: selectedValues.isEmpty
-          ? Theme.of(context).textTheme.bodyLarge!.color
-          : null,
+      foregroundColor:
+          hasSelection ? Theme.of(context).textTheme.bodyLarge!.color : null,
     );
-    if (icon == null) {
-      return TextButton(
-        style: buttonStyle,
-        onPressed: () => _handleChangeSelection(context),
-        child: Text(buttonLabel),
-      );
-    }
 
     return TextButton.icon(
       label: Text(buttonLabel),
-      icon: Icon(icon),
+      icon: Icon(Icons.filter_list),
       style: buttonStyle,
       onPressed: () => _handleChangeSelection(context),
     );
