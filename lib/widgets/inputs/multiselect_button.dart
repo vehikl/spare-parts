@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:spare_parts/utilities/helpers.dart';
 import 'package:spare_parts/widgets/dialogs/value_selection_dialog.dart';
 
-class MultiselectButton extends StatelessWidget {
-  final List<String> values;
-  final List<String> selectedValues;
+class MultiselectButton<T> extends StatelessWidget {
+  final List<T> values;
+  final List<T> selectedValues;
   final String buttonLabel;
-  final void Function(List<String>) onConfirm;
-  final Widget Function(String value)? leadingBuilder;
-  final String Function(String value) labelBuilder;
+  final void Function(List<T>) onConfirm;
+  final Widget Function(T value)? leadingBuilder;
+  final String Function(T value) labelBuilder;
   final IconData? icon;
+  final Widget? dialog;
 
   const MultiselectButton({
     super.key,
@@ -20,18 +21,21 @@ class MultiselectButton extends StatelessWidget {
     this.labelBuilder = stringIdentity,
     this.leadingBuilder,
     this.icon,
+    this.dialog,
   });
 
   void _handleChangeSelection(BuildContext context) async {
-    final newSelectedValues = await showDialog<List<String>?>(
+    final newSelectedValues = await showDialog<List<T>?>(
       context: context,
-      builder: (context) => ValueSelectionDialog(
-        title: 'Pick $buttonLabel',
-        values: values,
-        selectedValues: selectedValues,
-        leadingBuilder: leadingBuilder,
-        labelBuilder: labelBuilder,
-      ),
+      builder: (context) =>
+          dialog ??
+          ValueSelectionDialog<T>(
+            title: 'Pick $buttonLabel',
+            values: values,
+            selectedValues: selectedValues,
+            leadingBuilder: leadingBuilder,
+            labelBuilder: labelBuilder,
+          ),
     );
 
     if (newSelectedValues != null) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/filters/inventory_view_filters.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view_list.dart';
@@ -17,7 +18,7 @@ class InventoryView extends StatefulWidget {
 
 class _InventoryViewState extends State<InventoryView> {
   List<String> _selectedItemTypes = [];
-  List<String> _selectedBorrowers = [];
+  List<CustomUser> _selectedBorrowers = [];
   late bool _showOnlyAvailableItems;
   bool _inSelectionMode = false;
   int _itemsLimit = kItemsPerPage;
@@ -35,7 +36,7 @@ class _InventoryViewState extends State<InventoryView> {
     setState(() => _selectedItemTypes = newTypes);
   }
 
-  void _handleBorrowersFilterChanged(List<String> newBorrowers) {
+  void _handleBorrowersFilterChanged(List<CustomUser> newBorrowers) {
     setState(() => _selectedBorrowers = newBorrowers);
   }
 
@@ -76,8 +77,9 @@ class _InventoryViewState extends State<InventoryView> {
               withNoBorrower: _showOnlyAvailableItems,
               whereTypeIn:
                   _selectedItemTypes.isEmpty ? null : _selectedItemTypes,
-              whereBorrowerIn:
-                  _selectedBorrowers.isEmpty ? null : _selectedBorrowers,
+              whereBorrowerIn: _selectedBorrowers.isEmpty
+                  ? null
+                  : _selectedBorrowers.map((e) => e.uid).toList(),
               excludePrivates: !isAdmin,
               limit: _itemsLimit,
             ),

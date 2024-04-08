@@ -1,15 +1,12 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:spare_parts/dtos/user_dto.dart';
 import 'package:spare_parts/entities/custom_user.dart';
 import 'package:spare_parts/entities/inventory_item.dart';
 import 'package:spare_parts/factories/inventory_item_factory.dart';
 import 'package:spare_parts/pages/home_page/home_page.dart';
 import 'package:spare_parts/pages/home_page/inventory_view/inventory_view.dart';
 import 'package:spare_parts/pages/item_page/item_page.dart';
-import 'package:spare_parts/services/callable_service.mocks.dart';
 import 'package:spare_parts/utilities/constants.dart';
 import 'package:spare_parts/widgets/dialogs/user_selection_dialog.dart';
 import 'package:spare_parts/widgets/inputs/new_user_input.dart';
@@ -659,10 +656,8 @@ void main() {
           final user1 = CustomUser(uid: 'first', name: 'First');
           final user2 = CustomUser(uid: 'second', name: 'Second');
 
-          final callableService = MockCallableService();
-          when(callableService.getUsers()).thenAnswer((_) => Future.value(
-                [user1, user2].map(UserDto.fromCustomUser).toList(),
-              ));
+          firestore.collection('users').doc(user1.uid).set(user1.toFirestore());
+          firestore.collection('users').doc(user2.uid).set(user2.toFirestore());
 
           final item1 = InventoryItemFactory().create(borrower: user1);
           final item2 = InventoryItemFactory().create(borrower: user2);
@@ -675,7 +670,6 @@ void main() {
             tester,
             userRole: UserRole.admin,
             firestore: firestore,
-            callableService: callableService,
           );
 
           await tester.tap(find.text('Borrowers'));
