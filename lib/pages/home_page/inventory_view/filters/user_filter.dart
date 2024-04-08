@@ -22,10 +22,8 @@ class _UserFilterState extends State<UserFilter> {
   Widget build(BuildContext context) {
     return MultiselectButton<CustomUser>(
       buttonLabel: 'Borrowers',
-      values: [],
-      selectedValues: [],
+      hasSelection: widget.selectedUsers.isNotEmpty,
       onConfirm: widget.onChanged,
-      icon: Icons.filter_list,
       dialog: UserSelectionDialog(
         selectedUsers: widget.selectedUsers,
         title: 'Pick Borrowers',
