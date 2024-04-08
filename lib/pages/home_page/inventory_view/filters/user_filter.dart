@@ -1,31 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:spare_parts/entities/custom_user.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/filters/inventory_view_filter_selection.dart';
 import 'package:spare_parts/widgets/dialogs/user_selection_dialog.dart';
 import 'package:spare_parts/widgets/inputs/multiselect_button.dart';
 
-class UserFilter extends StatefulWidget {
-  final List<CustomUser> selectedUsers;
-  final void Function(List<CustomUser>) onChanged;
-
+class UserFilter extends StatelessWidget {
   const UserFilter({
-    super.key,
-    required this.selectedUsers,
-    required this.onChanged,
+    super.key
   });
 
-  @override
-  State<UserFilter> createState() => _UserFilterState();
-}
+  void onChanged(BuildContext context, List<CustomUser> selectedUsers) {
+    final selection = context.read<InventoryViewFilterSelection>();
+    selection.updateSelectedBorrowers(selectedUsers);
+  }
 
-class _UserFilterState extends State<UserFilter> {
   @override
   Widget build(BuildContext context) {
+    final selectedUsers =
+        context.select<InventoryViewFilterSelection, List<CustomUser>>(
+            (selection) => selection.selectedBorrowers);
+
     return MultiselectButton<CustomUser>(
       buttonLabel: 'Borrowers',
-      hasSelection: widget.selectedUsers.isNotEmpty,
-      onConfirm: widget.onChanged,
+      hasSelection: selectedUsers.isNotEmpty,
+      onConfirm: (values) => onChanged(context, values),
       dialog: UserSelectionDialog(
-        selectedUsers: widget.selectedUsers,
+        selectedUsers: selectedUsers,
         title: 'Pick Borrowers',
       ),
     );

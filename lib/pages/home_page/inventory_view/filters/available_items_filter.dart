@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:spare_parts/pages/home_page/inventory_view/filters/inventory_view_filter_selection.dart';
 
 class AvailableItemsFilter extends StatelessWidget {
-  final bool value;
-  final void Function() onPressed;
+  const AvailableItemsFilter({super.key});
 
-  const AvailableItemsFilter({
-    super.key,
-    required this.value,
-    required this.onPressed,
-  });
+  void onPressed(BuildContext context) {
+    final selection = context.read<InventoryViewFilterSelection>();
+    selection.toggleShowOnlyAvailableItems();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final value = context.select<InventoryViewFilterSelection, bool>(
+        (selection) => selection.showOnlyAvailableItems);
+
     return TextButton.icon(
       label: Text('Only available items'),
       icon: Icon(
@@ -20,7 +23,7 @@ class AvailableItemsFilter extends StatelessWidget {
       style: TextButton.styleFrom(
         foregroundColor: Theme.of(context).textTheme.bodyLarge!.color,
       ),
-      onPressed: onPressed,
+      onPressed: () => onPressed(context),
     );
   }
 }
