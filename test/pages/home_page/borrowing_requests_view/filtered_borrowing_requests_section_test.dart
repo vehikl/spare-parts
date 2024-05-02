@@ -39,7 +39,85 @@ void main() {
           .add(processedRequest.toFirestore());
     });
 
+    group('when showing pending requests', () {
+      testWidgets('shows correct empty message', (WidgetTester tester) async {
+        await deleteAllData(firestore);
+
+        await pumpPage(
+          Scaffold(
+            body: FilteredBorrowingRequestsSection(showProcessed: true),
+          ),
+          tester,
+          auth: authMock,
+          firestore: firestore,
+          userRole: UserRole.admin,
+        );
+
+        expect(find.text("You haven't requested any items yet..."),
+            findsOneWidget);
+      });
+
+      testWidgets('shows pending requests', (WidgetTester tester) async {
+        await pumpPage(
+          Scaffold(
+            body: FilteredBorrowingRequestsSection(showProcessed: false),
+          ),
+          tester,
+          auth: authMock,
+          firestore: firestore,
+          userRole: UserRole.admin,
+        );
+
+        await tester.pumpAndSettle();
+
+        expect(find.text(processedRequest.item.id), findsNothing);
+        expect(find.text(pendingRequest.item.id), findsOneWidget);
+      });
+
+      testWidgets('shows actions on items', (WidgetTester tester) async {
+        await pumpPage(
+          Scaffold(
+            body: FilteredBorrowingRequestsSection(showProcessed: false),
+          ),
+          tester,
+          auth: authMock,
+          firestore: firestore,
+          userRole: UserRole.admin,
+        );
+
+        await tester.pumpAndSettle();
+
+        final pendingItem = find.ancestor(
+          of: find.text(pendingRequest.item.id),
+          matching: find.byType(BorrowingRequestListItem),
+        );
+
+        final optionsButton = find.descendant(
+          of: pendingItem,
+          matching: find.byIcon(Icons.more_vert),
+        );
+
+        expect(optionsButton, findsOneWidget);
+      });
+    });
+
     group('when showing processed requests', () {
+      testWidgets('shows correct empty message', (WidgetTester tester) async {
+        await deleteAllData(firestore);
+
+        await pumpPage(
+          Scaffold(
+            body: FilteredBorrowingRequestsSection(showProcessed: true),
+          ),
+          tester,
+          auth: authMock,
+          firestore: firestore,
+          userRole: UserRole.admin,
+        );
+
+        expect(find.text("No processed requests found..."), findsOneWidget);
+      });
+
       testWidgets('shows processed requests', (WidgetTester tester) async {
         await pumpPage(
           Scaffold(
@@ -82,51 +160,6 @@ void main() {
         );
 
         expect(optionsButton, findsNothing);
-      });
-    });
-
-    group('when showing pending requests', () {
-      testWidgets('shows pending requests', (WidgetTester tester) async {
-        await pumpPage(
-          Scaffold(
-            body: FilteredBorrowingRequestsSection(showProcessed: false),
-          ),
-          tester,
-          auth: authMock,
-          firestore: firestore,
-          userRole: UserRole.admin,
-        );
-
-        await tester.pumpAndSettle();
-
-        expect(find.text(processedRequest.item.id), findsNothing);
-        expect(find.text(pendingRequest.item.id), findsOneWidget);
-      });
-
-      testWidgets('shows actions on items', (WidgetTester tester) async {
-        await pumpPage(
-          Scaffold(
-            body: FilteredBorrowingRequestsSection(showProcessed: false),
-          ),
-          tester,
-          auth: authMock,
-          firestore: firestore,
-          userRole: UserRole.admin,
-        );
-
-        await tester.pumpAndSettle();
-
-        final pendingItem = find.ancestor(
-          of: find.text(pendingRequest.item.id),
-          matching: find.byType(BorrowingRequestListItem),
-        );
-
-        final optionsButton = find.descendant(
-          of: pendingItem,
-          matching: find.byIcon(Icons.more_vert),
-        );
-
-        expect(optionsButton, findsOneWidget);
       });
     });
   });
