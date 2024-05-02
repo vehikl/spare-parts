@@ -30,7 +30,7 @@ void main() {
       ),
     );
 
-    setUpAll(() async {
+    setUp(() async {
       await firestore
           .collection('borrowingRequests')
           .add(pendingRequest.toFirestore());
@@ -39,13 +39,17 @@ void main() {
           .add(processedRequest.toFirestore());
     });
 
+    tearDown(() async {
+      await deleteAllData(firestore);
+    });
+
     group('when showing pending requests', () {
       testWidgets('shows correct empty message', (WidgetTester tester) async {
         await deleteAllData(firestore);
 
         await pumpPage(
           Scaffold(
-            body: FilteredBorrowingRequestsSection(showProcessed: true),
+            body: FilteredBorrowingRequestsSection(showProcessed: false),
           ),
           tester,
           auth: authMock,
@@ -53,8 +57,10 @@ void main() {
           userRole: UserRole.admin,
         );
 
-        expect(find.text("You haven't requested any items yet..."),
-            findsOneWidget);
+        expect(
+          find.text("You haven't requested any items yet..."),
+          findsOneWidget,
+        );
       });
 
       testWidgets('shows pending requests', (WidgetTester tester) async {
