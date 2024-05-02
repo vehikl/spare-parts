@@ -13,8 +13,8 @@ import '../helpers/tester_extension.dart';
 void main() {
   final FakeFirebaseFirestore firestore = FakeFirebaseFirestore();
 
-  setUp(() {
-    deleteAllData(firestore);
+  setUp(() async {
+    await deleteAllData(firestore);
   });
 
   testWidgets('Displays the name of the item', (WidgetTester tester) async {
@@ -113,8 +113,8 @@ void main() {
           .set(laptop.toFirestore());
     });
 
-    tearDown(() {
-      deleteAllData(firestore);
+    tearDown(() async {
+      await deleteAllData(firestore);
     });
 
     testWidgets('Displays Laptop metadata', (WidgetTester tester) async {

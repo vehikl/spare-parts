@@ -22,47 +22,50 @@ class ItemHistory extends StatelessWidget {
         Center(
           child: Text('Interaction History', style: TextStyle(fontSize: 18)),
         ),
-        StreamBuilder<List<Event>>(
-          stream: eventRepository.getEventsStream(itemId),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return ErrorContainer(error: snapshot.error.toString());
-            }
+        Flexible(
+          child: StreamBuilder<List<Event>>(
+            stream: eventRepository.getEventsStream(itemId),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return ErrorContainer(error: snapshot.error.toString());
+              }
 
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
-            }
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-            final events = snapshot.data!;
+              final events = snapshot.data!;
 
-            if (events.isEmpty) {
-              return EmptyListState(
-                  message: "This item was not borrowed yet...");
-            }
+              if (events.isEmpty) {
+                return EmptyListState(
+                    message: "This item was not borrowed yet...");
+              }
 
-            return ListView(
-              shrinkWrap: true,
-              children: events
-                  .map((event) => ListTile(
-                        visualDensity: VisualDensity(
-                          vertical: VisualDensity.minimumDensity,
-                        ),
-                        title: Text(event.issuerName),
-                        subtitle: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(event.type),
-                            Text(
-                              event.createdAt == null
-                                  ? 'N/A'
-                                  : DateFormat.yMMMd().format(event.createdAt!),
-                            )
-                          ],
-                        ),
-                      ))
-                  .toList(),
-            );
-          },
+              return ListView(
+                shrinkWrap: true,
+                children: events
+                    .map((event) => ListTile(
+                          visualDensity: VisualDensity(
+                            vertical: VisualDensity.minimumDensity,
+                          ),
+                          title: Text(event.issuerName),
+                          subtitle: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(event.type),
+                              Text(
+                                event.createdAt == null
+                                    ? 'N/A'
+                                    : DateFormat.yMMMd()
+                                        .format(event.createdAt!),
+                              )
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              );
+            },
+          ),
         ),
       ],
     );

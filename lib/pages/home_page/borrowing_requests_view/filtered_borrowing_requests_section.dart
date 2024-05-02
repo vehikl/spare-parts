@@ -39,8 +39,11 @@ class FilteredBorrowingRequestsSection extends StatelessWidget {
         final borrowingRequests = snapshot.data!;
 
         if (borrowingRequests.isEmpty) {
-          return EmptyListState(
-              message: "You haven't requested any items yet...");
+          final message = showProcessed
+              ? "No processed requests found..."
+              : "You haven't requested any items yet...";
+
+          return EmptyListState(message: message);
         }
 
         return ListView.builder(

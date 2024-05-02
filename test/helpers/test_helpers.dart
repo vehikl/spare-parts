@@ -73,7 +73,7 @@ MockFirebaseAuth createAuth({
 }
 
 Future<void> deleteAllData(FirebaseFirestore firestore) async {
-  final collections = ['borrowingRules', 'items', 'users'];
+  final collections = ['borrowingRules', 'borrowingRequests', 'items', 'users'];
 
   for (var collection in collections) {
     final items = await firestore.collection(collection).get();
