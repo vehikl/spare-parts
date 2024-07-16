@@ -25,7 +25,7 @@ jobs:
     with:
       runs_on: ubuntu-latest
       final_command_name: Build for Android
-      final_command: flutter build apk
+      final_command: flutter build aab
     secrets:
       GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
       DART_FIREBASE_OPTIONS: ${{ secrets.DART_FIREBASE_OPTIONS }}

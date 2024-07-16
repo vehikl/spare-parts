@@ -12,6 +12,7 @@ class EmptyListState extends StatelessWidget {
       child: Text(
         message,
         style: kEmptyListStyle,
+        textAlign: TextAlign.center,
       ),
     );
   }
