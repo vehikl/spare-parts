@@ -38,9 +38,38 @@ void main() {
         tester,
       );
 
+      const name = 'New user';
+      var nameInput = find.byKey(Key('name'));
+      await tester.enterText(nameInput, name);
+      await tester.pumpAndSettle();
+
+      const email = 'new.user@test.com';
+      var emailInput = find.byKey(Key('email'));
+      await tester.enterText(emailInput, email);
+      await tester.pumpAndSettle();
+
+      final newUserAddButton = find.byIcon(Icons.add);
+      await tester.tap(newUserAddButton);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.descendant(
+          of: find.byType(ListView),
+          matching: find.text(name),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('does not add a new user without an email', (tester) async {
+      await pumpPage(
+        Scaffold(body: UsersSetting()),
+        tester,
+      );
+
       const customName = 'New user';
-      var newUserNameInput = find.byType(TextField);
-      await tester.enterText(newUserNameInput, customName);
+      var nameInput = find.byKey(Key('name'));
+      await tester.enterText(nameInput, customName);
       await tester.pumpAndSettle();
 
       final newUserAddButton = find.byIcon(Icons.add);
@@ -52,7 +81,7 @@ void main() {
           of: find.byType(ListView),
           matching: find.text(customName),
         ),
-        findsOneWidget,
+        findsNothing,
       );
     });
 
