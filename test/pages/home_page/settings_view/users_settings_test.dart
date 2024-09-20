@@ -83,6 +83,12 @@ void main() {
         ),
         findsNothing,
       );
+
+      final emailError = find.text('Email is required');
+      expect(emailError, findsOneWidget);
+
+      final nameInputText = find.text(customName);
+      expect(nameInputText, findsOneWidget);
     });
 
     testWidgets('can edit the name of a user', (tester) async {
@@ -156,6 +162,24 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(user1.name!), findsNothing);
+    });
+
+    testWidgets('displays errors when adding a user', (tester) async {
+      await pumpPage(
+        Scaffold(body: UsersSetting()),
+        tester,
+        firestore: firestore,
+      );
+
+      final newUserAddButton = find.byIcon(Icons.add);
+      await tester.tap(newUserAddButton);
+      await tester.pumpAndSettle();
+
+      final userNameError = find.text('User name is required');
+      expect(userNameError, findsOneWidget);
+
+      final emailError = find.text('Email is required');
+      expect(emailError, findsOneWidget);
     });
   });
 }
