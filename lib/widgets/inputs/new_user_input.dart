@@ -59,7 +59,7 @@ class _NewUserInputState extends State<NewUserInput> {
     return null;
   }
 
-  Text? getErrorWidget(String? Function() errorGetter) {
+  Text? getErrorWidget(BuildContext context, String? Function() errorGetter) {
     if (!_isDirty) {
       return null;
     }
@@ -69,7 +69,10 @@ class _NewUserInputState extends State<NewUserInput> {
       return null;
     }
 
-    return Text(error);
+    return Text(
+      error,
+      style: TextStyle(color: Theme.of(context).colorScheme.error),
+    );
   }
 
   bool get _formValid {
@@ -93,7 +96,7 @@ class _NewUserInputState extends State<NewUserInput> {
                 controller: _nameController,
                 decoration: InputDecoration(
                   hintText: 'User name',
-                  error: getErrorWidget(_getNameError),
+                  error: getErrorWidget(context, _getNameError),
                 ),
               ),
             ),
@@ -104,7 +107,7 @@ class _NewUserInputState extends State<NewUserInput> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   hintText: 'User email',
-                  error: getErrorWidget(_getEmailError),
+                  error: getErrorWidget(context, _getEmailError),
                 ),
               ),
             ),
