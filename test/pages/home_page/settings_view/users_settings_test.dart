@@ -181,5 +181,25 @@ void main() {
       final emailError = find.text('Email is required');
       expect(emailError, findsOneWidget);
     });
+
+    testWidgets('validates email when adding a user', (tester) async {
+      await pumpPage(
+        Scaffold(body: UsersSetting()),
+        tester,
+        firestore: firestore,
+      );
+
+      const email = 'invalid_email';
+      var emailInput = find.byKey(Key('email'));
+      await tester.enterText(emailInput, email);
+      await tester.pumpAndSettle();
+
+      final newUserAddButton = find.byIcon(Icons.add);
+      await tester.tap(newUserAddButton);
+      await tester.pumpAndSettle();
+
+      final emailError = find.text("Email should end with '@vehikl.com'");
+      expect(emailError, findsOneWidget);
+    });
   });
 }

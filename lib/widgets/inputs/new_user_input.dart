@@ -52,6 +52,10 @@ class _NewUserInputState extends State<NewUserInput> {
       return 'Email is required';
     }
 
+    if (!_emailController.text.endsWith('@vehikl.com')) {
+      return "Email should end with '@vehikl.com'";
+    }
+
     return null;
   }
 
