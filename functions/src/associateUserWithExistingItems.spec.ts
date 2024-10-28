@@ -1,12 +1,12 @@
-import { UserRecord } from "firebase-admin/lib/auth/user-record"
-import { associateUserWithExistingItems } from "./associateUserWithExistingItems"
+import {UserRecord} from 'firebase-admin/lib/auth/user-record'
+import {associateUserWithExistingItems} from './associateUserWithExistingItems'
 
 describe('associateItemWithExistingUsers', () => {
   it('associates item with existing users', () => {
     // create user
     const user = new UserRecord()
     // seed items with user email
-    
+
     // call function with item and user
     associateUserWithExistingItems(user)
 

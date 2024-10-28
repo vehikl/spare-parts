@@ -9,7 +9,7 @@ export async function associateUserWithUserDocument(user: UserRecord) {
       uid: user.uid,
       name: user.displayName,
       photoURL: user.photoURL,
-      email: user.email
+      email: user.email,
     })
   } else {
     const existingUserDoc = matchingUserDocs.docs[0]
