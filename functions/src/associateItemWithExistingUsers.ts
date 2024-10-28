@@ -1,11 +1,11 @@
 import {QueryDocumentSnapshot} from 'firebase-functions/v1/firestore'
-import {firebaseApp} from './admin'
+import {getAuth} from 'firebase-admin/auth'
 
 export async function associateItemWithExistingUsers(
     item: any,
     itemSnap: QueryDocumentSnapshot
 ) {
-  const userListResult = await firebaseApp.auth().listUsers()
+  const userListResult = await getAuth().listUsers()
   const users = userListResult.users
 
   const borrower = users.find((user) => user.displayName === item.borrower?.name)

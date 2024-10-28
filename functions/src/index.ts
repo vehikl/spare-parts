@@ -1,16 +1,19 @@
 import * as functions from 'firebase-functions'
-import {firebaseApp} from './admin'
 import {associateItemWithExistingUsers} from './associateItemWithExistingUsers'
 import {associateUserWithExistingItems} from './associateUserWithExistingItems'
 import {associateUserWithUserDocument} from './associateUserWithUserDocument'
 import {incrementItemNameIds} from './incrementItemNameId'
+import {getAuth} from 'firebase-admin/auth'
+import {initializeApp} from 'firebase-admin/app'
+
+initializeApp()
 
 export const deleteIfIncorrectEmail = functions.auth
     .user()
     .beforeCreate(async (user, _) => {
       if (!user.email?.endsWith('@vehikl.com')) {
         console.log(`Deleting user with incorrect email: ${user.email}`)
-        await firebaseApp.auth().deleteUser(user.uid)
+        await getAuth().deleteUser(user.uid)
       }
     })
 
@@ -24,7 +27,7 @@ export const userCreated = functions.auth
 
 
 export const getUsers = functions.https.onCall(async (_, __) => {
-  const userListResult = await firebaseApp.auth().listUsers()
+  const userListResult = await getAuth().listUsers()
   const users = userListResult.users
 
   return users.map((user) => ({
@@ -40,11 +43,11 @@ export const setAdmins = functions.https.onCall(async (data, _) => {
 
   if (!uids) throw new Error('The `uids` parameter is required')
 
-  const userListResult = await firebaseApp.auth().listUsers()
+  const userListResult = await getAuth().listUsers()
   const users = userListResult.users
 
   for (const user of users) {
-    await firebaseApp.auth().setCustomUserClaims(user.uid, {
+    await getAuth().setCustomUserClaims(user.uid, {
       role: uids.includes(user.uid) ? 'admin' : 'user',
     })
   }
