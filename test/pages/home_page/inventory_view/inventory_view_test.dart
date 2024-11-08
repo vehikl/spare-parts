@@ -569,11 +569,13 @@ void main() {
         await tester.pumpAndSettle();
 
         var customName = 'Jane Doe';
-        var newUserNameInput = find.descendant(
-          of: find.byType(NewUserInput),
-          matching: find.byType(TextField),
-        );
-        await tester.enterText(newUserNameInput, customName);
+        var userNameInput = find.byKey(Key('name'));
+        await tester.enterText(userNameInput, customName);
+        await tester.pumpAndSettle();
+
+        var customEmail = 'jd@vehikl.com';
+        var emailInput = find.byKey(Key('email'));
+        await tester.enterText(emailInput, customEmail);
         await tester.pumpAndSettle();
 
         final newUserAddButton = find.byIcon(Icons.add);

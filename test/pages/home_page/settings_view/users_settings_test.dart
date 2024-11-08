@@ -43,7 +43,7 @@ void main() {
       await tester.enterText(nameInput, name);
       await tester.pumpAndSettle();
 
-      const email = 'new.user@test.com';
+      const email = 'new.user@vehikl.com';
       var emailInput = find.byKey(Key('email'));
       await tester.enterText(emailInput, email);
       await tester.pumpAndSettle();
