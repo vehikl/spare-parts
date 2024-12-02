@@ -55,12 +55,14 @@ export const setAdmins = functions.https.onCall(async (data, _) => {
   return null
 })
 
+// this is only used for the initial import of the items
 export const itemCreated = functions.firestore
     .document('items/{itemId}')
     .onCreate(async (snap, _) => {
       const item = snap.data()
 
-      if (item.borrower?.name && !item.borrower?.id) {
+      const itemBorrowerIsIncomplete = item.borrower?.name && !item.borrower?.id
+      if (itemBorrowerIsIncomplete) {
         await associateItemWithExistingUsers(item, snap)
       }
 
