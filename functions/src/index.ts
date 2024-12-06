@@ -1,6 +1,6 @@
 import {initializeApp} from 'firebase-admin/app'
 import {getAuth} from 'firebase-admin/auth'
-import * as functions from 'firebase-functions'
+import * as functions from 'firebase-functions/v1'
 import {associateItemWithExistingUsers} from './associateItemWithExistingUsers'
 import {associateUserWithExistingItems} from './associateUserWithExistingItems'
 import {associateUserWithUserDocument} from './associateUserWithUserDocument'
@@ -86,7 +86,7 @@ export const itemChanged = functions.firestore
     })
 
 export const userChanged = functions.firestore
-    .document('user/{uid}')
+    .document('users/{uid}')
     .onUpdate(async (change, _) => {
       const userData = change.after.data() as CustomUser
       await syncItemBorrowersWithUser(userData)
