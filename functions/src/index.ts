@@ -22,8 +22,8 @@ export const deleteIfIncorrectEmail = functions.auth
 export const userCreated = functions.auth
     .user()
     .onCreate(async (user, _) => {
-      await associateUserWithExistingItems(user)
       await associateUserWithUserDocument(user)
+      await associateUserWithExistingItems(user)
       return null
     })
 
