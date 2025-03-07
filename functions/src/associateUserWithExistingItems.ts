@@ -1,10 +1,10 @@
 import {UserRecord} from 'firebase-functions/v1/auth'
-import {db} from './admin'
+import {getFirestore} from 'firebase-admin/firestore'
 
 export async function associateUserWithExistingItems(user: UserRecord) {
-  const itemsRef = await db
+  const itemsRef = await getFirestore()
       .collection('items')
-      .where('borrower.name', '==', user.displayName)
+      .where('borrower.email', '==', user.email)
       .get()
 
   console.log(`Assigning ${itemsRef.docs.length} items to ${user.displayName}`)
@@ -14,6 +14,7 @@ export async function associateUserWithExistingItems(user: UserRecord) {
     await item.ref.set({
       ...item.data(),
       borrower: {
+        ...item.data().borrower,
         uid: user.uid,
         name: user.displayName,
         photoURL: user.photoURL,

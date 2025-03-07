@@ -38,9 +38,38 @@ void main() {
         tester,
       );
 
+      const name = 'New user';
+      var nameInput = find.byKey(Key('name'));
+      await tester.enterText(nameInput, name);
+      await tester.pumpAndSettle();
+
+      const email = 'new.user@vehikl.com';
+      var emailInput = find.byKey(Key('email'));
+      await tester.enterText(emailInput, email);
+      await tester.pumpAndSettle();
+
+      final newUserAddButton = find.byIcon(Icons.add);
+      await tester.tap(newUserAddButton);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.descendant(
+          of: find.byType(ListView),
+          matching: find.text(name),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('does not add a new user without an email', (tester) async {
+      await pumpPage(
+        Scaffold(body: UsersSetting()),
+        tester,
+      );
+
       const customName = 'New user';
-      var newUserNameInput = find.byType(TextField);
-      await tester.enterText(newUserNameInput, customName);
+      var nameInput = find.byKey(Key('name'));
+      await tester.enterText(nameInput, customName);
       await tester.pumpAndSettle();
 
       final newUserAddButton = find.byIcon(Icons.add);
@@ -52,8 +81,14 @@ void main() {
           of: find.byType(ListView),
           matching: find.text(customName),
         ),
-        findsOneWidget,
+        findsNothing,
       );
+
+      final emailError = find.text('Email is required');
+      expect(emailError, findsOneWidget);
+
+      final nameInputText = find.text(customName);
+      expect(nameInputText, findsOneWidget);
     });
 
     testWidgets('can edit the name of a user', (tester) async {
@@ -127,6 +162,44 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(user1.name!), findsNothing);
+    });
+
+    testWidgets('displays errors when adding a user', (tester) async {
+      await pumpPage(
+        Scaffold(body: UsersSetting()),
+        tester,
+        firestore: firestore,
+      );
+
+      final newUserAddButton = find.byIcon(Icons.add);
+      await tester.tap(newUserAddButton);
+      await tester.pumpAndSettle();
+
+      final userNameError = find.text('User name is required');
+      expect(userNameError, findsOneWidget);
+
+      final emailError = find.text('Email is required');
+      expect(emailError, findsOneWidget);
+    });
+
+    testWidgets('validates email when adding a user', (tester) async {
+      await pumpPage(
+        Scaffold(body: UsersSetting()),
+        tester,
+        firestore: firestore,
+      );
+
+      const email = 'invalid_email';
+      var emailInput = find.byKey(Key('email'));
+      await tester.enterText(emailInput, email);
+      await tester.pumpAndSettle();
+
+      final newUserAddButton = find.byIcon(Icons.add);
+      await tester.tap(newUserAddButton);
+      await tester.pumpAndSettle();
+
+      final emailError = find.text("Email should end with '@vehikl.com'");
+      expect(emailError, findsOneWidget);
     });
   });
 }

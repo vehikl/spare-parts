@@ -6,6 +6,7 @@ on:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NODE_VERSION: 18
 
 jobs:
   test_flutter:
@@ -51,7 +52,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
         working-directory: ./functions
@@ -64,6 +65,33 @@ jobs:
       - name: Build
         working-directory: ./functions
         run: npm run build
+
+  test_functions:
+    name: Run Functions Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: functions
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Start emulators
+        run: firebase emulators:start --only firestore,auth & sleep 20
+
+      - name: Run functions tests
+        run: npm test
 
   # TODO: set up provisioning profiles
   # build_ios:

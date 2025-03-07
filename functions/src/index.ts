@@ -1,30 +1,34 @@
-import * as functions from 'firebase-functions'
-import {firebaseApp} from './admin'
+import {initializeApp} from 'firebase-admin/app'
+import {getAuth} from 'firebase-admin/auth'
+import * as functions from 'firebase-functions/v1'
 import {associateItemWithExistingUsers} from './associateItemWithExistingUsers'
 import {associateUserWithExistingItems} from './associateUserWithExistingItems'
 import {associateUserWithUserDocument} from './associateUserWithUserDocument'
 import {incrementItemNameIds} from './incrementItemNameId'
+import {syncItemBorrowersWithUser} from './syncItemBorrowersWithUser'
+import {CustomUser} from './types/customUser'
+
+initializeApp()
 
 export const deleteIfIncorrectEmail = functions.auth
     .user()
     .beforeCreate(async (user, _) => {
       if (!user.email?.endsWith('@vehikl.com')) {
         console.log(`Deleting user with incorrect email: ${user.email}`)
-        await firebaseApp.auth().deleteUser(user.uid)
+        await getAuth().deleteUser(user.uid)
       }
     })
 
 export const userCreated = functions.auth
     .user()
     .onCreate(async (user, _) => {
-      await associateUserWithExistingItems(user)
       await associateUserWithUserDocument(user)
+      await associateUserWithExistingItems(user)
       return null
     })
 
-
 export const getUsers = functions.https.onCall(async (_, __) => {
-  const userListResult = await firebaseApp.auth().listUsers()
+  const userListResult = await getAuth().listUsers()
   const users = userListResult.users
 
   return users.map((user) => ({
@@ -40,11 +44,11 @@ export const setAdmins = functions.https.onCall(async (data, _) => {
 
   if (!uids) throw new Error('The `uids` parameter is required')
 
-  const userListResult = await firebaseApp.auth().listUsers()
+  const userListResult = await getAuth().listUsers()
   const users = userListResult.users
 
   for (const user of users) {
-    await firebaseApp.auth().setCustomUserClaims(user.uid, {
+    await getAuth().setCustomUserClaims(user.uid, {
       role: uids.includes(user.uid) ? 'admin' : 'user',
     })
   }
@@ -52,12 +56,14 @@ export const setAdmins = functions.https.onCall(async (data, _) => {
   return null
 })
 
+// this is only used for the initial import of the items
 export const itemCreated = functions.firestore
     .document('items/{itemId}')
     .onCreate(async (snap, _) => {
       const item = snap.data()
 
-      if (item.borrower?.name && !item.borrower?.id) {
+      const itemBorrowerIsIncomplete = item.borrower?.name && !item.borrower?.id
+      if (itemBorrowerIsIncomplete) {
         await associateItemWithExistingUsers(item, snap)
       }
 
@@ -77,4 +83,11 @@ export const itemChanged = functions.firestore
       }
 
       return null
+    })
+
+export const userChanged = functions.firestore
+    .document('users/{uid}')
+    .onUpdate(async (change, _) => {
+      const userData = change.after.data() as CustomUser
+      await syncItemBorrowersWithUser(userData)
     })
